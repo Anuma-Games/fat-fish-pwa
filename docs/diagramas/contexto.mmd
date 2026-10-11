@@ -1,0 +1,27 @@
+flowchart LR
+    J(["Jugador"])
+    V(["Visitante"])
+
+    subgraph PC["PC del jugador"]
+        GAME["Videojuego Fat Fish<br/>Unity"]
+        Q[("Cola local de partidas")]
+        GAME --> Q
+    end
+
+    subgraph MOV["Celular o navegador"]
+        PWA["PWA Angular<br/>+ Service Worker"]
+    end
+
+    subgraph GCP["Google Cloud"]
+        subgraph CR["Cloud Run · contenedor único"]
+            BE["Spring Boot<br/>/api/juego/** · /api/pwa/**<br/>+ archivos de la PWA"]
+        end
+        DB[("Cloud SQL<br/>PostgreSQL")]
+    end
+
+    J -->|juega| GAME
+    J -->|consulta su expediente| PWA
+    V -->|ranking, wiki, opinión| PWA
+    Q -->|"POST /api/juego/partidas"| BE
+    PWA -->|"GET y POST /api/pwa/**"| BE
+    BE --> DB

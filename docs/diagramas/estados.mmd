@@ -1,0 +1,12 @@
+stateDiagram-v2
+    [*] --> Cargando
+    Cargando --> ConDatos: llegan datos
+    Cargando --> Vacio: no hay registros
+    Cargando --> DesdeCache: sin red, hay datos guardados
+    Cargando --> SinRed: sin red, nada guardado
+    Cargando --> Error: falla el servidor
+
+    ConDatos --> Cargando: cambiar de página
+    DesdeCache --> Cargando: vuelve la conexión
+    SinRed --> Cargando: vuelve la conexión
+    Error --> Cargando: Reintentar

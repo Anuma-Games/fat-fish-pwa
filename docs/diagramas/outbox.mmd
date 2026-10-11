@@ -1,0 +1,20 @@
+sequenceDiagram
+    actor U as Jugador
+    participant APP as PWA Angular
+    participant OB as Outbox IndexedDB
+    participant API as /api/pwa
+
+    U->>APP: Envía retroalimentación
+    APP->>API: POST /api/pwa/retroalimentacion
+    alt Sin conexión o fallo de red
+        API--xAPP: Error de red
+        APP->>OB: Guarda solicitud como PENDIENTE
+        APP-->>U: Guardado en tu dispositivo, se enviará al reconectar
+        Note over OB,API: Evento online, arranque de la app o Background Sync
+        OB->>API: POST con Idempotency-Key
+        API-->>OB: 201 Created
+        OB-->>APP: Marca ENVIADO
+    else Con conexión
+        API-->>APP: 201 Created
+        APP-->>U: Enviado
+    end

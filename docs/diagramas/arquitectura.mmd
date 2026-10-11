@@ -1,0 +1,16 @@
+flowchart LR
+    subgraph NAV["Navegador del jugador"]
+        APP["PWA Angular"]
+        SW["Service Worker<br/>precaché + caché de datos"]
+        IDB[("IndexedDB<br/>outbox de formularios")]
+        LS["localStorage<br/>sesión: ID y alias"]
+        APP <--> SW
+        APP --> IDB
+        APP --> LS
+    end
+
+    subgraph CR["Cloud Run · contenedor único"]
+        SB["Spring Boot<br/>sirve la PWA (estáticos) y /api/pwa/..."]
+    end
+
+    SW -->|"HTTPS · mismo origen"| SB
