@@ -679,7 +679,7 @@ En el ranking, la posición del jugador queda fija abajo mientras se cambia de p
 
 ## 7. Diagramas de la aplicación
 
-Complementan los diagramas de las secciones 2.1, 3 y 5.5. Todos se muestran como imagen para que se vean igual en GitHub y en cualquier editor; su código está en [`docs/diagramas/`](docs/diagramas/).
+Complementan los diagramas de las secciones 2.1, 3 y 5.5. Todos se muestran como imagen para que se vean igual en GitHub y en cualquier editor; su código está en [`docs/diagramas/`](docs/diagramas).
 
 ### 7.1 Contexto del sistema
 
