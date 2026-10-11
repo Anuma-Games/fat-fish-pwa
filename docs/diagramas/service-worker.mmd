@@ -1,0 +1,13 @@
+stateDiagram-v2
+    [*] --> Instalando: primera visita
+    Instalando --> Activo: guarda app, wiki, fuentes y logo
+
+    state Activo {
+        [*] --> Atendiendo
+        Atendiendo --> Atendiendo: consultas a la API, red primero
+        Atendiendo --> EnviandoPendientes: vuelve la conexión
+        EnviandoPendientes --> Atendiendo
+    }
+
+    Activo --> VersionNueva: revisa al iniciar y cada 6 h
+    VersionNueva --> Activo: el usuario acepta y recarga

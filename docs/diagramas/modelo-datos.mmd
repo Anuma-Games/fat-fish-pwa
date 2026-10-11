@@ -1,0 +1,53 @@
+erDiagram
+    jugador ||--|| estadistica_jugador : "tiene (1:1)"
+    jugador ||--o{ partida : "registra (1:N)"
+
+    jugador {
+        id id PK "generado por el backend, único"
+        varchar alias "varchar(24), NN, se puede repetir"
+        timestamp creado_en "NN"
+        timestamp ultima_actividad "nulo"
+        varchar token "solo hash, nulo"
+    }
+
+    estadistica_jugador {
+        id jugador_id PK, FK
+        int partidas_totales "NN"
+        int partidas_ganadas "NN"
+        bigint total_invertido "NN"
+        bigint total_perdido "NN"
+        int racha_derrotas_max "NN"
+        bigint tiempo_jugado_seg "NN"
+    }
+
+    partida {
+        id id PK
+        id jugador_id FK "NN"
+        varchar semilla "varchar(64), NN"
+        varchar mazo_id "varchar(40), NN"
+        resultado_partida resultado "VICTORIA, DERROTA, ABANDONO, NN"
+        int ronda_alcanzada "NN"
+        bigint puntaje "NN"
+        int dinero_maximo "NN"
+        int dinero_invertido "NN"
+        int dinero_perdido "NN"
+        int duracion_seg "NN"
+        timestamp creada_en "NN"
+    }
+
+    retroalimentacion {
+        id id PK
+        enum categoria "ERROR, SUGERENCIA, OTRO, NN"
+        enum componente "JUEGO, PWA, OTRO, NN"
+        varchar mensaje "varchar(1000), NN, mínimo 10 caracteres"
+        timestamp creada_en "NN"
+    }
+
+    encuesta_rapida {
+        id id PK
+        smallint percepcion_riesgo "NN, 1 a 5"
+        smallint cambio_opinion "NN, 1 a 5"
+        smallint claridad_mensaje "NN, 1 a 5"
+        varchar comentario "varchar(500), nulo"
+        timestamp enviada_en "NN"
+    }

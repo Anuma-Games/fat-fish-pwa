@@ -1,0 +1,28 @@
+sequenceDiagram
+    actor U as Jugador
+    participant P as PWA
+    participant SW as Service Worker
+    participant API as /api/pwa
+
+    U->>P: Escribe "pezgordo" y pulsa Buscar
+    P->>SW: GET /jugadores?busqueda=pezgordo
+    SW->>API: Red primero
+    API-->>P: 2 jugadores (alias + ID)
+    P-->>U: Lista de jugadores
+
+    U->>P: Elige ID #1042
+    par Perfil e historial
+        P->>SW: GET /perfil?id=1042
+        SW->>API: Red primero
+        API-->>P: Estadísticas
+    and
+        P->>SW: GET /partidas?id=1042&pagina=0
+        SW->>API: Red primero
+        API-->>P: Primera página del historial
+    end
+    P-->>U: Expediente completo
+
+    alt Sin conexión
+        SW-->>P: Última respuesta guardada
+        P-->>U: Datos + aviso "Sin conexión" con su fecha
+    end
