@@ -1,0 +1,22 @@
+# Revisa cada semana si hay versiones nuevas de las dependencias y abre un PR hacia develop.
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    target-branch: develop
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 3
+    groups:
+      angular:
+        patterns: ["@angular/*", "@angular-devkit/*"]
+    commit-message:
+      prefix: deps
+
+  - package-ecosystem: github-actions
+    directory: /
+    target-branch: develop
+    schedule:
+      interval: weekly
+    commit-message:
+      prefix: ci
