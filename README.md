@@ -1,12 +1,14 @@
 # Fat Fish · PWA del videojuego · Proyecto Integrador
 
+[![CI](https://github.com/Anuma-Games/fat-fish-pwa/actions/workflows/ci.yml/badge.svg)](https://github.com/Anuma-Games/fat-fish-pwa/actions/workflows/ci.yml)
+
 > **Fase actual:** 1 · Planeación — propuesta de arquitectura
 > **Stack de la PWA:** Angular · Service Worker · Web App Manifest
 > **Hosting:** Cloud Run (mismo contenedor y mismo origen que el backend)
 > **Idioma:** Español
 > **Versión del documento:** 0.4 (propuesta de diseño)
 > **Fuente de requisitos:** *Recuento final (versión 2): PWA de la integradora*, con los cambios acordados por el equipo
-> **Equipo:** Anuma Games (ver [8. Equipo](#8-equipo))
+> **Equipo:** Anuma Games (ver [9. Equipo](#9-equipo))
 
 ---
 
@@ -19,7 +21,8 @@
 5. [Estrategia PWA](#5-estrategia-pwa)
 6. [Experiencia de usuario (UI/UX)](#6-experiencia-de-usuario-uiux)
 7. [Diagramas de la aplicación](#7-diagramas-de-la-aplicación)
-8. [Equipo](#8-equipo)
+8. [Integración continua y flujo de trabajo](#8-integración-continua-y-flujo-de-trabajo)
+9. [Equipo](#9-equipo)
 
 ---
 
@@ -88,7 +91,7 @@ La PWA cierra el ciclo **jugar → registrar → reflexionar → opinar**:
 | Service Worker, caché y funcionamiento sin conexión | [5. Estrategia PWA](#5-estrategia-pwa) |
 | Interfaz modular (JS/CSS) y adaptativa | [6. Experiencia de usuario](#6-experiencia-de-usuario-uiux) |
 | Diagramas de la aplicación | [2.1](#21-vista-general), [3](#3-modelo-de-datos), [5.5](#55-cola-de-envío-outbox) y [7](#7-diagramas-de-la-aplicación) |
-| Documentación en un `.md` con los integrantes | Este README; [8. Equipo](#8-equipo) |
+| Documentación en un `.md` con los integrantes | Este README; [9. Equipo](#9-equipo) |
 
 ---
 
@@ -713,7 +716,20 @@ Cómo se instala la PWA, cómo atiende sin red y cómo se actualiza.
 
 ---
 
-## 8. Equipo
+## 8. Integración continua y flujo de trabajo
+
+El workflow [`.github/workflows/ci.yml`](.github/workflows/ci.yml) corre en cada push a `main` y `develop` y en cada Pull Request hacia esas ramas:
+
+1. **Analizar y probar:** formato del código (`npm run format:check`) y pruebas (`ng test`).
+2. **Compilar** (solo si el paso anterior pasa): `ng build` y sube el resultado como artefacto `fat-fish-pwa-dist`.
+
+- Ramas: `main` (producción), `develop` (integración) y `feature/FF-<ticket>-<descripcion>`; ambas ramas principales están protegidas.
+- Todo cambio entra por Pull Request con una aprobación y el CI en verde. `CODEOWNERS` asigna revisores y la plantilla de PR pide el ticket de Jira.
+- Dependabot revisa cada semana las dependencias (npm y acciones de GitHub) y abre PRs hacia `develop`.
+
+---
+
+## 9. Equipo
 
 **Anuma Games**, Proyecto integrador, grupo IDGS101N, Universidad Tecnológica de Chihuahua.
 
