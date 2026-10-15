@@ -1,0 +1,31 @@
+$ psql -U fatfish -h localhost -d fatfish -f docs/laboratorio-pruebas/sql/01_limpieza.sql
+TRUNCATE TABLE
+ jugadores 
+-----------
+         0
+(1 row)
+
+ partidas 
+----------
+        0
+(1 row)
+
+ retroalimentaciones 
+---------------------
+                   0
+(1 row)
+
+
+$ psql -U fatfish -h localhost -d fatfish -f docs/laboratorio-pruebas/sql/02_carga.sql
+INSERT 0 5
+INSERT 0 18
+INSERT 0 2
+ id |  alias   |       creado_en        
+----+----------+------------------------
+  1 | jesus    | 2026-09-20 09:00:00-06
+  2 | emmanuel | 2026-09-22 12:30:00-06
+  3 | angel    | 2026-09-25 15:10:00-06
+  4 | luis     | 2026-09-26 11:00:00-06
+  5 | andrik   | 2026-09-28 06:00:00-06
+(5 rows)
+
