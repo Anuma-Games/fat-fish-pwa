@@ -1,0 +1,43 @@
+-- 2026-10-14 21:50:27 CST · ANTES de usar la PWA
+$ psql -U fatfish -h localhost -d fatfish -f docs/laboratorio-pruebas/sql/03_consultas.sql
+ jugadores 
+-----------
+         5
+(1 row)
+
+ partidas 
+----------
+       18
+(1 row)
+
+ retroalimentaciones 
+---------------------
+                   2
+(1 row)
+
+ id | resultado | ronda_alcanzada | puntaje | dinero_invertido | dinero_perdido |       creada_en        
+----+-----------+-----------------+---------+------------------+----------------+------------------------
+ 12 | VICTORIA  |               9 |    1510 |             9100 |           1900 | 2026-10-13 16:00:00-06
+ 11 | DERROTA   |               6 |     470 |             3900 |           2600 | 2026-10-12 13:45:00-06
+ 10 | DERROTA   |               1 |      90 |              500 |            450 | 2026-10-11 15:00:00-06
+  9 | VICTORIA  |               9 |    1320 |             8800 |           2100 | 2026-10-09 10:10:00-06
+  8 | DERROTA   |               7 |     640 |             5200 |           3300 | 2026-10-07 14:00:00-06
+  7 | ABANDONO  |               3 |     210 |             1200 |            600 | 2026-10-05 11:30:00-06
+  6 | DERROTA   |               4 |     281 |             2350 |           1450 | 2026-10-03 13:00:00-06
+  5 | DERROTA   |               2 |     150 |              900 |            700 | 2026-10-01 12:00:00-06
+  4 | DERROTA   |               5 |     360 |             3100 |           2000 | 2026-09-29 15:00:00-06
+  3 | ABANDONO  |               2 |     110 |              600 |            420 | 2026-09-27 12:15:00-06
+  2 | DERROTA   |               3 |     175 |             1100 |            800 | 2026-09-24 14:30:00-06
+  1 | DERROTA   |               1 |      60 |              400 |            380 | 2026-09-21 13:00:00-06
+(12 rows)
+
+ id | categoria  | componente |                           mensaje                           |       creada_en        | clave_idempotencia 
+----+------------+------------+-------------------------------------------------------------+------------------------+--------------------
+  1 | SUGERENCIA | PWA        | Me gustaría ver mi historial filtrado por resultado         | 2026-10-12 11:00:00-06 | 
+  2 | ERROR      | JUEGO      | La bola se quedó girando en la ronda 3 y tuve que reiniciar | 2026-10-13 14:30:00-06 | 
+(2 rows)
+
+ clave_idempotencia | count 
+--------------------+-------
+(0 rows)
+

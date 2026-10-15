@@ -1,0 +1,18 @@
+.card {
+  margin-top: var(--ff-space-6);
+}
+.outbox .btn {
+  margin: var(--ff-space-2) 0 var(--ff-space-4);
+}
+.btn.block {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--ff-space-2);
+  margin-top: var(--ff-space-3);
+}
+@media (min-width: 1024px) {
+  .card:first-of-type {
+    max-width: 560px;
+  }
+}

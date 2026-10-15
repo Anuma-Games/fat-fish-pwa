@@ -1,0 +1,30 @@
+[info] [FatFish] PWA iniciada · service worker activo · en línea
+[info] [FatFish] GET /api/pwa/perfil?id=1
+[info] [FatFish] GET /api/pwa/partidas?id=1&pagina=0&tamano=10
+[info] [FatFish] Perfil y partidas respondieron en 32.9 ms: jesus (ID #1), 10 de 12 partidas
+[table] Array(10)
+[info] [FatFish] Expediente renderizado: 10 partidas en pantalla, 39.5 ms desde el GET
+[info] [FatFish] PWA iniciada · service worker activo · en línea
+[info] [FatFish] GET /api/pwa/perfil?id=1
+[info] [FatFish] GET /api/pwa/partidas?id=1&pagina=0&tamano=10
+[info] [FatFish] Perfil y partidas respondieron en 18.9 ms: jesus (ID #1), 10 de 12 partidas
+[table] Array(10)
+[info] [FatFish] Expediente renderizado: 10 partidas en pantalla, 20.5 ms desde el GET
+[info] [FatFish] GET /api/pwa/partidas?id=1&pagina=1&tamano=10
+[info] [FatFish] Página 1 respondió en 9.0 ms: 2 partidas más
+[table] Array(2)
+[info] [FatFish] Expediente renderizado: 12 partidas en pantalla, 9.7 ms desde el GET
+[info] [FatFish] PWA iniciada · service worker activo · en línea
+[info] [FatFish] POST /api/pwa/retroalimentacion OK en 49.1 ms: id 3 (Idempotency-Key d3c799a1-b1b2-44f3-bd13-3722207d183a)
+[warning] [FatFish] Sin conexión: los envíos se guardarán en IndexedDB
+[warning] [FatFish] Sin conexión: retroalimentación 3612ccdb-598b-4058-ace5-ee481dac23ea guardada en IndexedDB (outbox)
+[info] [FatFish] PWA iniciada · service worker activo · sin conexión
+[info] [FatFish] GET /api/pwa/perfil?id=1
+[info] [FatFish] GET /api/pwa/partidas?id=1&pagina=0&tamano=10
+[info] [FatFish] Perfil y partidas respondieron en 12.7 ms: jesus (ID #1), 10 de 12 partidas
+[table] Array(10)
+[info] [FatFish] Expediente renderizado: 10 partidas en pantalla, 14.3 ms desde el GET
+[info] [FatFish] PWA iniciada · service worker activo · sin conexión
+[info] [FatFish] Conexión recuperada
+[info] [FatFish] Sincronizando outbox: 1 envío(s) pendiente(s)
+[info] [FatFish] POST /api/pwa/retroalimentacion OK en 24.3 ms: id 4 (Idempotency-Key 3612ccdb-598b-4058-ace5-ee481dac23ea)
