@@ -1,0 +1,57 @@
+/* Design tokens (README 6.2 and 6.3). Components only use var(--ff-*). */
+@font-face {
+  font-family: 'Jersey 10';
+  src: url('/fonts/jersey-10-latin-400-normal.woff2') format('woff2');
+  font-weight: 400;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Press Start 2P';
+  src: url('/fonts/press-start-2p-latin-400-normal.woff2') format('woff2');
+  font-weight: 400;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Geist';
+  src: url('/fonts/geist-latin-400-normal.woff2') format('woff2');
+  font-weight: 400;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Geist';
+  src: url('/fonts/geist-latin-600-normal.woff2') format('woff2');
+  font-weight: 600;
+  font-display: swap;
+}
+
+:root {
+  --ff-bg-900: #0b1416;
+  --ff-bg-800: #11201c;
+  --ff-bg-700: #172a25;
+  --ff-felt-800: #0d3522;
+  --ff-felt-700: #105030;
+  --ff-line: #24493a;
+  --ff-gold-400: #e8b850;
+  --ff-gold-600: #c08828;
+  --ff-ruby-700: #882020;
+  --ff-ruby-300: #f08a7e;
+  --ff-cream-100: #f2e8cc;
+  --ff-fog-400: #9aa8a2;
+  --ff-win-300: #6fd39a;
+
+  --ff-font-display: 'Jersey 10', system-ui, sans-serif;
+  --ff-font-label: 'Press Start 2P', ui-monospace, monospace;
+  --ff-font-body: 'Geist', system-ui, -apple-system, 'Segoe UI', sans-serif;
+
+  --ff-space-1: 4px;
+  --ff-space-2: 8px;
+  --ff-space-3: 12px;
+  --ff-space-4: 16px;
+  --ff-space-6: 24px;
+  --ff-space-8: 32px;
+
+  --ff-radius-field: 2px;
+  --ff-radius-card: 6px;
+  --ff-shadow-hard: 4px 4px 0 #000;
+  --ff-content-max: 1040px;
+}

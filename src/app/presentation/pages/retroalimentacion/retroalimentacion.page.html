@@ -1,0 +1,116 @@
+<span class="eyebrow">Opinión</span>
+<h1>Tu opinión cuenta</h1>
+
+<section class="card">
+  <h2>Retroalimentación</h2>
+  <p class="muted">Cuéntanos qué falló o qué mejorarías. No necesitas tu ID.</p>
+
+  <form (ngSubmit)="enviar()">
+    <span class="label">Tipo</span>
+    <div class="options" role="radiogroup" aria-label="Tipo">
+      @for (o of categorias; track o.valor) {
+        <button
+          type="button"
+          class="option"
+          role="radio"
+          [attr.aria-checked]="categoria === o.valor"
+          [class.selected]="categoria === o.valor"
+          (click)="categoria = o.valor"
+        >
+          {{ o.texto }}
+        </button>
+      }
+    </div>
+
+    <span class="label">¿Dónde ocurrió?</span>
+    <div class="options" role="radiogroup" aria-label="¿Dónde ocurrió?">
+      @for (o of componentes; track o.valor) {
+        <button
+          type="button"
+          class="option"
+          role="radio"
+          [attr.aria-checked]="componente === o.valor"
+          [class.selected]="componente === o.valor"
+          (click)="componente = o.valor"
+        >
+          {{ o.texto }}
+        </button>
+      }
+    </div>
+
+    <label class="label" for="mensaje">Mensaje</label>
+    <textarea
+      id="mensaje"
+      name="mensaje"
+      rows="4"
+      maxlength="1000"
+      [(ngModel)]="mensaje"
+    ></textarea>
+    <p class="counter small muted">{{ mensaje.length }} / 1000 · mínimo 10</p>
+
+    <button class="btn block" type="submit" [disabled]="enviando()">
+      <app-pixel-icon name="enviar" [size]="14" />
+      {{ conectividad.enLinea() ? 'Enviar' : 'Guardar para enviar después' }}
+    </button>
+  </form>
+
+  @if (aviso(); as a) {
+    <div class="notice" [class.ok]="a.tipo !== 'RECHAZADO'" [class.error]="a.tipo === 'RECHAZADO'">
+      <app-pixel-icon
+        class="mark"
+        [name]="a.tipo === 'RECHAZADO' ? 'cerrar' : 'check'"
+        [size]="16"
+      />
+      <span>{{ a.texto }}</span>
+    </div>
+  }
+</section>
+
+<section class="card outbox">
+  <span class="eyebrow">Vista del laboratorio de pruebas</span>
+  <h2>Envíos desde este dispositivo</h2>
+  <p class="small muted">
+    Bandeja de salida guardada en IndexedDB (<code>fatfish-pwa</code> → <code>outbox</code>). Sin
+    conexión, los envíos esperan aquí y se mandan solos al volver la red.
+  </p>
+  <button
+    class="btn ghost"
+    type="button"
+    (click)="facade.sincronizar()"
+    [disabled]="!conectividad.enLinea()"
+  >
+    Reintentar pendientes
+  </button>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Fecha</th>
+          <th>Tipo</th>
+          <th>Mensaje</th>
+          <th>Estado</th>
+          <th>Intentos</th>
+          <th>ID en servidor</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (e of facade.envios(); track e.id) {
+          <tr>
+            <td>{{ e.creadoEn | date: 'd MMM, HH:mm:ss' }}</td>
+            <td>{{ e.contenido.categoria }} · {{ e.contenido.componente }}</td>
+            <td class="msg">{{ e.contenido.mensaje }}</td>
+            <td>
+              <span class="chip" [class]="e.estado.toLowerCase()">{{ e.estado }}</span>
+            </td>
+            <td class="num">{{ e.intentos }}</td>
+            <td class="num">{{ e.idServidor ?? '—' }}</td>
+          </tr>
+        } @empty {
+          <tr>
+            <td colspan="6">Todavía no has enviado nada desde este dispositivo.</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</section>

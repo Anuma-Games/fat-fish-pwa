@@ -12,6 +12,8 @@
 
 ---
 
+> **Laboratorio de pruebas (PWA + API + PostgreSQL):** pasos para levantarlo, casos de prueba y evidencias en [`docs/laboratorio-pruebas/`](docs/laboratorio-pruebas/README.md).
+
 ## Tabla de contenido
 
 1. [Finalidad de la PWA dentro del proyecto](#1-finalidad-de-la-pwa-dentro-del-proyecto)

@@ -1,0 +1,155 @@
+<span class="eyebrow">Expediente</span>
+<h1>Lo que el casino sabe de ti</h1>
+<p class="muted">Busca tu expediente con tu ID. No necesitas contraseña.</p>
+
+<form (ngSubmit)="consultar()">
+  <label class="label" for="jugador">ID del jugador</label>
+  <div class="search">
+    <input
+      id="jugador"
+      name="jugador"
+      inputmode="numeric"
+      placeholder="Por ejemplo, 1"
+      [ngModel]="jugadorId()"
+      (ngModelChange)="jugadorId.set($event)"
+    />
+    <button class="btn icon" type="submit" aria-label="Buscar" [disabled]="facade.cargando()">
+      <app-pixel-icon name="buscar" [size]="18" />
+    </button>
+  </div>
+  <p class="small muted">El ID es único. En el laboratorio, los jugadores van del 1 al 5.</p>
+</form>
+
+@if (facade.error(); as error) {
+  <div class="notice error">
+    <span>{{ error }}</span>
+  </div>
+}
+
+@if (facade.perfil(); as perfil) {
+  @if (!conectividad.enLinea() && facade.generadoEn(); as fecha) {
+    <div class="notice offline">
+      <app-pixel-icon class="warn" name="sin-conexion" [size]="18" />
+      <span>
+        <span class="title">Sin conexión</span>
+        Datos guardados el {{ fecha | date: "d 'de' MMM 'a las' HH:mm" }}.
+      </span>
+    </div>
+  }
+
+  <section class="perfil">
+    <span class="eyebrow">Lo que el casino sabe de ti</span>
+    <h2 class="alias">
+      {{ perfil.alias }} <span class="chip id">ID #{{ perfil.jugadorId }}</span>
+    </h2>
+    <p class="small muted">
+      Todo el dinero es ficticio.
+      @if (perfil.ultimaActividad; as ultima) {
+        Última partida: {{ ultima | date: 'd MMM y' }}.
+      }
+    </p>
+
+    <div class="stats">
+      <div class="stat">
+        <span class="eyebrow">Partidas</span>
+        <div class="value">{{ perfil.estadisticas.partidasTotales }}</div>
+        <span class="small muted">Ganaste {{ perfil.estadisticas.partidasGanadas }}</span>
+      </div>
+      <div class="stat">
+        <span class="eyebrow">Total perdido</span>
+        <div class="value loss">${{ perfil.estadisticas.totalPerdido | number }}</div>
+        <span class="small muted"
+          >De ${{ perfil.estadisticas.totalInvertido | number }} invertidos</span
+        >
+      </div>
+      <div class="stat">
+        <span class="eyebrow">Racha de derrotas</span>
+        <div class="value">{{ perfil.estadisticas.rachaDerrotasMax }}</div>
+        <span class="small muted">Seguidas</span>
+      </div>
+      <div class="stat">
+        <span class="eyebrow">Tiempo en la mesa</span>
+        <div class="value">{{ horas(perfil.estadisticas.tiempoJugadoSeg) }}</div>
+        <span class="small muted">Volviste {{ perfil.estadisticas.partidasTotales }} veces</span>
+      </div>
+    </div>
+
+    <h2>Historial</h2>
+    @if (facade.partidas().length === 0) {
+      <p class="muted">Este jugador todavía no tiene partidas.</p>
+    } @else {
+      <div class="table-wrap desktop-only">
+        <table>
+          <thead>
+            <tr>
+              <th>Fecha</th>
+              <th>Resultado</th>
+              <th>Ronda alcanzada</th>
+              <th>Puntaje</th>
+              <th>Invertido</th>
+              <th>Ganado</th>
+              <th>Perdido</th>
+              <th>Duración</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (p of facade.partidas(); track p.id) {
+              <tr>
+                <td>{{ p.creadaEn | date: 'd MMM y' }}</td>
+                <td>
+                  <span class="chip" [class]="p.resultado.toLowerCase()">{{ p.resultado }}</span>
+                </td>
+                <td>Ronda {{ p.rondaAlcanzada }} de 9</td>
+                <td class="num">{{ p.puntaje | number }}</td>
+                <td class="num">${{ p.dineroInvertido | number }}</td>
+                <td class="num">${{ p.dineroGanado | number }}</td>
+                <td class="num">${{ p.dineroPerdido | number }}</td>
+                <td class="num">{{ minutos(p.duracionSeg) }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <ul class="match-cards phone-only">
+        @for (p of facade.partidas(); track p.id) {
+          <li class="match-card">
+            <div class="match-head">
+              <span class="small muted"
+                >{{ p.creadaEn | date: 'd MMM y' }} · {{ minutos(p.duracionSeg) }}</span
+              >
+              <span class="chip" [class]="p.resultado.toLowerCase()">{{ p.resultado }}</span>
+            </div>
+            <dl>
+              <dt>Ronda alcanzada</dt>
+              <dd>Ronda {{ p.rondaAlcanzada }} de 9</dd>
+              <dt>Puntaje</dt>
+              <dd>{{ p.puntaje | number }}</dd>
+              <dt>Invertido / perdido</dt>
+              <dd>${{ p.dineroInvertido | number }} / ${{ p.dineroPerdido | number }}</dd>
+            </dl>
+          </li>
+        }
+      </ul>
+
+      <p class="small muted count">
+        {{ facade.partidas().length }} de {{ facade.totalPartidas() }} partidas
+        @if (facade.generadoEn(); as fecha) {
+          · datos del {{ fecha | date: 'd MMM, HH:mm' }}
+        }
+      </p>
+      @if (facade.hayMas()) {
+        <button
+          class="btn ghost more"
+          type="button"
+          (click)="facade.verMas()"
+          [disabled]="facade.cargandoMas()"
+        >
+          <app-pixel-icon name="mas" [size]="14" /> Ver más partidas
+        </button>
+      }
+    }
+  </section>
+} @else if (facade.cargando()) {
+  <p class="muted">Consultando…</p>
+}
