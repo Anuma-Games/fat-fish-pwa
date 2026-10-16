@@ -1,0 +1,51 @@
+<section class="hero" id="inicio" data-seccion="inicio">
+  <img
+    class="hero-img"
+    src="img/landing/hero-mesa.jpg"
+    alt="La mesa de Fat Fish: ruleta, paño verde y el Crupier al otro lado"
+    width="1600"
+    height="862"
+    fetchpriority="high"
+  />
+  <div class="hero-veil"></div>
+
+  <div class="wheel" aria-hidden="true">
+    <svg viewBox="-110 -110 220 220">
+      <circle r="108" fill="#3b2412" />
+      <circle r="100" style="fill: var(--ff-gold-600)" />
+      @for (c of casillas; track c.numero) {
+        <path [attr.d]="c.d" [style.fill]="c.color" class="casilla" />
+        <text
+          [attr.x]="c.x"
+          [attr.y]="c.y"
+          [attr.transform]="'rotate(' + c.giro + ' ' + c.x + ' ' + c.y + ')'"
+          text-anchor="middle"
+          dominant-baseline="middle"
+        >
+          {{ c.numero }}
+        </text>
+      }
+      <circle r="52" class="centro" />
+      @for (r of radios; track r) {
+        <rect x="-2" y="-46" width="4" height="36" [attr.transform]="'rotate(' + r + ')'" />
+      }
+      <circle r="10" class="eje" />
+    </svg>
+  </div>
+
+  <div class="lp-wrap hero-content">
+    <span class="eyebrow lp-gold">{{ hero.eyebrow }}</span>
+    <h1 class="crt">{{ hero.titulo }}</h1>
+    <p class="claim">{{ hero.claim }}</p>
+    <p class="lead">{{ hero.texto }}</p>
+    <div class="actions">
+      <a class="btn" [href]="cta.demo">Jugar la demo</a>
+      <a class="btn lp-alt" [routerLink]="cta.expediente">Ver un expediente</a>
+    </div>
+  </div>
+
+  <a class="scroll-hint" href="#como-se-juega" aria-label="Bajar a cómo se juega">
+    <span class="eyebrow">Cómo se juega</span>
+    <span class="flecha" aria-hidden="true"></span>
+  </a>
+</section>

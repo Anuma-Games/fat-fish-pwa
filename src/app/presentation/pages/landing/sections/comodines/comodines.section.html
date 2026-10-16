@@ -1,0 +1,30 @@
+<section class="lp-section comodines" id="comodines" data-seccion="comodines">
+  <div class="lp-wrap">
+    <header class="lp-head" appReveal>
+      <span class="eyebrow">Entre rondas</span>
+      <h2>Cuatro comodines y una tienda</h2>
+      <p class="muted">
+        Se compran con dinero del juego desde el final de la ronda 1 y suben de nivel con las
+        copias. Los puntos nunca se convierten en dinero.
+      </p>
+    </header>
+
+    <div class="cartas">
+      @for (c of comodines; track c.titulo) {
+        <article
+          class="carta"
+          appReveal
+          (pointermove)="inclinar($event)"
+          (pointerleave)="soltar($event)"
+        >
+          <span class="categoria">{{ c.categoria }}</span>
+          <span class="glifo" aria-hidden="true">{{ c.glifo }}</span>
+          <div>
+            <h3>{{ c.titulo }}</h3>
+            <p class="small muted">{{ c.texto }}</p>
+          </div>
+        </article>
+      }
+    </div>
+  </div>
+</section>

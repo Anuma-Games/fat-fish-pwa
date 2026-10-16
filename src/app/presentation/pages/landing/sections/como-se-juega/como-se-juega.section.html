@@ -1,0 +1,56 @@
+<section class="lp-section" id="como-se-juega" data-seccion="como-se-juega">
+  <div class="lp-wrap">
+    <div class="intro">
+      <header class="lp-head" appReveal>
+        <span class="eyebrow">Cómo se juega</span>
+        <h2>Cada ronda pide más</h2>
+        <p class="muted">
+          Una ronda siempre es igual: inviertes, giras y sumas puntos. Lo único que cambia es la
+          meta.
+        </p>
+      </header>
+
+      <div class="metas" appReveal aria-hidden="true">
+        <span class="eyebrow">Meta</span>
+        <div class="barras">
+          @for (alto of metas; track $index) {
+            <i [style.height.%]="alto" [style.--i]="$index"></i>
+          }
+        </div>
+      </div>
+    </div>
+
+    <ol class="pasos">
+      @for (p of pasos; track p.titulo; let i = $index) {
+        <li appReveal [style.--i]="i">
+          <span class="ficha" aria-hidden="true">{{ i + 1 }}</span>
+          <h3>{{ p.titulo }}</h3>
+          <p class="muted">{{ p.texto }}</p>
+          @if (p.ejemplo) {
+            <span class="ejemplo">{{ p.ejemplo }}</span>
+          }
+        </li>
+      }
+    </ol>
+
+    <p class="vuelta" appReveal>
+      <svg viewBox="0 0 48 32" aria-hidden="true">
+        <path d="M44 6 H14 A10 10 0 0 0 14 26 H40" />
+        <path d="M34 20 L40 26 L34 32" />
+      </svg>
+      {{ vuelta }}
+    </p>
+
+    <ul class="pilares">
+      @for (p of pilares; track p.titulo) {
+        <li appReveal>
+          <app-pixel-icon class="lp-gold" [name]="p.icono" [size]="22" />
+          <div>
+            <h3>{{ p.titulo }}</h3>
+            <p class="muted small">{{ p.texto }}</p>
+          </div>
+        </li>
+      }
+    </ul>
+  </div>
+</section>

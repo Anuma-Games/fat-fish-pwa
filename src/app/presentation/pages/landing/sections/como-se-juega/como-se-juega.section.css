@@ -1,0 +1,185 @@
+.intro {
+  display: grid;
+  gap: var(--ff-space-6);
+  align-items: end;
+  margin-bottom: var(--ff-space-8);
+}
+.intro .lp-head {
+  margin-bottom: 0;
+}
+
+/* Rising goal: the bars keep growing and fade out before any last one */
+.metas {
+  display: grid;
+  gap: var(--ff-space-2);
+  min-width: 0;
+}
+.barras {
+  display: flex;
+  align-items: flex-end;
+  gap: 6px;
+  height: 140px;
+  -webkit-mask-image: linear-gradient(to right, #000 50%, transparent);
+  mask-image: linear-gradient(to right, #000 50%, transparent);
+}
+.barras i {
+  flex: 1;
+  min-width: 6px;
+  background: var(--ff-gold-400);
+  box-shadow: inset 0 3px 0 var(--ff-cream-100);
+  transform-origin: bottom;
+  transition: scale 0.6s cubic-bezier(0.2, 0.7, 0.2, 1) calc(var(--i, 0) * 50ms);
+}
+.metas.lp-wait .barras i {
+  scale: 1 0;
+}
+
+/* The loop of one round */
+.pasos {
+  position: relative;
+  display: grid;
+  gap: var(--ff-space-6);
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.pasos::before {
+  content: '';
+  position: absolute;
+  left: 19px;
+  top: 20px;
+  bottom: 20px;
+  border-left: 2px dashed var(--ff-gold-600);
+}
+.pasos li {
+  position: relative;
+  display: grid;
+  grid-template-columns: 40px minmax(0, 1fr);
+  column-gap: var(--ff-space-4);
+  align-content: start;
+  transition-delay: calc(var(--i, 0) * 80ms);
+}
+.pasos li > :not(.ficha) {
+  grid-column: 2;
+}
+.ficha {
+  grid-row: 1 / span 3;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  font-family: var(--ff-font-display);
+  font-size: 24px;
+  color: var(--ff-bg-900);
+  background: var(--ff-gold-400);
+  border: 4px dashed var(--ff-cream-100);
+  border-radius: 50%;
+  box-shadow: 3px 3px 0 #000;
+}
+.pasos h3 {
+  margin: 4px 0 var(--ff-space-1);
+  font-size: 26px;
+  line-height: 1;
+}
+.pasos p {
+  margin: 0;
+}
+.ejemplo {
+  justify-self: start;
+  margin-top: var(--ff-space-2);
+  padding: 4px 8px;
+  font-family: var(--ff-font-display);
+  font-size: 20px;
+  color: var(--ff-gold-400);
+  border: 1px solid var(--ff-gold-600);
+  font-variant-numeric: tabular-nums;
+}
+
+.vuelta {
+  display: flex;
+  align-items: center;
+  gap: var(--ff-space-3);
+  margin: var(--ff-space-8) 0 0;
+  font-family: var(--ff-font-display);
+  font-size: clamp(24px, 3.4vw, 32px);
+  line-height: 1.1;
+  color: var(--ff-gold-400);
+}
+.vuelta svg {
+  flex-shrink: 0;
+  width: 48px;
+  height: 32px;
+  overflow: visible;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 3;
+}
+
+/* Pillars */
+.pilares {
+  display: grid;
+  gap: var(--ff-space-6);
+  list-style: none;
+  padding: var(--ff-space-8) 0 0;
+  margin: var(--ff-space-8) 0 0;
+  border-top: 1px solid var(--ff-line);
+}
+.pilares li {
+  display: flex;
+  gap: var(--ff-space-3);
+  align-items: flex-start;
+}
+.pilares h3 {
+  font-size: 24px;
+  margin-bottom: var(--ff-space-1);
+}
+.pilares p {
+  margin: 0;
+}
+
+@media (min-width: 520px) {
+  .pilares {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* Desktop: the five steps in a row, joined by one line */
+@media (min-width: 900px) {
+  .intro {
+    grid-template-columns: 1fr 1fr;
+  }
+  .pasos {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: var(--ff-space-4);
+  }
+  .pasos::before {
+    left: 20px;
+    right: 20px;
+    top: 19px;
+    bottom: auto;
+    border-left: 0;
+    border-top: 2px dashed var(--ff-gold-600);
+  }
+  .pasos li {
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: var(--ff-space-3);
+  }
+  .pasos li > :not(.ficha) {
+    grid-column: 1;
+  }
+  .pilares {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+  .ficha {
+    grid-row: auto;
+  }
+  .pasos h3 {
+    margin-top: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .barras i {
+    transition: none;
+  }
+}

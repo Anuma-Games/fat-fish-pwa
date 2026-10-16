@@ -1,0 +1,29 @@
+<section class="lp-section" id="expediente" data-seccion="expediente">
+  <div class="lp-wrap split">
+    <header class="lp-head" appReveal>
+      <span class="eyebrow">El gancho</span>
+      <h2>{{ expediente.titulo }}</h2>
+      <p class="muted">{{ expediente.texto }}</p>
+      <div class="acciones">
+        <a class="btn" [routerLink]="cta.expediente">{{ expediente.cta }}</a>
+        <button class="btn lp-alt" type="button" (click)="repetir()">Abrir de nuevo</button>
+      </div>
+    </header>
+
+    <article class="archivo" [class.revelando]="revelando()" aria-label="Expediente de ejemplo">
+      <span class="sello" aria-hidden="true">Confidencial</span>
+      <span class="eyebrow">Lo que el casino sabe de ti</span>
+      <h3>{{ expediente.alias }} · ID #{{ expediente.id }}</h3>
+      <dl class="datos">
+        @for (d of expediente.muestra; track d.etiqueta; let i = $index) {
+          <div>
+            <dt class="eyebrow">{{ d.etiqueta }}</dt>
+            <dd [class.perdida]="d.perdida">
+              <span class="tachado" [style.--retraso]="i * 0.18 + 's'">{{ valores()[i] }}</span>
+            </dd>
+          </div>
+        }
+      </dl>
+    </article>
+  </div>
+</section>

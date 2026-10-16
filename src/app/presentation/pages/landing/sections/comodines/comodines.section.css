@@ -1,0 +1,82 @@
+.comodines {
+  background: var(--ff-bg-800);
+  border-block: 1px solid var(--ff-line);
+}
+.cartas {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: var(--ff-space-4);
+  perspective: 900px;
+}
+.carta {
+  position: relative;
+  display: grid;
+  align-content: space-between;
+  gap: var(--ff-space-4);
+  min-height: 300px;
+  padding: var(--ff-space-4);
+  overflow: hidden;
+  background: linear-gradient(160deg, var(--ff-felt-700), var(--ff-felt-800) 60%, #08241a);
+  border: 2px solid var(--ff-gold-600);
+  border-radius: 10px;
+  box-shadow: var(--ff-shadow-hard);
+  transform-style: preserve-3d;
+  transition:
+    transform 0.25s ease-out,
+    opacity 0.7s ease;
+}
+.carta::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s;
+  background: radial-gradient(
+    circle at var(--bx, 50%) var(--by, 50%),
+    rgb(242 232 204 / 26%),
+    transparent 45%
+  );
+}
+.carta:hover::before {
+  opacity: 1;
+}
+.categoria {
+  font-family: var(--ff-font-label);
+  font-size: 8px;
+  text-transform: uppercase;
+  color: var(--ff-gold-400);
+}
+.glifo {
+  font-family: var(--ff-font-display);
+  font-size: 80px;
+  line-height: 0.8;
+  color: var(--ff-gold-400);
+  text-shadow: 4px 4px 0 #000;
+}
+.carta h3 {
+  font-size: 28px;
+  line-height: 1;
+  margin-bottom: var(--ff-space-2);
+}
+.carta p {
+  margin: 0;
+}
+
+@media (max-width: 640px) {
+  .carta {
+    min-height: 230px;
+    padding: var(--ff-space-3);
+  }
+  .glifo {
+    font-size: 56px;
+  }
+  .carta h3 {
+    font-size: 22px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .carta {
+    transition: none;
+  }
+}

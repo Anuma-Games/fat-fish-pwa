@@ -1,0 +1,87 @@
+.cierre {
+  background: var(--ff-felt-800);
+  border-top: 2px solid var(--ff-gold-600);
+}
+.grid {
+  display: grid;
+  gap: var(--ff-space-8);
+  align-items: center;
+}
+
+/* The visitor's sheet, same paper as the sample dossier */
+.ficha {
+  display: grid;
+  gap: var(--ff-space-4);
+  padding: var(--ff-space-6);
+  color: #221e16;
+  background: #e6dec8;
+  box-shadow: 8px 8px 0 #000;
+  rotate: 1deg;
+}
+.ficha .eyebrow {
+  color: #5b5444;
+}
+.ficha h2 {
+  margin: 0;
+  font-size: clamp(30px, 4vw, 40px);
+  line-height: 1;
+}
+dl {
+  display: grid;
+  gap: var(--ff-space-2);
+  margin: 0;
+}
+dl div {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--ff-space-3);
+  padding-bottom: var(--ff-space-2);
+  border-bottom: 1px dashed rgb(34 30 22 / 30%);
+}
+dt {
+  font-size: 14px;
+  color: #5b5444;
+}
+dd {
+  margin: 0;
+  font-family: var(--ff-font-display);
+  font-size: 26px;
+  line-height: 1;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.llamado {
+  display: grid;
+  justify-items: start;
+  gap: var(--ff-space-4);
+}
+.llamado h2 {
+  margin: 0;
+  font-size: clamp(32px, 5vw, 48px);
+  line-height: 1;
+  text-wrap: balance;
+}
+.llamado p {
+  margin: 0;
+}
+.llamado .btn {
+  font-size: 24px;
+  min-height: 52px;
+  padding-inline: var(--ff-space-8);
+}
+.plataformas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ff-space-2);
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+@media (min-width: 900px) {
+  .grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}

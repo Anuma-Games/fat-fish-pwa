@@ -1,193 +1,56 @@
 <a class="skip" href="#contenido">Saltar al contenido</a>
 
 <header class="lp-nav">
-  <a class="lp-brand" href="#inicio">
-    <img src="icons/logo-48.png" alt="" width="32" height="32" />
-    <span>Fat Fish</span>
-  </a>
-  <nav class="lp-links" aria-label="Secciones">
-    <a href="#mecanicas">Mecánicas</a>
-    <a href="#expediente">Expediente</a>
-    <a href="#equipo">Equipo</a>
-    <a href="#faq">Preguntas</a>
-  </nav>
-  <a class="btn small-nav" [href]="cta.demo">Jugar la demo</a>
+  <div class="lp-wrap nav-row">
+    <a class="lp-brand" href="#inicio">
+      <img src="icons/logo-48.png" alt="" width="32" height="32" />
+      <span>Fat Fish</span>
+    </a>
+    <nav class="lp-links" aria-label="Secciones">
+      <a href="#como-se-juega">Cómo se juega</a>
+      <a href="#comodines">Comodines</a>
+      <a href="#expediente">Expediente</a>
+      <a href="#faq">Preguntas</a>
+    </nav>
+    <a class="btn nav-cta" [href]="cta.demo">Jugar la demo</a>
+  </div>
+  <span class="progreso" aria-hidden="true"></span>
 </header>
 
 <main id="contenido">
-  <!-- Hero -->
-  <section class="lp-hero" id="inicio">
-    <img
-      class="lp-hero-img"
-      src="img/landing/hero-mesa.jpg"
-      alt="La mesa de Fat Fish: ruleta, paño verde y el Crupier al otro lado"
-      width="1600"
-      height="862"
-    />
-    <div class="lp-hero-veil"></div>
-    <div class="lp-wrap lp-hero-content">
-      <span class="eyebrow gold">{{ hero.eyebrow }}</span>
-      <h1 class="lp-title">{{ hero.titulo }}</h1>
-      <p class="lp-claim">{{ hero.claim }}</p>
-      <p class="lp-lead">{{ hero.texto }}</p>
-      <div class="lp-actions">
-        <a class="btn" [href]="cta.demo">Jugar la demo</a>
-        <a class="btn ghost" routerLink="/perfil">Ver un expediente</a>
-      </div>
-      <ul class="lp-badges">
-        @for (b of hero.badges; track b) {
-          <li class="chip">{{ b }}</li>
-        }
-      </ul>
-      <p class="lp-aviso small">{{ hero.aviso }}</p>
-    </div>
-  </section>
+  <app-landing-hero />
+  <app-landing-como-se-juega />
+  <app-landing-comodines />
+  <app-landing-expediente />
+  <app-landing-mensaje />
+  <app-landing-cierre />
 
-  <!-- Pilares -->
-  <section class="lp-band">
+  <section class="lp-section creditos" id="equipo" data-seccion="equipo">
     <div class="lp-wrap">
-      <span class="eyebrow">La idea</span>
-      <h2>Cuatro cosas que importan</h2>
-      <div class="lp-grid four">
-        @for (p of pilares; track p.titulo) {
-          <article class="card pilar">
-            <app-pixel-icon class="ico" [name]="p.icono" [size]="26" />
-            <h3>{{ p.titulo }}</h3>
-            <p class="muted">{{ p.texto }}</p>
-          </article>
-        }
-      </div>
-    </div>
-  </section>
-
-  <!-- Video -->
-  <section class="lp-band alt">
-    <div class="lp-wrap">
-      <div class="lp-video-head">
-        <div>
-          <span class="eyebrow">La mesa en movimiento</span>
-          <h2>Así se ve una ronda</h2>
-        </div>
-        <app-pixel-icon class="ico gold" name="play" [size]="34" />
-      </div>
-      <video
-        class="lp-video"
-        src="video/demo-mesa.mp4"
-        poster="img/landing/hero-mesa.jpg"
-        autoplay
-        muted
-        loop
-        playsinline
-        preload="metadata"
-        aria-label="Video de una ronda en la mesa de Fat Fish"
-      ></video>
-      <p class="lp-aviso small">
-        Captura y video del material de desarrollo: el juego está en fase de producción y la imagen
-        puede cambiar.
-      </p>
-    </div>
-  </section>
-
-  <!-- Expediente -->
-  <section class="lp-band" id="expediente">
-    <div class="lp-wrap lp-split">
-      <div>
-        <span class="eyebrow">El gancho</span>
-        <h2>{{ expediente.titulo }}</h2>
-        <p class="muted">{{ expediente.texto }}</p>
-        <a class="btn" routerLink="/perfil">{{ expediente.cta }}</a>
-      </div>
-      <div class="card lp-dossier">
-        <span class="eyebrow">Ejemplo de expediente</span>
-        <h3>pezgordo · ID #1042</h3>
-        <div class="lp-dossier-stats">
-          @for (s of expediente.muestra; track s.etiqueta) {
-            <div class="stat">
-              <span class="eyebrow">{{ s.etiqueta }}</span>
-              <div class="value" [class.loss]="s.perdida">{{ s.valor }}</div>
-            </div>
-          }
-        </div>
-        <p class="small muted">Todo el dinero es ficticio. El casino solo anota.</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- Mecánicas -->
-  <section class="lp-band alt" id="mecanicas">
-    <div class="lp-wrap">
-      <span class="eyebrow">Cómo se juega</span>
-      <h2>Mecánicas</h2>
-      <div class="lp-grid two">
-        @for (m of mecanicas; track m.titulo) {
-          <article class="card mecanica">
-            <app-pixel-icon class="ico" [name]="m.icono" [size]="26" />
-            <div>
-              <h3>{{ m.titulo }}</h3>
-              <p class="muted">{{ m.texto }}</p>
-            </div>
-          </article>
-        }
-      </div>
-    </div>
-  </section>
-
-  <!-- Plataformas -->
-  <section class="lp-band">
-    <div class="lp-wrap">
-      <span class="eyebrow">Dónde jugarlo</span>
-      <h2>Plataformas</h2>
-      <div class="lp-grid four">
-        @for (p of plataformas; track p.titulo) {
-          <article class="card plataforma">
-            <h3>{{ p.titulo }}</h3>
-            <p class="small muted">{{ p.texto }}</p>
-          </article>
-        }
-      </div>
-    </div>
-  </section>
-
-  <!-- Mensaje -->
-  <section class="lp-band alt">
-    <div class="lp-wrap lp-mensaje">
-      <span class="eyebrow">Por qué lo hacemos</span>
-      <blockquote>
-        Fat Fish no simula el juego de azar real ni lo celebra. Usa la misma mecánica para mostrar
-        cómo funciona la ludopatía: la recompensa inmediata, la escalada de lo invertido y un casino
-        que siempre gana a largo plazo.
-      </blockquote>
-      <p class="small muted">
-        Si el juego de azar te afecta o te preocupa, busca ayuda en los servicios de salud de tu
-        comunidad.
-      </p>
-    </div>
-  </section>
-
-  <!-- Equipo -->
-  <section class="lp-band" id="equipo">
-    <div class="lp-wrap">
-      <span class="eyebrow">Quién lo hace</span>
-      <h2>Anuma Games</h2>
-      <p class="muted">
-        Proyecto integrador del grupo IDGS101N de la Universidad Tecnológica de Chihuahua.
-      </p>
-      <ul class="lp-equipo">
+      <header class="lp-head" appReveal>
+        <span class="eyebrow">Créditos</span>
+        <h2>Anuma Games</h2>
+        <p class="muted">
+          Proyecto integrador del grupo IDGS101N de la Universidad Tecnológica de Chihuahua.
+        </p>
+      </header>
+      <ul class="equipo">
         @for (n of equipo; track n) {
-          <li class="card">{{ n }}</li>
+          <li appReveal>{{ n }}</li>
         }
       </ul>
     </div>
   </section>
 
-  <!-- Preguntas -->
-  <section class="lp-band alt" id="faq">
+  <section class="lp-section faq" id="faq" data-seccion="faq">
     <div class="lp-wrap">
-      <span class="eyebrow">Preguntas frecuentes</span>
-      <h2>Lo que suelen preguntarnos</h2>
-      <div class="lp-faq">
+      <header class="lp-head" appReveal>
+        <span class="eyebrow">Preguntas frecuentes</span>
+        <h2>Lo que suelen preguntarnos</h2>
+      </header>
+      <div class="preguntas">
         @for (p of preguntas; track p.titulo) {
-          <details class="card">
+          <details>
             <summary>{{ p.titulo }}</summary>
             <p class="muted">{{ p.respuesta }}</p>
           </details>
@@ -195,36 +58,20 @@
       </div>
     </div>
   </section>
-
-  <!-- Cierre -->
-  <section class="lp-cierre">
-    <div class="lp-wrap">
-      <h2>Nueve rondas. Una mesa. Tú decides hasta dónde llegas.</h2>
-      <div class="lp-actions">
-        <a class="btn" [href]="cta.demo">Jugar la demo</a>
-        <a class="btn ghost" [href]="cta.steam">Wishlist en Steam</a>
-      </div>
-      <p class="lp-aviso small">{{ hero.aviso }}</p>
-    </div>
-  </section>
 </main>
 
 <footer class="lp-footer">
-  <div class="lp-wrap lp-footer-row">
-    <span class="lp-foot-brand">
+  <div class="lp-wrap footer-row">
+    <span class="foot-brand">
       <img src="icons/logo-48.png" alt="" width="24" height="24" />
       Fat Fish · Anuma Games
     </span>
-    <nav class="lp-foot-links" aria-label="Enlaces del pie">
-      <a routerLink="/perfil">Expediente</a>
-      <a routerLink="/opinion/retroalimentacion">Enviar opinión</a>
+    <nav class="foot-links" aria-label="Enlaces del pie">
+      <a [routerLink]="cta.expediente">Expediente</a>
+      <a [routerLink]="cta.opinion">Enviar opinión</a>
       <a href="#faq">Preguntas</a>
     </nav>
   </div>
-  <div class="lp-wrap">
-    <p class="small muted">
-      Dinero ficticio. Este juego no simula apuestas reales, no usa dinero real y no incluye compras
-      dentro del juego.
-    </p>
-  </div>
 </footer>
+
+<app-landing-visit-hud />

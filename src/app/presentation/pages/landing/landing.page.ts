@@ -1,35 +1,47 @@
-import { Component } from '@angular/core';
+import { Component, ElementRef, afterNextRender, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import {
-  CTA,
-  EQUIPO,
-  EXPEDIENTE,
-  HERO,
-  MECANICAS,
-  PILARES,
-  PLATAFORMAS,
-  PREGUNTAS,
-} from '../../../core/config/landing.config';
-import { PixelIcon } from '../../components/pixel-icon/pixel-icon';
+import { CTA, EQUIPO, PREGUNTAS } from '../../../core/config/landing.config';
+import { Reveal } from './reveal.directive';
+import { CierreSection } from './sections/cierre/cierre.section';
+import { ComoSeJuegaSection } from './sections/como-se-juega/como-se-juega.section';
+import { ComodinesSection } from './sections/comodines/comodines.section';
+import { ExpedienteSection } from './sections/expediente/expediente.section';
+import { HeroSection } from './sections/hero/hero.section';
+import { MensajeSection } from './sections/mensaje/mensaje.section';
+import { VisitHud } from './sections/visit-hud/visit-hud';
+import { VisitDossier } from './visit-dossier';
 
 /**
- * Landing page of the promotion site. It has no route data (`layout: 'landing'`), so the app shell
- * (top bar and side menu) is hidden and the page takes the whole window.
- * Every text and link comes from `core/config/landing.config.ts`.
+ * Landing page of the promotion site ("La mesa te observa"). Its route data (`layout: 'landing'`)
+ * hides the app shell, so the page takes the whole window. It is design only: every text comes from
+ * `core/config/landing.config.ts`, and the visit dossier lives in memory (VisitDossier), without
+ * any service, storage or API call of the PWA.
  */
 @Component({
   selector: 'app-landing-page',
-  imports: [RouterLink, PixelIcon],
+  imports: [
+    RouterLink,
+    Reveal,
+    HeroSection,
+    ComoSeJuegaSection,
+    ComodinesSection,
+    ExpedienteSection,
+    MensajeSection,
+    CierreSection,
+    VisitHud,
+  ],
+  providers: [VisitDossier],
   templateUrl: './landing.page.html',
   styleUrl: './landing.page.css',
 })
 export class LandingPage {
   protected readonly cta = CTA;
-  protected readonly hero = HERO;
-  protected readonly expediente = EXPEDIENTE;
-  protected readonly pilares = PILARES;
-  protected readonly mecanicas = MECANICAS;
-  protected readonly plataformas = PLATAFORMAS;
   protected readonly equipo = EQUIPO;
   protected readonly preguntas = PREGUNTAS;
+
+  constructor() {
+    const visita = inject(VisitDossier);
+    const host = inject<ElementRef<HTMLElement>>(ElementRef).nativeElement;
+    afterNextRender(() => visita.iniciar(host));
+  }
 }

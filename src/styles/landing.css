@@ -1,0 +1,82 @@
+/* Landing page: classes shared by its section components (they are global because each section
+   has its own encapsulated styles). */
+.lp-wrap {
+  max-width: var(--ff-content-max);
+  margin-inline: auto;
+  padding-inline: var(--ff-space-4);
+}
+.lp-section {
+  display: block;
+  padding-block: 72px;
+  scroll-margin-top: 56px;
+}
+.lp-head {
+  display: grid;
+  gap: var(--ff-space-3);
+  max-width: 680px;
+  margin-bottom: var(--ff-space-8);
+}
+.lp-head h2 {
+  margin: 0;
+  font-size: clamp(36px, 6vw, 56px);
+  line-height: 1;
+  text-wrap: balance;
+}
+.lp-head p {
+  margin: 0;
+}
+.lp-gold {
+  color: var(--ff-gold-400);
+}
+.btn.lp-alt {
+  background: transparent;
+  border-color: var(--ff-gold-600);
+  box-shadow: none;
+}
+a.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  white-space: nowrap;
+  transition:
+    transform 0.12s ease,
+    box-shadow 0.12s ease;
+}
+a.btn:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 5px 5px 0 #000;
+}
+a.btn:active {
+  transform: translate(3px, 3px);
+  box-shadow: 1px 1px 0 #000;
+}
+a.btn.lp-alt:hover,
+a.btn.lp-alt:active {
+  box-shadow: none;
+}
+
+/* Scroll reveal (Reveal directive): only elements below the first screen wait for it. */
+.lp-reveal {
+  transition:
+    opacity 0.7s ease,
+    transform 0.7s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.lp-reveal.lp-wait {
+  opacity: 0;
+  transform: translateY(28px);
+}
+
+@media (min-width: 768px) {
+  .lp-section {
+    padding-block: 96px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .lp-reveal {
+    transition: none;
+  }
+  a.btn {
+    transition: none;
+  }
+}

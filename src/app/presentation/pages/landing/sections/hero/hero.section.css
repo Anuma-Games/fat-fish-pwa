@@ -1,0 +1,198 @@
+.hero {
+  position: relative;
+  display: grid;
+  align-items: center;
+  min-height: min(92vh, 820px);
+  padding-block: 72px 96px;
+  overflow: hidden;
+  isolation: isolate;
+  border-bottom: 2px solid var(--ff-gold-600);
+}
+.hero-img {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 42%;
+}
+.hero-veil {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    linear-gradient(
+      90deg,
+      rgb(11 20 22 / 92%) 0%,
+      rgb(11 20 22 / 70%) 45%,
+      rgb(11 20 22 / 30%) 100%
+    ),
+    linear-gradient(rgb(11 20 22 / 0%) 60%, var(--ff-bg-900) 100%);
+}
+
+/* Wheel: turns with the page scroll where the browser supports scroll-driven animations */
+.wheel {
+  position: absolute;
+  z-index: -1;
+  right: -120px;
+  top: 50%;
+  width: 560px;
+  aspect-ratio: 1;
+  translate: 0 -50%;
+  opacity: 0.6;
+  pointer-events: none;
+}
+.wheel svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+.casilla {
+  stroke: var(--ff-gold-400);
+  stroke-width: 0.6;
+}
+.wheel text {
+  font-family: var(--ff-font-display);
+  font-size: 7px;
+  fill: var(--ff-cream-100);
+}
+.centro {
+  fill: var(--ff-felt-800);
+  stroke: var(--ff-gold-400);
+}
+.wheel rect,
+.eje {
+  fill: var(--ff-gold-600);
+}
+@supports (animation-timeline: scroll()) {
+  .wheel svg {
+    animation: girar linear both;
+    animation-timeline: scroll(root);
+  }
+}
+@keyframes girar {
+  to {
+    rotate: 540deg;
+  }
+}
+
+/* Copy */
+.hero-content {
+  width: 100%;
+  display: grid;
+  justify-items: start;
+  gap: var(--ff-space-3);
+}
+.crt {
+  position: relative;
+  margin: 0;
+  font-size: clamp(76px, 17vw, 176px);
+  line-height: 0.82;
+  text-transform: uppercase;
+  color: var(--ff-cream-100);
+  text-shadow:
+    3px 0 0 rgb(136 32 32 / 80%),
+    -3px 0 0 rgb(232 184 80 / 45%),
+    6px 6px 0 #000;
+  animation: parpadeo 7s infinite steps(1);
+}
+.crt::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(transparent 0 3px, rgb(0 0 0 / 35%) 3px 4px);
+}
+@keyframes parpadeo {
+  0%,
+  47%,
+  49%,
+  83%,
+  100% {
+    opacity: 1;
+  }
+  48% {
+    opacity: 0.8;
+  }
+  84% {
+    opacity: 0.9;
+  }
+}
+.claim {
+  margin: var(--ff-space-2) 0 0;
+  font-family: var(--ff-font-display);
+  font-size: clamp(24px, 3.6vw, 34px);
+  line-height: 1.1;
+  color: var(--ff-gold-400);
+  max-width: 22ch;
+}
+.lead {
+  margin: 0;
+  max-width: 46ch;
+  font-size: clamp(15px, 2vw, 18px);
+}
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ff-space-3);
+  margin-block: var(--ff-space-3);
+}
+.actions .btn {
+  font-size: clamp(20px, 3vw, 24px);
+  min-height: 52px;
+  padding-inline: var(--ff-space-6);
+}
+
+.scroll-hint {
+  position: absolute;
+  left: 50%;
+  bottom: var(--ff-space-4);
+  translate: -50% 0;
+  display: grid;
+  justify-items: center;
+  gap: var(--ff-space-2);
+  text-decoration: none;
+}
+.flecha {
+  width: 12px;
+  height: 12px;
+  border-right: 3px solid var(--ff-gold-400);
+  border-bottom: 3px solid var(--ff-gold-400);
+  rotate: 45deg;
+  animation: bajar 1.8s ease-in-out infinite;
+}
+@keyframes bajar {
+  50% {
+    translate: 0 6px;
+  }
+}
+
+@media (max-width: 640px) {
+  .wheel {
+    width: 380px;
+    right: -190px;
+    top: 30%;
+    opacity: 0.4;
+  }
+  .hero-veil {
+    background:
+      linear-gradient(rgb(11 20 22 / 70%), rgb(11 20 22 / 85%)),
+      linear-gradient(rgb(11 20 22 / 0%) 60%, var(--ff-bg-900) 100%);
+  }
+  .actions {
+    width: 100%;
+  }
+  .actions .btn {
+    flex: 1 1 200px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .crt,
+  .flecha,
+  .wheel svg {
+    animation: none;
+  }
+}
