@@ -109,6 +109,16 @@
   margin: 0 auto;
   padding: var(--ff-space-6) var(--ff-space-4) var(--ff-space-8);
 }
+
+/* Landing page: it takes the whole window, without the side menu or the margins of the app */
+.shell.landing {
+  display: block;
+}
+.content.landing-content {
+  max-width: none;
+  margin: 0;
+  padding: 0;
+}
 .desktop-only {
   display: none;
 }
@@ -144,5 +154,8 @@
   .content {
     padding: var(--ff-space-8);
     margin: 0;
+  }
+  .content.landing-content {
+    padding: 0;
   }
 }

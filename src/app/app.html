@@ -1,55 +1,67 @@
-<header class="topbar">
-  <button class="icon-btn" type="button" aria-label="Abrir el menú" (click)="menuAbierto.set(true)">
-    <app-pixel-icon name="menu" [size]="20" />
-  </button>
-  <img class="logo" src="icons/logo-96.png" alt="" width="32" height="32" />
-  <span class="topbar-title">{{ seccion() }}</span>
-</header>
+@if (!esLanding()) {
+  <header class="topbar">
+    <button
+      class="icon-btn"
+      type="button"
+      aria-label="Abrir el menú"
+      (click)="menuAbierto.set(true)"
+    >
+      <app-pixel-icon name="menu" [size]="20" />
+    </button>
+    <img class="logo" src="icons/logo-96.png" alt="" width="32" height="32" />
+    <span class="topbar-title">{{ seccion() }}</span>
+  </header>
+}
 
-<div class="shell">
-  @if (menuAbierto()) {
+<div class="shell" [class.landing]="esLanding()">
+  @if (!esLanding() && menuAbierto()) {
     <div class="scrim" (click)="menuAbierto.set(false)"></div>
   }
-  <aside class="sidebar" [class.open]="menuAbierto()">
-    <div class="brand-row">
-      <img class="logo" src="icons/logo-96.png" alt="Logo de Fat Fish" width="36" height="36" />
-      <a class="brand" routerLink="/perfil" (click)="menuAbierto.set(false)">Fat Fish</a>
-      <button
-        class="icon-btn close"
-        type="button"
-        aria-label="Cerrar el menú"
-        (click)="menuAbierto.set(false)"
-      >
-        <app-pixel-icon name="cerrar" [size]="18" />
-      </button>
-    </div>
-    <nav class="nav" (click)="menuAbierto.set(false)">
-      <a routerLink="/perfil" routerLinkActive="active">
-        <app-pixel-icon name="expediente" [size]="16" /> Expediente
-      </a>
-      <a routerLink="/opinion/retroalimentacion" routerLinkActive="active">
-        <app-pixel-icon name="opinion" [size]="16" /> Opinión
-      </a>
-    </nav>
-    <div class="sync small">
-      @if (!conectividad.enLinea()) {
-        <span class="chip fallido">Sin conexión</span>
-      }
-      <p class="muted">
-        Última sincronización:
-        @if (sync.ultimaSincronizacion(); as fecha) {
-          {{ esHoy() ? 'hoy, ' + (fecha | date: 'HH:mm') : (fecha | date: 'd MMM, HH:mm') }}
-        } @else {
-          todavía no
+  @if (!esLanding()) {
+    <aside class="sidebar" [class.open]="menuAbierto()">
+      <div class="brand-row">
+        <img class="logo" src="icons/logo-96.png" alt="Logo de Fat Fish" width="36" height="36" />
+        <a class="brand" routerLink="/" (click)="menuAbierto.set(false)">Fat Fish</a>
+        <button
+          class="icon-btn close"
+          type="button"
+          aria-label="Cerrar el menú"
+          (click)="menuAbierto.set(false)"
+        >
+          <app-pixel-icon name="cerrar" [size]="18" />
+        </button>
+      </div>
+      <nav class="nav" (click)="menuAbierto.set(false)">
+        <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+          <app-pixel-icon name="expediente" [size]="16" /> Inicio
+        </a>
+        <a routerLink="/perfil" routerLinkActive="active">
+          <app-pixel-icon name="expediente" [size]="16" /> Expediente
+        </a>
+        <a routerLink="/opinion/retroalimentacion" routerLinkActive="active">
+          <app-pixel-icon name="opinion" [size]="16" /> Opinión
+        </a>
+      </nav>
+      <div class="sync small">
+        @if (!conectividad.enLinea()) {
+          <span class="chip fallido">Sin conexión</span>
         }
-      </p>
-      <p class="muted tiny">
-        Service worker: {{ swActivo() ? 'activo' : 'inactivo (modo desarrollo)' }}
-      </p>
-    </div>
-  </aside>
+        <p class="muted">
+          Última sincronización:
+          @if (sync.ultimaSincronizacion(); as fecha) {
+            {{ esHoy() ? 'hoy, ' + (fecha | date: 'HH:mm') : (fecha | date: 'd MMM, HH:mm') }}
+          } @else {
+            todavía no
+          }
+        </p>
+        <p class="muted tiny">
+          Service worker: {{ swActivo() ? 'activo' : 'inactivo (modo desarrollo)' }}
+        </p>
+      </div>
+    </aside>
+  }
 
-  <main class="content">
+  <main class="content" [class.landing-content]="esLanding()">
     <router-outlet />
   </main>
 </div>
