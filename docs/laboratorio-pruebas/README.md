@@ -8,27 +8,31 @@ Banco de pruebas de la PWA de **Fat Fish** conectada a la API (Spring Boot) y a 
 
 Equipo: Anuma Games (IDGS101N). Los datos son **simulados** (scripts de la carpeta `sql/`).
 
-## Tablas que usa la PWA
+> **Versión entregada (14 de octubre de 2026):** tag [`laboratorio-1`](https://github.com/Anuma-Games/fat-fish-pwa/tree/laboratorio-1/docs/laboratorio-pruebas) en este repositorio y en [`fat-fish-api`](https://github.com/Anuma-Games/fat-fish-api/tree/laboratorio-1). Esta carpeta está actualizada al esquema de base de datos actual (FF-51); para correr la versión entregada, haz `git checkout laboratorio-1` en **los dos** repositorios.
 
-La migración `V2` de la API crea tres tablas con `id` numérico (modelo del README de la PWA):
+## Tablas que usa el laboratorio
+
+La migración `V1` de la API crea el esquema completo con `id` numérico; el diagrama y la descripción de cada tabla están en la [sección 3 del README de la PWA](../../README.md#3-modelo-de-datos). El laboratorio usa estas:
 
 | Tabla | Uso en el laboratorio |
 |---|---|
 | `jugador` | 5 jugadores de prueba (`id` 1 a 5) |
+| `estadistica_jugador` | Totales de cada jugador; de aquí salen las 4 tarjetas del perfil |
 | `partida` | Historial de cada jugador (la PWA solo lo lee) |
+| `partida_comodin` | Comodines comprados y usados en algunas partidas (la PWA todavía no los muestra) |
 | `retroalimentacion` | Lo que se envía desde la PWA; `clave_idempotencia` evita guardar dos veces el mismo envío |
 
-**¿Por qué `clave_idempotencia` es un UUID?** La genera el navegador (`crypto.randomUUID()`) en el momento del envío, incluso sin conexión, cuando todavía no puede pedirle un número al servidor. Si cada dispositivo numerara 1, 2, 3…, dos dispositivos tendrían un "envío 1" y la API descartaría uno pensando que es un reintento. El UUID no se repite y viaja en la cabecera `Idempotency-Key`. El `id` de cada fila sigue siendo el número que asigna PostgreSQL; los datos de prueba dejan la clave vacía.
+**¿Por qué `clave_idempotencia` es un UUID?** La genera el navegador (`crypto.randomUUID()`) en el momento del envío, incluso sin conexión, cuando todavía no puede pedirle un número al servidor. Si cada dispositivo numerara 1, 2, 3…, dos dispositivos tendrían un "envío 1" y la API descartaría uno pensando que es un reintento. El UUID no se repite y viaja en la cabecera `Idempotency-Key`. El `id` de cada fila sigue siendo el número que asigna PostgreSQL; en los datos de prueba la clave la genera `gen_random_uuid()`.
 
-> Las tablas `players`, `installations` y `runs` (migración `V1`) son las que recibe el juego al sincronizar; el laboratorio no las usa. Conectar las partidas del juego con `partida` queda pendiente para cuando se simplifiquen los identificadores del juego.
+> En el juego, los jugadores se registran con alias y contraseña y envían sus partidas a `/api/juego` (ver el README de la API). En el laboratorio se cargan con `02_carga.sql`: los 5 jugadores tienen la contraseña de prueba `fatfish2026`.
 
 ## Contenido de esta carpeta
 
 | Ruta | Qué es |
 |---|---|
 | `sql/00_crear_bd.sql` | Crea el usuario `fatfish` y las bases `fatfish` y `fatfish_test` (borra las anteriores) |
-| `sql/01_limpieza.sql` | Vacía las tablas de la PWA y reinicia los `id` |
-| `sql/02_carga.sql` | Datos de prueba: 5 jugadores (los integrantes del equipo, `id` 1 a 5), 18 partidas y 2 retroalimentaciones |
+| `sql/01_limpieza.sql` | Vacía las tablas (excepto el catálogo de comodines) y reinicia los `id` |
+| `sql/02_carga.sql` | Datos de prueba: 5 jugadores (los integrantes del equipo, `id` 1 a 5) con sus estadísticas, 18 partidas, 6 registros de comodines y 2 retroalimentaciones |
 | `sql/03_consultas.sql` | Consultas de verificación para correr antes y después de usar la PWA |
 | `evidencias/` | Salidas de `psql`, logs de Spring Boot, consola del navegador, capturas y volcados de Cache Storage e IndexedDB |
 
@@ -100,7 +104,7 @@ cd fat-fish-api
 ./mvnw spring-boot:run -Dspring-boot.run.profiles=lab
 ```
 
-- Espera la línea `Started FatFishApiApplication`. Flyway crea las tablas (migraciones `V1` y `V2`) en el primer arranque.
+- Espera la línea `Started FatFishApiApplication`. Flyway crea las tablas (migración `V1`) en el primer arranque.
 - Si tu sistema tiene otra versión de Java por defecto, indica el JDK 21 antes del comando:
   - Linux / WSL: `export JAVA_HOME=/usr/lib/jvm/java-21-openjdk-amd64` (ajusta la ruta a tu instalación).
   - macOS: `export JAVA_HOME=$(/usr/libexec/java_home -v 21)`.
@@ -151,7 +155,7 @@ psql -U fatfish -h localhost -d fatfish -f fat-fish-pwa/docs/laboratorio-pruebas
 | LAB-04 | Envío sin conexión | DevTools → Network → **Offline**; enviar otro mensaje | Aviso "Guardado en tu dispositivo"; estado `PENDIENTE` en la tabla y en IndexedDB (`fatfish-pwa` → `outbox`); la base no cambia | `ui-03-retroalimentacion-sin-conexion.png`, `almacenamiento-sin-conexion.json` |
 | LAB-05 | Historial sin conexión | Con Offline activo, abrir `/perfil` y recargar | La app abre y muestra el perfil y las partidas desde Cache Storage, con el aviso "Sin conexión" y la fecha de los datos | `ui-04-expediente-sin-conexion.png` |
 | LAB-06 | Sincronización | Quitar Offline | La consola muestra "Sincronizando outbox"; el registro pasa a `ENVIADO`; en PostgreSQL aparece **una sola vez** | `ui-05-retroalimentacion-sincronizada.png`, `almacenamiento-tras-reconectar.json`, `bd-02-despues.txt` |
-| LAB-07 | Integridad | Correr `03_consultas.sql` | La consulta 4 sale vacía (sin claves repetidas); las restricciones `check` y `unique` de la tabla impiden datos inválidos o duplicados | `bd-02-despues.txt` |
+| LAB-07 | Integridad | Correr `03_consultas.sql` | La consulta 5 sale vacía (sin claves repetidas); las restricciones `check` y `unique` de la tabla impiden datos inválidos o duplicados | `bd-02-despues.txt` |
 
 Al terminar, compara con el estado inicial:
 
@@ -175,7 +179,7 @@ psql -U fatfish -h localhost -d fatfish -f fat-fish-pwa/docs/laboratorio-pruebas
 
 ### Capturas de DevTools (Chrome, tomadas a mano)
 
-Se tomaron en una corrida aparte de las evidencias automáticas; por eso las retroalimentaciones llegan hasta el `id` 6.
+Se tomaron en una corrida aparte de las evidencias automáticas, con la versión entregada (tag `laboratorio-1`); por eso las retroalimentaciones llegan hasta el `id` 6. Lo que muestran (Network, service worker, Cache Storage, IndexedDB y consola) no cambió con el esquema actual.
 
 | Archivo | Pestaña | Qué muestra |
 |---|---|---|
@@ -195,6 +199,7 @@ Se tomaron en una corrida aparte de las evidencias automáticas; por eso las ret
 | Síntoma | Causa y solución |
 |---|---|
 | `relation "retroalimentacion" does not exist` al cargar datos | La API no ha arrancado todavía: Flyway crea las tablas al iniciar (paso 3) |
+| La API no arranca: `Validate failed: Migrations have failed validation` | La base se creó con el esquema anterior. Vuelve a ejecutar `00_crear_bd.sql` (borra y crea las bases) y arranca la API |
 | La PWA muestra "No pudimos consultar tu expediente" | La API no está corriendo en el puerto 8080; revisa la terminal del paso 3 |
 | La PWA muestra "No encontramos a ningún jugador…" con el ID 1 | Faltan los datos de prueba: ejecuta el paso 4 |
 | `Port 8080 was already in use` | Otro proceso usa el puerto; ciérralo o usa `SERVER_PORT=8081` y `API_URL=http://localhost:8081 npm run lab` |

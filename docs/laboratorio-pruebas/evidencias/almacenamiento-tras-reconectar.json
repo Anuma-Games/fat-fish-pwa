@@ -1,10 +1,10 @@
 {
   "cacheStorage": {
     "ngsw:/:db:control": "(app)",
-    "ngsw:/:cc68625044a1c1718db58d41e4c797aa10e18399:assets:app:cache": "(app)",
-    "ngsw:/:db:cc68625044a1c1718db58d41e4c797aa10e18399:assets:app:meta": "(app)",
-    "ngsw:/:cc68625044a1c1718db58d41e4c797aa10e18399:assets:assets:cache": "(app)",
-    "ngsw:/:db:cc68625044a1c1718db58d41e4c797aa10e18399:assets:assets:meta": "(app)",
+    "ngsw:/:c34c295256638a987994cb9fbedae172715cba70:assets:app:cache": "(app)",
+    "ngsw:/:db:c34c295256638a987994cb9fbedae172715cba70:assets:app:meta": "(app)",
+    "ngsw:/:c34c295256638a987994cb9fbedae172715cba70:assets:assets:cache": "(app)",
+    "ngsw:/:db:c34c295256638a987994cb9fbedae172715cba70:assets:assets:meta": "(app)",
     "ngsw:/:1:data:api-expediente:cache": [
       "http://localhost:4200/api/pwa/partidas?id=1&pagina=1&tamano=10",
       "http://localhost:4200/api/pwa/perfil?id=1",
@@ -15,27 +15,27 @@
   },
   "indexedDB": [
     {
-      "id": "3612ccdb-598b-4058-ace5-ee481dac23ea",
+      "id": "73a32db0-9a25-4018-bd3a-814ac7c5cc95",
       "tipo": "retroalimentacion",
       "contenido": {
         "categoria": "ERROR",
         "componente": "PWA",
         "mensaje": "Error reportado sin conexión: queda en IndexedDB"
       },
-      "creadoEn": "2026-10-15T03:50:47.278Z",
+      "creadoEn": "2026-10-17T00:28:40.498Z",
       "intentos": 1,
       "estado": "ENVIADO",
       "idServidor": "4"
     },
     {
-      "id": "d3c799a1-b1b2-44f3-bd13-3722207d183a",
+      "id": "b3b5c4e7-e4e8-43d3-8631-9236fb94f01a",
       "tipo": "retroalimentacion",
       "contenido": {
         "categoria": "SUGERENCIA",
         "componente": "PWA",
         "mensaje": "Sugerencia enviada en línea desde el laboratorio"
       },
-      "creadoEn": "2026-10-15T03:50:43.997Z",
+      "creadoEn": "2026-10-17T00:28:37.227Z",
       "intentos": 1,
       "estado": "ENVIADO",
       "idServidor": "3"

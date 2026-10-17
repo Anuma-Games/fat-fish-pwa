@@ -1,30 +1,30 @@
 [info] [FatFish] PWA iniciada · service worker activo · en línea
 [info] [FatFish] GET /api/pwa/perfil?id=1
 [info] [FatFish] GET /api/pwa/partidas?id=1&pagina=0&tamano=10
-[info] [FatFish] Perfil y partidas respondieron en 32.9 ms: jesus (ID #1), 10 de 12 partidas
+[info] [FatFish] Perfil y partidas respondieron en 203.5 ms: jesus (ID #1), 10 de 12 partidas
 [table] Array(10)
-[info] [FatFish] Expediente renderizado: 10 partidas en pantalla, 39.5 ms desde el GET
+[info] [FatFish] Expediente renderizado: 10 partidas en pantalla, 209.4 ms desde el GET
 [info] [FatFish] PWA iniciada · service worker activo · en línea
 [info] [FatFish] GET /api/pwa/perfil?id=1
 [info] [FatFish] GET /api/pwa/partidas?id=1&pagina=0&tamano=10
-[info] [FatFish] Perfil y partidas respondieron en 18.9 ms: jesus (ID #1), 10 de 12 partidas
+[info] [FatFish] Perfil y partidas respondieron en 20.4 ms: jesus (ID #1), 10 de 12 partidas
 [table] Array(10)
-[info] [FatFish] Expediente renderizado: 10 partidas en pantalla, 20.5 ms desde el GET
+[info] [FatFish] Expediente renderizado: 10 partidas en pantalla, 22.0 ms desde el GET
 [info] [FatFish] GET /api/pwa/partidas?id=1&pagina=1&tamano=10
-[info] [FatFish] Página 1 respondió en 9.0 ms: 2 partidas más
+[info] [FatFish] Página 1 respondió en 9.7 ms: 2 partidas más
 [table] Array(2)
-[info] [FatFish] Expediente renderizado: 12 partidas en pantalla, 9.7 ms desde el GET
+[info] [FatFish] Expediente renderizado: 12 partidas en pantalla, 10.5 ms desde el GET
 [info] [FatFish] PWA iniciada · service worker activo · en línea
-[info] [FatFish] POST /api/pwa/retroalimentacion OK en 49.1 ms: id 3 (Idempotency-Key d3c799a1-b1b2-44f3-bd13-3722207d183a)
+[info] [FatFish] POST /api/pwa/retroalimentacion OK en 59.0 ms: id 3 (Idempotency-Key b3b5c4e7-e4e8-43d3-8631-9236fb94f01a)
 [warning] [FatFish] Sin conexión: los envíos se guardarán en IndexedDB
-[warning] [FatFish] Sin conexión: retroalimentación 3612ccdb-598b-4058-ace5-ee481dac23ea guardada en IndexedDB (outbox)
+[warning] [FatFish] Sin conexión: retroalimentación 73a32db0-9a25-4018-bd3a-814ac7c5cc95 guardada en IndexedDB (outbox)
 [info] [FatFish] PWA iniciada · service worker activo · sin conexión
 [info] [FatFish] GET /api/pwa/perfil?id=1
 [info] [FatFish] GET /api/pwa/partidas?id=1&pagina=0&tamano=10
-[info] [FatFish] Perfil y partidas respondieron en 12.7 ms: jesus (ID #1), 10 de 12 partidas
+[info] [FatFish] Perfil y partidas respondieron en 14.4 ms: jesus (ID #1), 10 de 12 partidas
 [table] Array(10)
-[info] [FatFish] Expediente renderizado: 10 partidas en pantalla, 14.3 ms desde el GET
+[info] [FatFish] Expediente renderizado: 10 partidas en pantalla, 15.9 ms desde el GET
 [info] [FatFish] PWA iniciada · service worker activo · sin conexión
 [info] [FatFish] Conexión recuperada
 [info] [FatFish] Sincronizando outbox: 1 envío(s) pendiente(s)
-[info] [FatFish] POST /api/pwa/retroalimentacion OK en 24.3 ms: id 4 (Idempotency-Key 3612ccdb-598b-4058-ace5-ee481dac23ea)
+[info] [FatFish] POST /api/pwa/retroalimentacion OK en 23.1 ms: id 4 (Idempotency-Key 73a32db0-9a25-4018-bd3a-814ac7c5cc95)
