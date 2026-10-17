@@ -8,6 +8,8 @@ Banco de pruebas de la PWA de **Fat Fish** conectada a la API (Spring Boot) y a 
 
 Equipo: Anuma Games (IDGS101N). Los datos son **simulados** (scripts de la carpeta `sql/`).
 
+> **Versión entregada (14 de octubre de 2026):** tag [`laboratorio-1`](https://github.com/Anuma-Games/fat-fish-pwa/tree/laboratorio-1/docs/laboratorio-pruebas) en este repositorio y en [`fat-fish-api`](https://github.com/Anuma-Games/fat-fish-api/tree/laboratorio-1). Esta carpeta está actualizada al esquema de base de datos actual (FF-51); para correr la versión entregada, haz `git checkout laboratorio-1` en **los dos** repositorios.
+
 ## Tablas que usa el laboratorio
 
 La migración `V1` de la API crea el esquema completo con `id` numérico; el diagrama y la descripción de cada tabla están en la [sección 3 del README de la PWA](../../README.md#3-modelo-de-datos). El laboratorio usa estas:
@@ -165,8 +167,6 @@ psql -U fatfish -h localhost -d fatfish -f fat-fish-pwa/docs/laboratorio-pruebas
 
 ### Incluidas en `evidencias/` (generadas en macOS con Chrome)
 
-> Las evidencias se generaron el 14 de octubre de 2026 con el esquema anterior (tablas `jugador`, `partida` y `retroalimentacion` de la migración `V2`). Desde FF-51 los scripts usan el esquema actual: las salidas de `psql` muestran columnas nuevas, pero la PWA y los casos de prueba dan el mismo resultado.
-
 | Archivo | Qué demuestra |
 |---|---|
 | `bd-00-limpieza-y-carga.txt` | Ejecución de los scripts de limpieza y carga |
@@ -179,7 +179,7 @@ psql -U fatfish -h localhost -d fatfish -f fat-fish-pwa/docs/laboratorio-pruebas
 
 ### Capturas de DevTools (Chrome, tomadas a mano)
 
-Se tomaron en una corrida aparte de las evidencias automáticas; por eso las retroalimentaciones llegan hasta el `id` 6.
+Se tomaron en una corrida aparte de las evidencias automáticas, con la versión entregada (tag `laboratorio-1`); por eso las retroalimentaciones llegan hasta el `id` 6. Lo que muestran (Network, service worker, Cache Storage, IndexedDB y consola) no cambió con el esquema actual.
 
 | Archivo | Pestaña | Qué muestra |
 |---|---|---|

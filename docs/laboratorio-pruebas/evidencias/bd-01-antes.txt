@@ -1,4 +1,4 @@
--- 2026-10-14 21:50:27 CST · ANTES de usar la PWA
+-- 2026-10-16 18:28:20 CST · ANTES de usar la PWA
 $ psql -U fatfish -h localhost -d fatfish -f docs/laboratorio-pruebas/sql/03_consultas.sql
  jugadores 
 -----------
@@ -31,10 +31,15 @@ $ psql -U fatfish -h localhost -d fatfish -f docs/laboratorio-pruebas/sql/03_con
   1 | DERROTA   |               1 |      60 |              400 |            380 | 2026-09-21 13:00:00-06
 (12 rows)
 
- id | categoria  | componente |                           mensaje                           |       creada_en        | clave_idempotencia 
-----+------------+------------+-------------------------------------------------------------+------------------------+--------------------
-  1 | SUGERENCIA | PWA        | Me gustaría ver mi historial filtrado por resultado         | 2026-10-12 11:00:00-06 | 
-  2 | ERROR      | JUEGO      | La bola se quedó girando en la ronda 3 y tuve que reiniciar | 2026-10-13 14:30:00-06 | 
+ partidas_totales | partidas_ganadas | dinero_invertido | dinero_perdido | racha_derrotas_max | tiempo_jugado_seg 
+------------------+------------------+------------------+----------------+--------------------+-------------------
+               12 |                2 |            37150 |          16700 |                  6 |             16890
+(1 row)
+
+ id | categoria  | componente |                           mensaje                           |       creada_en        |          clave_idempotencia          
+----+------------+------------+-------------------------------------------------------------+------------------------+--------------------------------------
+  1 | SUGERENCIA | PWA        | Me gustaría ver mi historial filtrado por resultado         | 2026-10-12 11:00:00-06 | 98613473-53f3-4969-882d-fd497f9d9805
+  2 | ERROR      | JUEGO      | La bola se quedó girando en la ronda 3 y tuve que reiniciar | 2026-10-13 14:30:00-06 | e73d0975-8a7d-464b-a3e3-f7a8d61ad7fe
 (2 rows)
 
  clave_idempotencia | count 
