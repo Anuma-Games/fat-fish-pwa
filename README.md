@@ -219,19 +219,37 @@ Esquema de referencia sobre el que se construyen los DTOs de la PWA.
 
 <sub>Código del diagrama: [`docs/diagramas/modelo-datos.mmd`](docs/diagramas/modelo-datos.mmd)</sub>
 
-> `NN` = *not null*. El `id` del jugador lo genera el backend y es lo único que identifica a un jugador; el `alias` se puede repetir, por eso se indexa (sin distinguir mayúsculas) para buscar, pero no es único. `retroalimentacion` y `encuesta_rapida` no tienen relación con `jugador`: la encuesta es anónima y ambas son de solo inserción. Todas las marcas de tiempo se guardan en UTC. Para el ranking existe un índice parcial `(jugador_id, puntaje DESC, creada_en) WHERE resultado = 'VICTORIA'`.
+**Simbología**
+
+| Símbolo | Significado |
+|---|---|
+| `PK` | Llave primaria: identifica cada registro y no se repite |
+| `FK` | Llave foránea: guarda el `id` de un registro de otra tabla |
+| `UK` | Valor único: no se puede repetir en la tabla |
+| `NN` | Obligatorio (*not null*): no puede quedar vacío |
+| nulo | Opcional: puede quedar vacío |
+| `varchar(n)` | Texto de hasta `n` caracteres |
+| Dos rayas en ambos extremos (`‖───‖`) | Uno a uno: cada jugador tiene exactamente un registro de estadísticas |
+| Dos rayas y un círculo con tres patas (`‖───○<`) | Uno a muchos: un registro del lado de las rayas tiene cero o más registros del lado de las patas |
+
+> El `id` del jugador lo genera el backend y es lo único que identifica a un jugador; el `alias` se puede repetir, por eso se indexa (sin distinguir mayúsculas) para buscar, pero no es único. `estadistica_jugador` se actualiza cada vez que el juego registra una partida; el ranking se ordena por `puntaje_maximo` (mejor puntaje en una victoria) y, ante empate, por `puntaje_maximo_en`, con un índice `(puntaje_maximo DESC, puntaje_maximo_en) WHERE puntaje_maximo_en IS NOT NULL`. `numero_local` es un contador que lleva el juego; es único por jugador y evita registrar dos veces la misma partida si el juego reintenta el envío. `partida_comodin` guarda cuántas veces se compró y se usó cada comodín en una partida; de ahí sale el comodín predilecto del jugador (el más usado). `retroalimentacion` y `encuesta` no tienen relación con `jugador`: ambas son anónimas y de solo inserción, y su `clave_idempotencia` evita duplicados cuando el outbox reintenta un envío (ver [5.5](#55-cola-de-envío-outbox)). Todas las marcas de tiempo se guardan en UTC.
+
+**Registro e inicio de sesión (juego).** Al entrar por primera vez, el juego pide un alias y una contraseña (mínimo 8 caracteres) y los envía a la API. La API crea el jugador, guarda la contraseña con BCrypt y responde con el `id` y un token; en la base de datos solo queda el hash del token (`token_hash`). El juego guarda el token en el dispositivo y lo envía cada vez que registra una partida. Para usar la cuenta en otro dispositivo, el jugador inicia sesión con su `id` y su contraseña y recibe un token nuevo, que reemplaza al anterior; si olvida su `id`, puede buscarlo por alias en la PWA. Si olvida la contraseña, puede cambiarla desde el juego en el mismo dispositivo: el juego envía el token y la contraseña nueva, y la API la guarda sin pedir la anterior. Si pierde el dispositivo y también olvidó la contraseña, la cuenta no se puede recuperar. La PWA no participa en este flujo.
 
 **Cómo usa la PWA cada tabla**
 
 | Tabla | Acceso de la PWA | Columnas que salen en la API | Columnas que nunca salen |
 |---|---|---|---|
-| `jugador` | Lectura | `id`, `alias`, `creado_en`, `ultima_actividad` | `token` |
-| `estadistica_jugador` | Lectura | Todas (incluidas dentro del perfil) | — |
-| `partida` | Lectura | `id`, `resultado`, `ronda_alcanzada`, `puntaje`, `dinero_maximo`, `dinero_invertido`, `dinero_perdido`, `duracion_seg`, `creada_en` | `jugador_id`, `semilla`, `mazo_id` |
-| `retroalimentacion` | **Inserción** | Entrada: `categoria`, `componente`, `mensaje` | — |
-| `encuesta_rapida` | **Inserción** | Entrada: `percepcion_riesgo`, `cambio_opinion`, `claridad_mensaje`, `comentario` | No se devuelve ningún identificador (anonimato) |
+| `jugador` | Lectura | `id`, `alias`, `creado_en`, `ultima_actividad` | `contrasena_hash`, `token_hash` |
+| `estadistica_jugador` | Lectura | Todas (dentro del perfil y del ranking) | — |
+| `partida` | Lectura | `id`, `resultado`, `ronda_alcanzada`, `puntaje`, `dinero_invertido`, `dinero_ganado`, `dinero_perdido`, `duracion_seg`, `creada_en` | `jugador_id`, `numero_local` |
+| `comodin`, `partida_comodin` | Sin uso por ahora | — | — |
+| `retroalimentacion` | **Inserción** | Entrada: `categoria`, `componente`, `mensaje` (la clave viaja en la cabecera `Idempotency-Key`) | — |
+| `encuesta` | **Inserción** | Entrada: `percepcion_riesgo`, `cambio_opinion`, `claridad_mensaje`, `comentario` (la clave viaja en la cabecera `Idempotency-Key`) | No se devuelve ningún identificador (anonimato) |
 
-La PWA **nunca escribe** en `jugador`, `partida` ni `estadistica_jugador`.
+La PWA **nunca escribe** en `jugador`, `estadistica_jugador`, `partida`, `comodin` ni `partida_comodin`; esas tablas solo las llena el juego a través de la API. Las estadísticas de comodines, Todo o nada, empeños y préstamos todavía no se muestran en la PWA.
+
+> La copia de referencia de este diagrama estará en el repositorio [fat-fish-api](https://github.com/Anuma-Games/fat-fish-api) cuando se implemente el esquema. Si el esquema cambia, se actualizan las dos copias.
 
 ---
 
@@ -242,7 +260,7 @@ La PWA **nunca escribe** en `jugador`, `partida` ni `estadistica_jugador`.
 1. **Rutas relativas** (`/api/pwa/...`), mismo origen, sin CORS.
 2. **JSON en UTF-8**; fechas en **ISO-8601 UTC**; nombres de campo en `camelCase` español.
 3. **Los DTOs de red no son los modelos de dominio.** La capa de infraestructura mapea `DTO → modelo`, así un cambio en el contrato solo afecta a los mappers.
-4. **Los DTOs se derivan del modelo de datos** (sección 3) y no exponen `token`, `semilla`, `mazo_id` ni `partida.jugador_id`.
+4. **Los DTOs se derivan del modelo de datos** (sección 3) y no exponen `contrasena_hash`, `token_hash`, `numero_local` ni `partida.jugador_id`.
 5. **La identidad viaja en la URL** (el ID del jugador como query param) en las consultas del jugador. Basta el ID porque es único; el alias solo se usa para buscar. Al ser un dato público es aceptable y además **es necesario para la caché**: el Service Worker usa la URL como llave; si la identidad fuera una cabecera, un usuario podría recibir datos cacheados de otro en el mismo dispositivo.
 6. Las rutas son **sugeridas**; el contrato definitivo se fija en el diseño detallado.
 
@@ -253,9 +271,8 @@ La PWA **nunca escribe** en `jugador`, `partida` ni `estadistica_jugador`.
 | `id` (`bigint`) | `string` | Número consecutivo generado por el backend (no lo genera el cliente), p. ej. `"1042"`. Viaja como texto con solo dígitos para no perder precisión |
 | `varchar(n)` | `string` | Se respeta la longitud máxima |
 | `int`, `smallint` | `number` | |
-| `bigint` | `number` | Aplica a `puntaje`, `total_invertido`, `total_perdido` y `tiempo_jugado_seg`. Se asume que no superan `Number.MAX_SAFE_INTEGER` (2⁵³ − 1) |
-| `timestamp` | `string` | ISO-8601 en UTC |
-| `enum` | unión de literales | p. ej. `'VICTORIA' \| 'DERROTA' \| 'ABANDONO'` |
+| `timestamptz` | `string` | ISO-8601 en UTC |
+| `varchar` con valores fijos | unión de literales | p. ej. `'VICTORIA' \| 'DERROTA' \| 'ABANDONO'` |
 
 ```ts
 // infrastructure/api/dto/comun.dto.ts
@@ -317,10 +334,10 @@ Devuelve los datos básicos del jugador (alias, fecha de alta y última activida
 export interface EstadisticasDto {
   partidasTotales: number;     // estadistica_jugador.partidas_totales  · int
   partidasGanadas: number;     // estadistica_jugador.partidas_ganadas  · int
-  totalInvertido: number;      // estadistica_jugador.total_invertido   · bigint
-  totalPerdido: number;        // estadistica_jugador.total_perdido     · bigint
+  totalInvertido: number;      // estadistica_jugador.dinero_invertido  · int
+  totalPerdido: number;        // estadistica_jugador.dinero_perdido    · int
   rachaDerrotasMax: number;    // estadistica_jugador.racha_derrotas_max · int
-  tiempoJugadoSeg: number;     // estadistica_jugador.tiempo_jugado_seg · bigint
+  tiempoJugadoSeg: number;     // estadistica_jugador.tiempo_jugado_seg · int
 }
 
 export interface PerfilDto {
@@ -355,11 +372,11 @@ export type ResultadoPartidaDto = 'VICTORIA' | 'DERROTA' | 'ABANDONO';
 
 export interface PartidaDto {
   id: string;                      // partida.id · id
-  resultado: ResultadoPartidaDto;  // partida.resultado · enum resultado_partida
+  resultado: ResultadoPartidaDto;  // partida.resultado · varchar(10)
   rondaAlcanzada: number;          // partida.ronda_alcanzada · int
-  puntaje: number;                 // partida.puntaje · bigint
-  dineroMaximo: number;            // partida.dinero_maximo · int
+  puntaje: number;                 // partida.puntaje · int
   dineroInvertido: number;         // partida.dinero_invertido · int
+  dineroGanado: number;            // partida.dinero_ganado · int
   dineroPerdido: number;           // partida.dinero_perdido · int
   duracionSeg: number;             // partida.duracion_seg · int
   creadaEn: string;                // partida.creada_en
@@ -367,7 +384,7 @@ export interface PartidaDto {
 // Respuesta: PaginaDto<PartidaDto>
 ```
 
-El DTO **no incluye** `jugador_id`, `semilla` ni `mazo_id`. `HistorialFacade` mantiene la lista acumulada y, con el botón **Ver más partidas**, solicita la página siguiente mientras `ultima` sea `false`.
+El DTO **no incluye** `jugador_id` ni `numero_local`. `HistorialFacade` mantiene la lista acumulada y, con el botón **Ver más partidas**, solicita la página siguiente mientras `ultima` sea `false`.
 
 #### 4.3.4 Consultar ranking
 
@@ -381,9 +398,9 @@ Devuelve una página del ranking mundial (10 jugadores por página, hasta el lug
 | `tamano` | int | No | Por defecto y máximo `10` |
 | `jugadorId` | string (id) | No | `jugador.id`. Si se envía, la respuesta incluye `miPosicion` |
 
-**Tablas:** `partida` + `jugador`.
+**Tablas:** `estadistica_jugador` + `jugador`.
 
-**Regla:** por cada jugador se toma su **mejor `puntaje`** entre las partidas con `resultado = 'VICTORIA'`; se ordena por puntaje descendente y, ante empate, por `creada_en` ascendente (**quien lo logró primero**). El ranking llega hasta el lugar 50.
+**Regla:** cada jugador aparece con su **mejor puntaje en una victoria** (`puntaje_maximo`); se ordena por puntaje descendente y, ante empate, por `puntaje_maximo_en` ascendente (**quien lo logró primero**). Los jugadores sin victorias no aparecen. El ranking llega hasta el lugar 50.
 
 ```ts
 // infrastructure/api/dto/ranking.dto.ts
@@ -391,8 +408,8 @@ export interface RankingEntradaDto {
   posicion: number;      // calculada por el servidor (no es una columna)
   jugadorId: string;     // jugador.id · distingue a jugadores con el mismo alias
   alias: string;         // jugador.alias
-  puntaje: number;       // partida.puntaje · bigint (el mejor de sus victorias)
-  logradoEn: string;     // partida.creada_en de esa partida
+  puntaje: number;       // estadistica_jugador.puntaje_maximo · int (el mejor de sus victorias)
+  logradoEn: string;     // estadistica_jugador.puntaje_maximo_en
 }
 
 export interface RankingDto {
@@ -405,7 +422,7 @@ export interface RankingDto {
 
 `POST /api/pwa/retroalimentacion`
 
-**Tabla:** `retroalimentacion` (solo inserción). Responde `201` con el `id` generado por el servidor y la fecha de creación.
+**Tabla:** `retroalimentacion` (solo inserción). La petición lleva la cabecera `Idempotency-Key`, que se guarda en `retroalimentacion.clave_idempotencia`; si la clave ya existe, responde `200` con el registro existente. Si no, responde `201` con el `id` generado por el servidor y la fecha de creación.
 
 ```ts
 // infrastructure/api/dto/retroalimentacion.dto.ts
@@ -413,8 +430,8 @@ export type CategoriaDto = 'ERROR' | 'SUGERENCIA' | 'OTRO';
 export type ComponenteDto = 'JUEGO' | 'PWA' | 'OTRO';
 
 export interface RetroalimentacionRequestDto {
-  categoria: CategoriaDto;     // retroalimentacion.categoria · enum · NN
-  componente: ComponenteDto;   // retroalimentacion.componente · enum · NN (dónde ocurrió)
+  categoria: CategoriaDto;     // retroalimentacion.categoria · varchar(20) · NN
+  componente: ComponenteDto;   // retroalimentacion.componente · varchar(20) · NN (dónde ocurrió)
   mensaje: string;             // retroalimentacion.mensaje · varchar(1000) · NN · mínimo 10 caracteres
 }
 
@@ -428,20 +445,20 @@ export interface RetroalimentacionResponseDto {
 
 `POST /api/pwa/encuesta`
 
-**Tabla:** `encuesta_rapida` (anónima, solo inserción). Responde `201` solo para confirmar la recepción; **no devuelve ningún identificador**.
+**Tabla:** `encuesta` (anónima, solo inserción). La petición lleva la cabecera `Idempotency-Key`, que se guarda en `encuesta.clave_idempotencia`. Responde `201` solo para confirmar la recepción; **no devuelve ningún identificador**.
 
 ```ts
 // infrastructure/api/dto/encuesta.dto.ts
 export interface EncuestaRequestDto {
-  percepcionRiesgo: number;    // encuesta_rapida.percepcion_riesgo · smallint · NN · 1 a 5
-  cambioOpinion: number;       // encuesta_rapida.cambio_opinion    · smallint · NN · 1 a 5
-  claridadMensaje: number;     // encuesta_rapida.claridad_mensaje  · smallint · NN · 1 a 5
-  comentario?: string | null;  // encuesta_rapida.comentario        · varchar(500) · opcional
+  percepcionRiesgo: number;    // encuesta.percepcion_riesgo · smallint · NN · 1 a 5
+  cambioOpinion: number;       // encuesta.cambio_opinion    · smallint · NN · 1 a 5
+  claridadMensaje: number;     // encuesta.claridad_mensaje  · smallint · NN · 1 a 5
+  comentario?: string | null;  // encuesta.comentario        · varchar(500) · opcional
 }
 
 export interface EncuestaResponseDto {
   recibida: true;
-  enviadaEn: string;           // encuesta_rapida.enviada_en
+  enviadaEn: string;           // encuesta.enviada_en
 }
 ```
 
@@ -567,7 +584,7 @@ Cada registro del outbox guarda un identificador único generado en el dispositi
 - **Se encola** cuando el envío falla por falta de red.
 - **Se vacía** al recuperar la conexión, al abrir la app, al volver a primer plano y, donde existe, con Background Sync.
 - **Reintentos** con espera creciente hasta un máximo de intentos o de días; después el registro pasa a *fallido*.
-- **Sin duplicados:** cada envío lleva una cabecera `Idempotency-Key` con el identificador del registro, de modo que un reintento no genere un duplicado. Requiere soporte del backend (mejora recomendada).
+- **Sin duplicados:** cada envío lleva una cabecera `Idempotency-Key` con el identificador del registro, de modo que un reintento no genere un duplicado. El backend la guarda en `clave_idempotencia` y, si ya la recibió, responde con el registro existente en lugar de insertar otro.
 - **Anonimato:** el outbox de la encuesta no guarda alias, ID ni ningún dato personal.
 
 ### 5.6 Segundo plano y actualizaciones
