@@ -232,9 +232,9 @@ Esquema de referencia sobre el que se construyen los DTOs de la PWA.
 | Dos rayas en ambos extremos (`‖───‖`) | Uno a uno: cada jugador tiene exactamente un registro de estadísticas |
 | Dos rayas y un círculo con tres patas (`‖───○<`) | Uno a muchos: un registro del lado de las rayas tiene cero o más registros del lado de las patas |
 
-> El `id` del jugador lo genera el backend y es lo único que identifica a un jugador; el `alias` se puede repetir, por eso se indexa (sin distinguir mayúsculas) para buscar, pero no es único. `estadistica_jugador` se actualiza cada vez que el juego registra una partida; el ranking se ordena por `puntaje_maximo` (mejor puntaje en una victoria) y, ante empate, por `puntaje_maximo_en`, con un índice `(puntaje_maximo DESC, puntaje_maximo_en) WHERE puntaje_maximo_en IS NOT NULL`. `numero_local` es un contador que lleva el juego; es único por jugador y evita registrar dos veces la misma partida si el juego reintenta el envío. `partida_comodin` guarda cuántas veces se compró y se usó cada comodín en una partida; de ahí sale el comodín predilecto del jugador (el más usado). `retroalimentacion` y `encuesta` no tienen relación con `jugador`: ambas son anónimas y de solo inserción, y su `clave_idempotencia` evita duplicados cuando el outbox reintenta un envío (ver [5.5](#55-cola-de-envío-outbox)). Todas las marcas de tiempo se guardan en UTC.
+> El `id` del jugador lo genera el backend y es lo único que identifica a un jugador; el `alias` se puede repetir, por eso se indexa (sin distinguir mayúsculas) para buscar, pero no es único. `estadistica_jugador` se actualiza cada vez que el juego registra una partida; el ranking se ordena por `puntaje_maximo` (mejor puntaje en una victoria) y, ante empate, por `puntaje_maximo_en`, con un índice `(puntaje_maximo DESC, puntaje_maximo_en) WHERE puntaje_maximo_en IS NOT NULL`. `clave_idempotencia` es el UUID que el juego genera al terminar cada partida; evita registrarla dos veces si el juego reintenta el envío, incluso cuando la misma cuenta juega en varios dispositivos. `terminada_en` es la fecha en que se jugó y `creada_en`, la fecha en que llegó a la API. `partida_comodin` guarda cuántas veces se compró y se usó cada comodín en una partida; de ahí sale el comodín predilecto del jugador (el más usado). `retroalimentacion` y `encuesta` no tienen relación con `jugador`: ambas son anónimas y de solo inserción, y su `clave_idempotencia` evita duplicados cuando el outbox reintenta un envío (ver [5.5](#55-cola-de-envío-outbox)). Todas las marcas de tiempo se guardan en UTC.
 
-**Registro e inicio de sesión (juego).** Al entrar por primera vez, el juego pide un alias y una contraseña (mínimo 8 caracteres) y los envía a la API. La API crea el jugador, guarda la contraseña con BCrypt y responde con el `id` y un token; en la base de datos solo queda el hash del token (`token_hash`). El juego guarda el token en el dispositivo y lo envía cada vez que registra una partida. Para usar la cuenta en otro dispositivo, el jugador inicia sesión con su `id` y su contraseña y recibe un token nuevo, que reemplaza al anterior; si olvida su `id`, puede buscarlo por alias en la PWA. Si olvida la contraseña, puede cambiarla desde el juego en el mismo dispositivo: el juego envía el token y la contraseña nueva, y la API la guarda sin pedir la anterior. Si pierde el dispositivo y también olvidó la contraseña, la cuenta no se puede recuperar. La PWA no participa en este flujo.
+**Cuentas (solo en el juego).** Por defecto el juego ofrece **continuar como invitado**: las partidas se guardan solo en el dispositivo, con el aviso de que si no se crea una cuenta y el dispositivo se daña, se pierde el progreso. Para crear una cuenta, el juego pide un alias y una contraseña (mínimo 8 caracteres) y los envía a la API. La API crea el jugador, guarda la contraseña con BCrypt y responde con el `id` y un token; en la base de datos solo queda el hash del token (`token_hash`). El juego guarda el token en el dispositivo y lo envía cada vez que registra una partida. Para usar la cuenta en otro dispositivo, el jugador inicia sesión con su `id` y su contraseña y recibe un token nuevo, que reemplaza al anterior; si olvida su `id`, puede buscarlo por alias en la PWA. Si olvida la contraseña, puede cambiarla desde el juego en el mismo dispositivo: el juego envía el token y la contraseña nueva, y la API la guarda sin pedir la anterior. Si pierde el dispositivo y también olvidó la contraseña, la cuenta no se puede recuperar. Al crear la cuenta o iniciar sesión, el juego envía las partidas que guardó como invitado. **La PWA y la app móvil no usan cuentas:** consultan el expediente, el historial y el ranking con el `id` público del jugador, y la retroalimentación y la encuesta son anónimas.
 
 **Cómo usa la PWA cada tabla**
 
@@ -242,7 +242,7 @@ Esquema de referencia sobre el que se construyen los DTOs de la PWA.
 |---|---|---|---|
 | `jugador` | Lectura | `id`, `alias`, `creado_en`, `ultima_actividad` | `contrasena_hash`, `token_hash` |
 | `estadistica_jugador` | Lectura | Todas (dentro del perfil y del ranking) | — |
-| `partida` | Lectura | `id`, `resultado`, `ronda_alcanzada`, `puntaje`, `dinero_invertido`, `dinero_ganado`, `dinero_perdido`, `duracion_seg`, `creada_en` | `jugador_id`, `numero_local` |
+| `partida` | Lectura | `id`, `resultado`, `ronda_alcanzada`, `puntaje`, `dinero_invertido`, `dinero_ganado`, `dinero_perdido`, `duracion_seg`, `creada_en` | `jugador_id`, `clave_idempotencia` |
 | `comodin`, `partida_comodin` | Sin uso por ahora | — | — |
 | `retroalimentacion` | **Inserción** | Entrada: `categoria`, `componente`, `mensaje` (la clave viaja en la cabecera `Idempotency-Key`) | — |
 | `encuesta` | **Inserción** | Entrada: `percepcion_riesgo`, `cambio_opinion`, `claridad_mensaje`, `comentario` (la clave viaja en la cabecera `Idempotency-Key`) | No se devuelve ningún identificador (anonimato) |
@@ -260,7 +260,7 @@ La PWA **nunca escribe** en `jugador`, `estadistica_jugador`, `partida`, `comodi
 1. **Rutas relativas** (`/api/pwa/...`), mismo origen, sin CORS.
 2. **JSON en UTF-8**; fechas en **ISO-8601 UTC**; nombres de campo en `camelCase` español.
 3. **Los DTOs de red no son los modelos de dominio.** La capa de infraestructura mapea `DTO → modelo`, así un cambio en el contrato solo afecta a los mappers.
-4. **Los DTOs se derivan del modelo de datos** (sección 3) y no exponen `contrasena_hash`, `token_hash`, `numero_local` ni `partida.jugador_id`.
+4. **Los DTOs se derivan del modelo de datos** (sección 3) y no exponen `contrasena_hash`, `token_hash`, `partida.clave_idempotencia` ni `partida.jugador_id`.
 5. **La identidad viaja en la URL** (el ID del jugador como query param) en las consultas del jugador. Basta el ID porque es único; el alias solo se usa para buscar. Al ser un dato público es aceptable y además **es necesario para la caché**: el Service Worker usa la URL como llave; si la identidad fuera una cabecera, un usuario podría recibir datos cacheados de otro en el mismo dispositivo.
 6. Las rutas son **sugeridas**; el contrato definitivo se fija en el diseño detallado.
 
@@ -364,7 +364,7 @@ Devuelve las partidas del jugador, de la más reciente a la más antigua, en pá
 | `pagina` | int | No | Base 0; por defecto `0` |
 | `tamano` | int | No | Por defecto `10`; máximo `50` |
 
-**Tabla:** `partida`, filtrada por el jugador. **Orden fijo:** `creada_en` descendente.
+**Tabla:** `partida`, filtrada por el jugador. **Orden fijo:** `terminada_en` descendente (cuándo se jugó).
 
 ```ts
 // infrastructure/api/dto/partida.dto.ts
@@ -379,12 +379,12 @@ export interface PartidaDto {
   dineroGanado: number;            // partida.dinero_ganado · int
   dineroPerdido: number;           // partida.dinero_perdido · int
   duracionSeg: number;             // partida.duracion_seg · int
-  creadaEn: string;                // partida.creada_en
+  creadaEn: string;                // partida.terminada_en (cuándo se jugó; el campo conserva su nombre)
 }
 // Respuesta: PaginaDto<PartidaDto>
 ```
 
-El DTO **no incluye** `jugador_id` ni `numero_local`. `HistorialFacade` mantiene la lista acumulada y, con el botón **Ver más partidas**, solicita la página siguiente mientras `ultima` sea `false`.
+El DTO **no incluye** `jugador_id` ni `clave_idempotencia`. `HistorialFacade` mantiene la lista acumulada y, con el botón **Ver más partidas**, solicita la página siguiente mientras `ultima` sea `false`.
 
 #### 4.3.4 Consultar ranking
 
