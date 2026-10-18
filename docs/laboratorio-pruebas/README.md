@@ -8,7 +8,6 @@ Banco de pruebas de la PWA de **Fat Fish** conectada a la API (Spring Boot) y a 
 
 Equipo: Anuma Games (IDGS101N). Los datos son **simulados** (scripts de la carpeta `sql/`).
 
-> **Versión entregada (14 de octubre de 2026):** tag [`laboratorio-1`](https://github.com/Anuma-Games/fat-fish-pwa/tree/laboratorio-1/docs/laboratorio-pruebas) en este repositorio y en [`fat-fish-api`](https://github.com/Anuma-Games/fat-fish-api/tree/laboratorio-1). Esta carpeta está actualizada al esquema de base de datos actual (FF-51); para correr la versión entregada, haz `git checkout laboratorio-1` en **los dos** repositorios.
 
 ## Tablas que usa el laboratorio
 
@@ -179,7 +178,7 @@ psql -U fatfish -h localhost -d fatfish -f fat-fish-pwa/docs/laboratorio-pruebas
 
 ### Capturas de DevTools (Chrome, tomadas a mano)
 
-Se tomaron en una corrida aparte de las evidencias automáticas, con la versión entregada (tag `laboratorio-1`); por eso las retroalimentaciones llegan hasta el `id` 6. Lo que muestran (Network, service worker, Cache Storage, IndexedDB y consola) no cambió con el esquema actual.
+Se tomaron en una corrida aparte de las evidencias automáticas, con el esquema anterior; por eso las retroalimentaciones llegan hasta el `id` 6. Lo que muestran (Network, service worker, Cache Storage, IndexedDB y consola) no cambió con el esquema actual.
 
 | Archivo | Pestaña | Qué muestra |
 |---|---|---|
