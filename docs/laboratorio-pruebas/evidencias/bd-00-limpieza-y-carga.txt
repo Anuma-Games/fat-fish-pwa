@@ -19,13 +19,15 @@ TRUNCATE TABLE
 $ psql -U fatfish -h localhost -d fatfish -f docs/laboratorio-pruebas/sql/02_carga.sql
 INSERT 0 5
 INSERT 0 18
+INSERT 0 6
+INSERT 0 5
 INSERT 0 2
- id |  alias   |       creado_en        
-----+----------+------------------------
-  1 | jesus    | 2026-09-20 09:00:00-06
-  2 | emmanuel | 2026-09-22 12:30:00-06
-  3 | angel    | 2026-09-25 15:10:00-06
-  4 | luis     | 2026-09-26 11:00:00-06
-  5 | andrik   | 2026-09-28 06:00:00-06
+ id |  alias   |                       contrasena_hash                        |                            token_hash                            |       creado_en        |    ultima_actividad    
+----+----------+--------------------------------------------------------------+------------------------------------------------------------------+------------------------+------------------------
+  1 | jesus    | $2a$10$DC.rDrvR3cW1LXzdTcfQJe5PHK8SDnBpqdzSlYOsYZSOAGLkxjLq6 | 8e4c23b81eaf081ca92ee7793e11c1ee068939123905145db01a421bb0f3a0b4 | 2026-09-20 09:00:00-06 | 2026-10-13 16:00:00-06
+  2 | emmanuel | $2a$10$zjMm27C19YM1kXfK4WMJ0eH2OGht1SqwGfCUBbTwMzkxUBDc74xYG | 5e6dfe244b64be332428f549f56d0e43253b71814835d0478cb958b7e8c9ee71 | 2026-09-22 12:30:00-06 | 2026-10-12 07:30:00-06
+  3 | angel    | $2a$10$ljadkaofCW63bS6/ns2ofujrZ8PIoKxRCRyKLGGRyUvUJSvNTymaq | 70a111e9b87eb41d61a25a51c4b231d6d97c361988919f8ae6559a37d07170d1 | 2026-09-25 15:10:00-06 | 2026-10-10 17:00:00-06
+  4 | luis     | $2a$10$S7aAOMvG9RS.YlrhxNf4vOP0hBuaooZFZ.lwBwgHvz2dYoFxrZ.Nq | 98fcc84217697343937089a2272c3e014f4c2a665095031015378628b781ce09 | 2026-09-26 11:00:00-06 | 2026-10-13 11:20:00-06
+  5 | andrik   | $2a$10$N6T6BpdkQpywfm8tvAR2KeuLfq2B1TcmTtXYT5NflsPqOIpoD5ebi | 7982812e6ec02f2421efb233993f21e5b8518240fcac5bd58e80affbfe81fdff | 2026-09-28 06:00:00-06 | 
 (5 rows)
 

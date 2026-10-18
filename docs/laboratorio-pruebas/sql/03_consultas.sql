@@ -12,14 +12,18 @@ from partida
 where jugador_id = 1
 order by creada_en desc;
 
--- 3. Retroalimentación (la que se envía desde la PWA aparece al final)
+-- 3. Estadísticas del jugador 1 (las 4 tarjetas del perfil)
+select partidas_totales, partidas_ganadas, dinero_invertido, dinero_perdido, racha_derrotas_max, tiempo_jugado_seg
+from estadistica_jugador
+where jugador_id = 1;
+
+-- 4. Retroalimentación (la que se envía desde la PWA aparece al final)
 select id, categoria, componente, mensaje, creada_en, clave_idempotencia
 from retroalimentacion
 order by id;
 
--- 4. Integridad: claves repetidas (debe salir vacío)
+-- 5. Integridad: claves repetidas (debe salir vacío)
 select clave_idempotencia, count(*)
 from retroalimentacion
-where clave_idempotencia is not null
 group by clave_idempotencia
 having count(*) > 1;

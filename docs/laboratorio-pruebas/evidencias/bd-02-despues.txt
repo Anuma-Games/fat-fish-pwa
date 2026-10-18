@@ -1,4 +1,4 @@
--- 2026-10-14 21:50:58 CST · DESPUÉS del envío en línea y del envío sin conexión sincronizado
+-- 2026-10-16 18:28:51 CST · DESPUÉS del envío en línea y del envío sin conexión sincronizado
 $ psql -U fatfish -h localhost -d fatfish -f docs/laboratorio-pruebas/sql/03_consultas.sql
  jugadores 
 -----------
@@ -31,12 +31,17 @@ $ psql -U fatfish -h localhost -d fatfish -f docs/laboratorio-pruebas/sql/03_con
   1 | DERROTA   |               1 |      60 |              400 |            380 | 2026-09-21 13:00:00-06
 (12 rows)
 
+ partidas_totales | partidas_ganadas | dinero_invertido | dinero_perdido | racha_derrotas_max | tiempo_jugado_seg 
+------------------+------------------+------------------+----------------+--------------------+-------------------
+               12 |                2 |            37150 |          16700 |                  6 |             16890
+(1 row)
+
  id | categoria  | componente |                           mensaje                           |           creada_en           |          clave_idempotencia          
 ----+------------+------------+-------------------------------------------------------------+-------------------------------+--------------------------------------
-  1 | SUGERENCIA | PWA        | Me gustaría ver mi historial filtrado por resultado         | 2026-10-12 11:00:00-06        | 
-  2 | ERROR      | JUEGO      | La bola se quedó girando en la ronda 3 y tuve que reiniciar | 2026-10-13 14:30:00-06        | 
-  3 | SUGERENCIA | PWA        | Sugerencia enviada en línea desde el laboratorio            | 2026-10-14 21:50:44.02625-06  | d3c799a1-b1b2-44f3-bd13-3722207d183a
-  4 | ERROR      | PWA        | Error reportado sin conexión: queda en IndexedDB            | 2026-10-14 21:50:54.431819-06 | 3612ccdb-598b-4058-ace5-ee481dac23ea
+  1 | SUGERENCIA | PWA        | Me gustaría ver mi historial filtrado por resultado         | 2026-10-12 11:00:00-06        | 98613473-53f3-4969-882d-fd497f9d9805
+  2 | ERROR      | JUEGO      | La bola se quedó girando en la ronda 3 y tuve que reiniciar | 2026-10-13 14:30:00-06        | e73d0975-8a7d-464b-a3e3-f7a8d61ad7fe
+  3 | SUGERENCIA | PWA        | Sugerencia enviada en línea desde el laboratorio            | 2026-10-16 18:28:37.273826-06 | b3b5c4e7-e4e8-43d3-8631-9236fb94f01a
+  4 | ERROR      | PWA        | Error reportado sin conexión: queda en IndexedDB            | 2026-10-16 18:28:47.680831-06 | 73a32db0-9a25-4018-bd3a-814ac7c5cc95
 (4 rows)
 
  clave_idempotencia | count 
