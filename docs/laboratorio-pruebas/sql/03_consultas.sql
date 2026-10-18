@@ -10,7 +10,7 @@ select count(*) as retroalimentaciones from retroalimentacion;
 select id, resultado, ronda_alcanzada, puntaje, dinero_invertido, dinero_perdido, creada_en
 from partida
 where jugador_id = 1
-order by creada_en desc;
+order by terminada_en desc;
 
 -- 3. Estadísticas del jugador 1 (las 4 tarjetas del perfil)
 select partidas_totales, partidas_ganadas, dinero_invertido, dinero_perdido, racha_derrotas_max, tiempo_jugado_seg

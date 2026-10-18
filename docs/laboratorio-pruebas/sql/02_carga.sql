@@ -13,26 +13,27 @@ insert into jugador(alias, contrasena_hash, token_hash, creado_en, ultima_activi
 
 -- jesus (1): 12 partidas, la PWA muestra 10 y "Ver más partidas" pide las otras 2
 -- emmanuel (2): 3, angel (3): 1, luis (4): 2, andrik (5): ninguna
--- numero_local es el contador de partidas de cada jugador en el juego
-insert into partida(jugador_id, numero_local, resultado, ronda_alcanzada, puntaje, dinero_invertido, dinero_ganado, dinero_perdido, veces_todo_o_nada, empenos, prestamos, duracion_seg, creada_en) values
-(1, 1, 'DERROTA', 1, 60, 400, 100, 380, 0, 0, 0, 480, '2026-09-21 13:00'),
-(1, 2, 'DERROTA', 3, 175, 1100, 700, 800, 1, 0, 0, 1020, '2026-09-24 14:30'),
-(1, 3, 'ABANDONO', 2, 110, 600, 350, 420, 0, 0, 0, 570, '2026-09-27 12:15'),
-(1, 4, 'DERROTA', 5, 360, 3100, 2300, 2000, 1, 1, 0, 1980, '2026-09-29 15:00'),
-(1, 5, 'DERROTA', 2, 150, 900, 600, 700, 0, 0, 1, 750, '2026-10-01 12:00'),
-(1, 6, 'DERROTA', 4, 281, 2350, 1800, 1450, 1, 0, 1, 1510, '2026-10-03 13:00'),
-(1, 7, 'ABANDONO', 3, 210, 1200, 950, 600, 0, 0, 0, 660, '2026-10-05 11:30'),
-(1, 8, 'DERROTA', 7, 640, 5200, 4100, 3300, 2, 1, 1, 2325, '2026-10-07 14:00'),
-(1, 9, 'VICTORIA', 9, 1320, 8800, 9900, 2100, 1, 0, 0, 2540, '2026-10-09 10:10'),
-(1, 10, 'DERROTA', 1, 90, 500, 200, 450, 0, 0, 0, 580, '2026-10-11 15:00'),
-(1, 11, 'DERROTA', 6, 470, 3900, 3000, 2600, 1, 1, 0, 1830, '2026-10-12 13:45'),
-(1, 12, 'VICTORIA', 9, 1510, 9100, 11200, 1900, 2, 0, 1, 2645, '2026-10-13 16:00'),
-(2, 1, 'DERROTA', 5, 330, 2800, 2100, 1700, 1, 0, 0, 1200, '2026-10-04 08:00'),
-(2, 2, 'VICTORIA', 9, 1405, 8700, 10400, 1800, 0, 0, 1, 2820, '2026-10-08 09:00'),
-(2, 3, 'ABANDONO', 2, 120, 700, 400, 500, 0, 0, 0, 720, '2026-10-12 07:30'),
-(3, 1, 'DERROTA', 3, 205, 1500, 900, 1200, 1, 0, 0, 1080, '2026-10-10 17:00'),
-(4, 1, 'DERROTA', 6, 520, 4100, 3300, 2500, 0, 1, 0, 2100, '2026-10-06 12:00'),
-(4, 2, 'VICTORIA', 9, 1480, 9300, 10800, 2200, 1, 0, 1, 2730, '2026-10-13 11:20');
+-- clave_idempotencia la genera el juego al terminar la partida (aquí, gen_random_uuid());
+-- terminada_en es cuándo se jugó y creada_en, cuándo llegó a la API (en los datos de prueba, la misma fecha)
+insert into partida(jugador_id, clave_idempotencia, terminada_en, resultado, ronda_alcanzada, puntaje, dinero_invertido, dinero_ganado, dinero_perdido, veces_todo_o_nada, empenos, prestamos, duracion_seg, creada_en) values
+(1, gen_random_uuid(), '2026-09-21 13:00', 'DERROTA', 1, 60, 400, 100, 380, 0, 0, 0, 480, '2026-09-21 13:00'),
+(1, gen_random_uuid(), '2026-09-24 14:30', 'DERROTA', 3, 175, 1100, 700, 800, 1, 0, 0, 1020, '2026-09-24 14:30'),
+(1, gen_random_uuid(), '2026-09-27 12:15', 'ABANDONO', 2, 110, 600, 350, 420, 0, 0, 0, 570, '2026-09-27 12:15'),
+(1, gen_random_uuid(), '2026-09-29 15:00', 'DERROTA', 5, 360, 3100, 2300, 2000, 1, 1, 0, 1980, '2026-09-29 15:00'),
+(1, gen_random_uuid(), '2026-10-01 12:00', 'DERROTA', 2, 150, 900, 600, 700, 0, 0, 1, 750, '2026-10-01 12:00'),
+(1, gen_random_uuid(), '2026-10-03 13:00', 'DERROTA', 4, 281, 2350, 1800, 1450, 1, 0, 1, 1510, '2026-10-03 13:00'),
+(1, gen_random_uuid(), '2026-10-05 11:30', 'ABANDONO', 3, 210, 1200, 950, 600, 0, 0, 0, 660, '2026-10-05 11:30'),
+(1, gen_random_uuid(), '2026-10-07 14:00', 'DERROTA', 7, 640, 5200, 4100, 3300, 2, 1, 1, 2325, '2026-10-07 14:00'),
+(1, gen_random_uuid(), '2026-10-09 10:10', 'VICTORIA', 9, 1320, 8800, 9900, 2100, 1, 0, 0, 2540, '2026-10-09 10:10'),
+(1, gen_random_uuid(), '2026-10-11 15:00', 'DERROTA', 1, 90, 500, 200, 450, 0, 0, 0, 580, '2026-10-11 15:00'),
+(1, gen_random_uuid(), '2026-10-12 13:45', 'DERROTA', 6, 470, 3900, 3000, 2600, 1, 1, 0, 1830, '2026-10-12 13:45'),
+(1, gen_random_uuid(), '2026-10-13 16:00', 'VICTORIA', 9, 1510, 9100, 11200, 1900, 2, 0, 1, 2645, '2026-10-13 16:00'),
+(2, gen_random_uuid(), '2026-10-04 08:00', 'DERROTA', 5, 330, 2800, 2100, 1700, 1, 0, 0, 1200, '2026-10-04 08:00'),
+(2, gen_random_uuid(), '2026-10-08 09:00', 'VICTORIA', 9, 1405, 8700, 10400, 1800, 0, 0, 1, 2820, '2026-10-08 09:00'),
+(2, gen_random_uuid(), '2026-10-12 07:30', 'ABANDONO', 2, 120, 700, 400, 500, 0, 0, 0, 720, '2026-10-12 07:30'),
+(3, gen_random_uuid(), '2026-10-10 17:00', 'DERROTA', 3, 205, 1500, 900, 1200, 1, 0, 0, 1080, '2026-10-10 17:00'),
+(4, gen_random_uuid(), '2026-10-06 12:00', 'DERROTA', 6, 520, 4100, 3300, 2500, 0, 1, 0, 2100, '2026-10-06 12:00'),
+(4, gen_random_uuid(), '2026-10-13 11:20', 'VICTORIA', 9, 1480, 9300, 10800, 2200, 1, 0, 1, 2730, '2026-10-13 11:20');
 
 -- Comodines comprados y usados en las victorias (partidas 9, 12, 14 y 18)
 -- 1 Multiplicador de puntos, 2 Bola adicional, 3 Bonificación económica, 4 Cambio de color
