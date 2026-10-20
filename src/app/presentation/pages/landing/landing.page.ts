@@ -1,6 +1,7 @@
-import { Component, ElementRef, afterNextRender, inject } from '@angular/core';
+import { Component, DestroyRef, ElementRef, afterNextRender, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { CTA, EQUIPO, PREGUNTAS } from '../../../core/config/landing.config';
+import { seguirAvance } from './motion';
 import { Reveal } from './reveal.directive';
 import { CierreSection } from './sections/cierre/cierre.section';
 import { ComoSeJuegaSection } from './sections/como-se-juega/como-se-juega.section';
@@ -42,6 +43,10 @@ export class LandingPage {
   constructor() {
     const visita = inject(VisitDossier);
     const host = inject<ElementRef<HTMLElement>>(ElementRef).nativeElement;
-    afterNextRender(() => visita.iniciar(host));
+    const destroyRef = inject(DestroyRef);
+    afterNextRender(() => {
+      visita.iniciar(host);
+      destroyRef.onDestroy(seguirAvance(host));
+    });
   }
 }

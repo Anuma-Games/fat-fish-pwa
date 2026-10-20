@@ -83,7 +83,7 @@
   padding-inline: var(--ff-space-3);
 }
 
-/* Reading progress, where scroll-driven animations exist */
+/* Reading progress: scroll-driven animation, or --avance from motion.ts where it is missing */
 .progreso {
   position: absolute;
   left: 0;
@@ -92,7 +92,7 @@
   height: 2px;
   background: var(--ff-gold-400);
   transform-origin: left;
-  transform: scaleX(0);
+  transform: scaleX(var(--avance, 0));
 }
 @supports (animation-timeline: scroll()) {
   .progreso {

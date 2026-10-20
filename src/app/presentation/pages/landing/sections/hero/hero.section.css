@@ -72,6 +72,14 @@
     animation-timeline: scroll(root);
   }
 }
+/* Fallback: LandingPage keeps --avance (0..1) in sync with the scroll (motion.ts) */
+@supports not (animation-timeline: scroll()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .wheel svg {
+      rotate: calc(var(--avance, 0) * 540deg);
+    }
+  }
+}
 @keyframes girar {
   to {
     rotate: 540deg;
