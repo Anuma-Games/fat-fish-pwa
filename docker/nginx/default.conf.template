@@ -1,0 +1,41 @@
+# Nginx for the Fat Fish PWA. ${API_URL} and ${API_KEY} come from the container environment.
+server {
+    listen 8080;
+    server_name _;
+    root /usr/share/nginx/html;
+    index index.html;
+
+    # Web app manifest: Nginx does not know the .webmanifest extension, so its type is set here
+    location = /manifest.webmanifest {
+        default_type application/manifest+json;
+        add_header Cache-Control "no-cache";
+        try_files $uri =404;
+    }
+
+    # Control files of the app and the service worker: the browser always asks for the latest version
+    location ~ ^/(index\.html|ngsw\.json|ngsw-worker\.js|safety-worker\.js)$ {
+        add_header Cache-Control "no-cache";
+        try_files $uri =404;
+    }
+
+    # Angular adds a hash to the name of its JavaScript and CSS files, so they can be cached for a year
+    location ~* \.(?:js|css)$ {
+        add_header Cache-Control "public, max-age=31536000, immutable";
+        try_files $uri =404;
+    }
+
+    # API: same origin for the browser (no CORS); Nginx forwards the request to the API
+    location /api/ {
+        proxy_pass ${API_URL};
+        proxy_set_header Host $proxy_host;
+        proxy_set_header X-Api-Key "${API_KEY}";
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_ssl_server_name on;
+    }
+
+    # Single page application: routes such as /perfil load index.html and Angular resolves them
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+}

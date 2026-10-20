@@ -1,0 +1,12 @@
+# Only package files, configuration and src/ are needed to build the image
+node_modules
+dist
+.angular
+.git
+.github
+.vscode
+docs
+coverage
+*.md
+Dockerfile
+docker-compose.yml

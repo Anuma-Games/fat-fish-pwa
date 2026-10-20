@@ -1,0 +1,42 @@
+# Fat Fish in containers: PostgreSQL + API + PWA.
+# Requires fat-fish-api cloned next to this repository (../fat-fish-api), as in the lab.
+#   docker compose up -d --build      -> PWA at http://localhost:8080 (API docs at http://localhost:8081/swagger-ui.html)
+#   docker compose down               -> stops the containers (add -v to also delete the database)
+services:
+  postgres:
+    image: postgres:17
+    environment:
+      POSTGRES_DB: fatfish
+      POSTGRES_USER: fatfish
+      POSTGRES_PASSWORD: fatfish
+    volumes:
+      - fatfish-pwa-db:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U fatfish -d fatfish"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  api:
+    build: ../fat-fish-api
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DB_URL: jdbc:postgresql://postgres:5432/fatfish
+      DB_USER: fatfish
+      DB_PASSWORD: fatfish
+    ports:
+      - "8081:8080"
+
+  pwa:
+    build: .
+    depends_on:
+      - api
+    environment:
+      API_URL: http://api:8080
+    ports:
+      - "8080:8080"
+
+volumes:
+  fatfish-pwa-db:
