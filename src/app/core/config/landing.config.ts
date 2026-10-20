@@ -210,3 +210,28 @@ export const PREGUNTAS: Pregunta[] = [
       'inmediata, la escalada de lo invertido y cómo el casino siempre gana a largo plazo.',
   },
 ];
+
+/**
+ * Short lines of the Crupier, shown one at a time under the nav. He is impartial and brief: he
+ * never celebrates a result and never invites the visitor to risk anything.
+ */
+export const CRUPIER = {
+  bienvenida: 'Toma asiento.',
+  inactivo: '¿Sigues ahí?',
+  primerGiro: 'La casa anota todo.',
+  giros: ['Otra vez.', 'La bola no recuerda nada. Yo sí.', 'Nadie te pidió que giraras.'],
+  expediente: 'Esto es lo que guardo de cada jugador.',
+  otraRonda: 'Otra vez aquí.',
+};
+
+/** The wheel of the hero can be spun by the visitor; this is the hint before the first spin. */
+export const RULETA = {
+  pista: 'Toca o arrastra la ruleta para girarla.',
+  colores: { rojo: 'rojo', negro: 'negro', cero: 'verde' },
+};
+
+/** Police-style header of the sample dossier. */
+export const FICHA = {
+  numero: 'Expediente N.º 1042',
+  estado: 'Estado: activo',
+};

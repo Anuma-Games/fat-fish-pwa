@@ -34,3 +34,31 @@ export function seguirAvance(raiz: HTMLElement): () => void {
 export function esTelefono(): boolean {
   return window.matchMedia?.('(max-width: 640px)').matches ?? false;
 }
+
+/** True on devices with a mouse or trackpad (cursor and magnetic buttons only apply there). */
+export function puedeApuntar(): boolean {
+  return window.matchMedia?.('(hover: hover) and (pointer: fine)').matches ?? false;
+}
+
+/**
+ * Typewriter: calls `alEscribir` with a growing part of `texto` every `ms` milliseconds.
+ * With reduced motion it writes everything at once. Returns the function that stops it.
+ */
+export function escribir(
+  texto: string,
+  alEscribir: (parcial: string) => void,
+  ms = 45,
+): () => void {
+  if (prefiereMenosMovimiento()) {
+    alEscribir(texto);
+    return () => {};
+  }
+  let n = 0;
+  alEscribir('');
+  const reloj = setInterval(() => {
+    n++;
+    alEscribir(texto.slice(0, n));
+    if (n >= texto.length) clearInterval(reloj);
+  }, ms);
+  return () => clearInterval(reloj);
+}

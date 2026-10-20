@@ -8,7 +8,7 @@
     >
       <app-pixel-icon name="menu" [size]="20" />
     </button>
-    <img class="logo" src="icons/logo-96.png" alt="" width="32" height="32" />
+    <img class="logo" src="icons/insignia-96.png" alt="" width="32" height="32" />
     <span class="topbar-title">{{ seccion() }}</span>
   </header>
 }
@@ -20,7 +20,13 @@
   @if (!esLanding()) {
     <aside class="sidebar" [class.open]="menuAbierto()">
       <div class="brand-row">
-        <img class="logo" src="icons/logo-96.png" alt="Logo de Fat Fish" width="36" height="36" />
+        <img
+          class="logo"
+          src="icons/insignia-96.png"
+          alt="Logo de Fat Fish"
+          width="36"
+          height="36"
+        />
         <a class="brand" routerLink="/" (click)="menuAbierto.set(false)">Fat Fish</a>
         <button
           class="icon-btn close"

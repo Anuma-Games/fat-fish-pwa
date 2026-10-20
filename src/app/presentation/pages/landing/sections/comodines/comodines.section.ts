@@ -1,12 +1,13 @@
 import { Component } from '@angular/core';
 import { COMODINES } from '../../../../../core/config/landing.config';
 import { prefiereMenosMovimiento } from '../../motion';
+import { Foco } from '../../foco.directive';
 import { Reveal } from '../../reveal.directive';
 
 /** The four wildcards of the MVP as cards that lean toward the pointer. */
 @Component({
   selector: 'app-landing-comodines',
-  imports: [Reveal],
+  imports: [Reveal, Foco],
   templateUrl: './comodines.section.html',
   styleUrl: './comodines.section.css',
 })

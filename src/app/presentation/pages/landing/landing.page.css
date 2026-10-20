@@ -76,8 +76,50 @@
 .foot-links a:hover {
   color: var(--ff-gold-400);
 }
-.nav-cta {
+/* Optional room sound */
+.sonido {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ff-space-2);
+  min-height: 40px;
   margin-left: auto;
+  padding: 0 var(--ff-space-2);
+  font-family: var(--ff-font-label);
+  font-size: 8px;
+  text-transform: uppercase;
+  color: var(--ff-fog-400);
+  background: transparent;
+  border: 1px solid var(--ff-line);
+  border-radius: var(--ff-radius-field);
+  cursor: pointer;
+}
+.sonido[aria-pressed='true'] {
+  color: var(--ff-gold-400);
+  border-color: var(--ff-gold-600);
+}
+.bocina {
+  position: relative;
+  width: 10px;
+  height: 12px;
+  background: currentColor;
+  clip-path: polygon(0 30%, 40% 30%, 100% 0, 100% 100%, 40% 70%, 0 70%);
+}
+.bocina.on::after {
+  content: '';
+  position: absolute;
+  left: 12px;
+  top: 1px;
+  width: 6px;
+  height: 10px;
+  border: 2px solid currentColor;
+  border-left: 0;
+  border-radius: 0 10px 10px 0;
+}
+.sonido-texto {
+  display: none;
+}
+.nav-cta {
+  margin-left: 0;
   min-height: 40px;
   font-size: 18px;
   padding-inline: var(--ff-space-3);
@@ -206,8 +248,11 @@ details[open]::details-content {
   .lp-links {
     display: flex;
   }
-  .nav-cta {
+  .sonido {
     margin-left: 0;
+  }
+  .sonido-texto {
+    display: inline;
   }
 }
 @media (prefers-reduced-motion: reduce) {

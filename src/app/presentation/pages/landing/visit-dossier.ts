@@ -1,4 +1,5 @@
 import { DestroyRef, Injectable, computed, inject, signal } from '@angular/core';
+import { prefiereMenosMovimiento } from './motion';
 
 /** Pixels in a metre at 96 dpi, to show how far the visitor scrolled. */
 const PX_POR_METRO = 3780;
@@ -24,11 +25,28 @@ export class VisitDossier {
   readonly fueraDelInicio = signal(false);
   /** The closing section is on screen or already passed (it shows the full dossier, so the panel hides). */
   readonly enCierre = signal(false);
+  /** Times the visitor spun the wheel of the hero. */
+  readonly girosRuleta = signal(0);
+  /** Times the visitor pressed "Otra ronda" and went back to the start. */
+  readonly reinicios = signal(0);
+  /** Grows every time the lamp of the hero must switch on again. */
+  readonly encendidos = signal(0);
 
   readonly tiempo = computed(() => {
     const s = this.segundos();
     return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
   });
+
+  registrarGiro(): void {
+    this.girosRuleta.update((n) => n + 1);
+  }
+
+  /** "Otra ronda": back to the top, where the lamp switches on again. */
+  otraRonda(): void {
+    this.reinicios.update((n) => n + 1);
+    this.encendidos.update((n) => n + 1);
+    window.scrollTo({ top: 0, behavior: prefiereMenosMovimiento() ? 'auto' : 'smooth' });
+  }
 
   /** Starts listening inside `raiz`; every listener is removed when the page is destroyed. */
   iniciar(raiz: HTMLElement): void {
@@ -78,10 +96,16 @@ export class VisitDossier {
     let observador: IntersectionObserver | undefined;
     if (typeof IntersectionObserver !== 'undefined') {
       const vistas = new Set<Element>();
+      const barrido = !prefiereMenosMovimiento();
       observador = new IntersectionObserver(
         (entradas) => {
           for (const entrada of entradas) {
-            if (entrada.isIntersecting) vistas.add(entrada.target);
+            if (!entrada.isIntersecting) continue;
+            vistas.add(entrada.target);
+            // First time on screen: a quick scan-line sweep, like an old monitor (landing.css)
+            if (barrido && entrada.target.classList.contains('lp-section')) {
+              entrada.target.classList.add('lp-barrido');
+            }
           }
           this.seccionesVistas.set(vistas.size);
         },

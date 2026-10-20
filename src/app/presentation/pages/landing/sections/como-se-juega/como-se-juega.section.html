@@ -22,12 +22,22 @@
 
     <ol class="pasos">
       @for (p of pasos; track p.titulo; let i = $index) {
-        <li appReveal [style.--i]="i">
+        <li appReveal appFoco [style.--i]="i">
           <span class="ficha" aria-hidden="true">{{ i + 1 }}</span>
           <h3>{{ p.titulo }}</h3>
           <p class="muted">{{ p.texto }}</p>
+          @if (i === 0) {
+            <!-- A stack of chips that drops onto the table when the step appears -->
+            <span class="pila" aria-hidden="true">
+              @for (n of fichas; track n) {
+                <i [style.--n]="n"></i>
+              }
+            </span>
+          }
           @if (p.ejemplo) {
-            <span class="ejemplo">{{ p.ejemplo }}</span>
+            <span class="ejemplo" [attr.aria-label]="p.ejemplo">
+              <span aria-hidden="true">{{ formula() }}<span class="cursor-tipo"></span></span>
+            </span>
           }
         </li>
       }

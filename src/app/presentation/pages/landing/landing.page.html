@@ -3,7 +3,7 @@
 <header class="lp-nav">
   <div class="lp-wrap nav-row">
     <a class="lp-brand" href="#inicio">
-      <img src="icons/logo-48.png" alt="" width="32" height="32" />
+      <img src="icons/insignia-96.png" alt="" width="32" height="32" />
       <span>Fat Fish</span>
     </a>
     <nav class="lp-links" aria-label="Secciones">
@@ -12,6 +12,15 @@
       <a href="#expediente">Expediente</a>
       <a href="#faq">Preguntas</a>
     </nav>
+    <button
+      class="sonido"
+      type="button"
+      [attr.aria-pressed]="sonido.activo()"
+      (click)="sonido.alternar()"
+    >
+      <span class="bocina" [class.on]="sonido.activo()" aria-hidden="true"></span>
+      <span class="sonido-texto">Sonido {{ sonido.activo() ? 'sí' : 'no' }}</span>
+    </button>
     <a class="btn nav-cta" [href]="cta.demo">Jugar la demo</a>
   </div>
   <span class="progreso" aria-hidden="true"></span>
@@ -22,7 +31,6 @@
   <app-landing-como-se-juega />
   <app-landing-comodines />
   <app-landing-expediente />
-  <app-landing-mensaje />
   <app-landing-cierre />
 
   <section class="lp-section creditos" id="equipo" data-seccion="equipo">
@@ -41,6 +49,8 @@
       </ul>
     </div>
   </section>
+
+  <app-landing-mensaje />
 
   <section class="lp-section faq" id="faq" data-seccion="faq">
     <div class="lp-wrap">
@@ -63,7 +73,7 @@
 <footer class="lp-footer">
   <div class="lp-wrap footer-row">
     <span class="foot-brand">
-      <img src="icons/logo-48.png" alt="" width="24" height="24" />
+      <img src="icons/insignia-96.png" alt="" width="24" height="24" />
       Fat Fish · Anuma Games
     </span>
     <nav class="foot-links" aria-label="Enlaces del pie">
@@ -75,3 +85,4 @@
 </footer>
 
 <app-landing-visit-hud />
+<app-landing-crupier-voz />

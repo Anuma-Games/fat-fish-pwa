@@ -5,15 +5,39 @@
       <h2>{{ expediente.titulo }}</h2>
       <p class="muted">{{ expediente.texto }}</p>
       <div class="acciones">
-        <a class="btn" [routerLink]="cta.expediente">{{ expediente.cta }}</a>
-        <button class="btn lp-alt" type="button" (click)="repetir()">Abrir de nuevo</button>
+        <a class="btn" appIman [routerLink]="cta.expediente">{{ expediente.cta }}</a>
+        <button class="btn lp-alt" appIman type="button" (click)="repetir()">Abrir de nuevo</button>
       </div>
     </header>
 
-    <article class="archivo" [class.revelando]="revelando()" aria-label="Expediente de ejemplo">
+    <article
+      class="archivo"
+      appFoco
+      [class.revelando]="revelando()"
+      [attr.aria-label]="'Expediente de ejemplo de ' + expediente.alias"
+    >
       <span class="sello" aria-hidden="true">Confidencial</span>
-      <span class="eyebrow">Lo que el casino sabe de ti</span>
-      <h3>{{ expediente.alias }} · ID #{{ expediente.id }}</h3>
+
+      <div class="cabecera">
+        <!-- Mugshot: silhouette in front of a height chart -->
+        <div class="foto" aria-hidden="true">
+          <svg viewBox="0 0 90 110">
+            <circle cx="45" cy="40" r="17" />
+            <path d="M12 110c0-26 14-40 33-40s33 14 33 40Z" />
+          </svg>
+          <span class="placa">#{{ expediente.id }}</span>
+        </div>
+        <div class="ident">
+          <span class="eyebrow">{{ ficha.numero }}</span>
+          <h3>
+            <span aria-hidden="true">{{ alias() }}</span>
+            <span class="lector">{{ expediente.alias }}</span>
+          </h3>
+          <span class="eyebrow">Lo que el casino sabe de ti</span>
+          <span class="estado">{{ ficha.estado }}</span>
+        </div>
+      </div>
+
       <dl class="datos">
         @for (d of expediente.muestra; track d.etiqueta; let i = $index) {
           <div>

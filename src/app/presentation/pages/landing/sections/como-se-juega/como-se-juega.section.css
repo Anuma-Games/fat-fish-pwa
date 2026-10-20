@@ -95,6 +95,55 @@
   font-variant-numeric: tabular-nums;
 }
 
+/* Chips dropping onto the table (step 1) */
+.pila {
+  display: flex;
+  flex-direction: column-reverse;
+  justify-self: start;
+  margin-top: var(--ff-space-3);
+}
+.pila i {
+  width: 46px;
+  height: 14px;
+  margin-top: -8px;
+  border-radius: 50%;
+  background: var(--ff-ruby-700);
+  border: 2px dashed var(--ff-cream-100);
+  box-shadow: 0 3px 0 #3a0c0a;
+  transition:
+    translate 0.45s cubic-bezier(0.3, 1.5, 0.5, 1),
+    opacity 0.3s ease;
+  transition-delay: calc(0.35s + var(--n) * 110ms);
+}
+.pila i:nth-child(2n) {
+  background: #151515;
+  box-shadow: 0 3px 0 #000;
+}
+.pila i:nth-child(3) {
+  background: var(--ff-gold-600);
+  box-shadow: 0 3px 0 #5e3f0c;
+}
+.lp-wait .pila i {
+  translate: 0 -48px;
+  opacity: 0;
+}
+
+/* Typed worked example */
+.cursor-tipo {
+  display: inline-block;
+  width: 0.45em;
+  height: 0.85em;
+  margin-left: 2px;
+  vertical-align: -0.08em;
+  background: currentColor;
+  animation: titilar 0.9s steps(1) infinite;
+}
+@keyframes titilar {
+  50% {
+    opacity: 0;
+  }
+}
+
 .vuelta {
   display: flex;
   align-items: center;
@@ -179,7 +228,11 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .barras i {
+  .barras i,
+  .pila i {
     transition: none;
+  }
+  .cursor-tipo {
+    animation: none;
   }
 }

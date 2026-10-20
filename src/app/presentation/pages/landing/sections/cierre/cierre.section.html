@@ -1,6 +1,6 @@
 <section class="lp-section cierre" id="cierre" data-seccion="cierre">
   <div class="lp-wrap grid">
-    <div class="ficha" appReveal>
+    <div class="ficha" appReveal appFoco>
       <span class="eyebrow">Expediente de tu visita</span>
       <h2>Esto supimos de ti sin que jugaras</h2>
       <dl>
@@ -27,6 +27,14 @@
           </dd>
         </div>
         <div>
+          <dt>Giraste la ruleta</dt>
+          <dd>{{ visita.girosRuleta() }} {{ visita.girosRuleta() === 1 ? 'vez' : 'veces' }}</dd>
+        </div>
+        <div>
+          <dt>Volviste a empezar</dt>
+          <dd>{{ visita.reinicios() }} {{ visita.reinicios() === 1 ? 'vez' : 'veces' }}</dd>
+        </div>
+        <div>
           <dt>Recorriste</dt>
           <dd>{{ visita.metros() | number: '1.1-1' }} m de página</dd>
         </div>
@@ -39,7 +47,12 @@
         Cuánto inviertes, cuándo lo arriesgas todo y qué empeñas para seguir. Al final te lo
         muestra.
       </p>
-      <a class="btn" [href]="cta.demo">Jugar la demo</a>
+      <div class="botones">
+        <a class="btn" appIman [href]="cta.demo">Jugar la demo</a>
+        <button class="btn lp-alt" appIman type="button" (click)="visita.otraRonda()">
+          Otra ronda
+        </button>
+      </div>
       <ul class="plataformas" aria-label="Plataformas">
         @for (p of plataformas; track p) {
           <li class="chip">{{ p }}</li>

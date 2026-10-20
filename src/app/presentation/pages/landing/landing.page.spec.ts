@@ -16,6 +16,35 @@ describe('LandingPage', () => {
     return fixture.nativeElement as HTMLElement;
   }
 
+  const esperar = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
+  it('lets the visitor spin the wheel and lands on a real number', async () => {
+    const fixture = TestBed.createComponent(LandingPage);
+    await fixture.whenStable();
+    const el = fixture.nativeElement as HTMLElement;
+    (el.querySelector('button.mesa') as HTMLButtonElement).click();
+    await esperar(60);
+    await fixture.whenStable();
+    const texto = el.querySelector('.resultado')?.textContent ?? '';
+    expect(texto).toMatch(/Salió el (\d+), (rojo|negro|verde)\./);
+    const numero = Number(texto.match(/\d+/)?.[0]);
+    expect(numero).toBeGreaterThanOrEqual(0);
+    expect(numero).toBeLessThanOrEqual(36);
+    expect(el.querySelector('.ficha dl')?.textContent).toContain('1 vez');
+  });
+
+  it('"Otra ronda" counts a restart in the visit dossier', async () => {
+    const fixture = TestBed.createComponent(LandingPage);
+    await fixture.whenStable();
+    const el = fixture.nativeElement as HTMLElement;
+    const otra = [...el.querySelectorAll('button')].find((b) =>
+      b.textContent?.includes('Otra ronda'),
+    );
+    otra!.click();
+    await fixture.whenStable();
+    expect(el.querySelector('.ficha dl')?.textContent).toMatch(/Volviste a empezar\s*1 vez/);
+  });
+
   it('explains how to play without counting rounds or naming conditions', async () => {
     const el = await render();
     expect(el.querySelectorAll('.pasos li').length).toBe(5);

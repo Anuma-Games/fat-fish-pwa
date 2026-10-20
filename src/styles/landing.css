@@ -56,6 +56,135 @@ a.btn.lp-alt:active {
   box-shadow: none;
 }
 
+/* Sections are the frame of the scan-line sweep */
+.lp-section {
+  position: relative;
+}
+
+/* Magnetic buttons (Iman directive) */
+.lp-iman {
+  transition: translate 0.25s ease-out;
+}
+a.btn.lp-iman {
+  transition:
+    transform 0.12s ease,
+    box-shadow 0.12s ease,
+    translate 0.25s ease-out;
+}
+
+/* "The lamp follows you" (Foco directive): half light until the element reaches the middle */
+.lp-foco {
+  filter: brightness(0.55) saturate(0.7);
+  transition: filter 0.6s ease;
+}
+.lp-foco.lp-iluminado,
+.lp-foco:hover {
+  filter: none;
+}
+.lp-reveal.lp-foco {
+  transition:
+    opacity 0.7s ease,
+    transform 0.7s cubic-bezier(0.2, 0.7, 0.2, 1),
+    filter 0.6s ease;
+}
+
+/* First time a section reaches the screen: a quick sweep, like an old monitor (VisitDossier) */
+.lp-section.lp-barrido::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
+  background:
+    linear-gradient(
+      transparent,
+      rgb(232 184 80 / 7%) 46%,
+      rgb(242 232 204 / 16%) 50%,
+      rgb(232 184 80 / 7%) 54%,
+      transparent
+    ),
+    repeating-linear-gradient(transparent 0 2px, rgb(0 0 0 / 22%) 2px 3px);
+  background-size:
+    100% 35%,
+    100% 100%;
+  background-repeat: no-repeat, repeat;
+  animation: lp-barrer 0.8s ease-out forwards;
+}
+@keyframes lp-barrer {
+  from {
+    background-position:
+      0 -40%,
+      0 0;
+    opacity: 1;
+  }
+  to {
+    background-position:
+      0 140%,
+      0 0;
+    opacity: 0;
+  }
+}
+
+/* A casino chip as cursor (mouse only) */
+@media (hover: hover) and (pointer: fine) {
+  app-landing-page {
+    cursor:
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='12' r='10' fill='%23882020' stroke='%23f2e8cc' stroke-width='2.5' stroke-dasharray='3.9 2.4'/%3E%3Ccircle cx='12' cy='12' r='5.5' fill='none' stroke='%23f2e8cc'/%3E%3C/svg%3E")
+        12 12,
+      auto;
+  }
+  app-landing-page :is(a, button, summary, [tabindex]) {
+    cursor:
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='12' r='10' fill='%23c08828' stroke='%23f2e8cc' stroke-width='2.5' stroke-dasharray='3.9 2.4'/%3E%3Ccircle cx='12' cy='12' r='5.5' fill='none' stroke='%23f2e8cc'/%3E%3C/svg%3E")
+        12 12,
+      pointer;
+  }
+}
+
+/* The lamp of the hero switching on (used by HeroSection) */
+@keyframes lp-encender {
+  0% {
+    opacity: 0;
+  }
+  12% {
+    opacity: 0.9;
+  }
+  18% {
+    opacity: 0.1;
+  }
+  30% {
+    opacity: 1;
+  }
+  36% {
+    opacity: 0.3;
+  }
+  50%,
+  100% {
+    opacity: 1;
+  }
+}
+@keyframes lp-encender-mesa {
+  0% {
+    filter: brightness(0.15);
+  }
+  12% {
+    filter: brightness(0.9);
+  }
+  18% {
+    filter: brightness(0.2);
+  }
+  30% {
+    filter: brightness(1);
+  }
+  36% {
+    filter: brightness(0.4);
+  }
+  50%,
+  100% {
+    filter: none;
+  }
+}
+
 /* Scroll reveal (Reveal directive): only elements below the first screen wait for it. */
 .lp-reveal {
   transition:
@@ -73,7 +202,9 @@ a.btn.lp-alt:active {
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  .lp-reveal {
+  .lp-reveal,
+  .lp-iman,
+  .lp-foco {
     transition: none;
   }
   a.btn {

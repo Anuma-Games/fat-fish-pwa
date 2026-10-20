@@ -3,6 +3,7 @@
   --papel-linea: rgb(34 30 22 / 9%);
   --tinta: #221e16;
   --tinta-suave: #5b5444;
+  --maquina: 'Courier New', Courier, ui-monospace, monospace;
 }
 .split {
   display: grid;
@@ -36,7 +37,72 @@
 }
 .archivo h3 {
   margin: 0;
-  font-size: 34px;
+  min-height: 1em;
+  font-family: var(--maquina);
+  font-weight: 700;
+  font-size: 30px;
+  line-height: 1;
+}
+
+/* Police file header: mugshot with a height chart, file number and status */
+.cabecera {
+  display: grid;
+  grid-template-columns: 92px minmax(0, 1fr);
+  gap: var(--ff-space-4);
+  align-items: center;
+  padding-bottom: var(--ff-space-3);
+  border-bottom: 2px solid var(--tinta);
+}
+.foto {
+  position: relative;
+  aspect-ratio: 9 / 11;
+  max-width: 100%;
+  overflow: hidden;
+  background-color: #cfc6ae;
+  background-image: repeating-linear-gradient(transparent 0 9px, rgb(34 30 22 / 35%) 9px 10px);
+  border: 2px solid var(--tinta);
+}
+.foto svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  fill: #2b2620;
+}
+.placa {
+  position: absolute;
+  left: 50%;
+  bottom: 6px;
+  translate: -50% 0;
+  padding: 1px 6px;
+  font-family: var(--maquina);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--papel);
+  background: var(--tinta);
+}
+.ident {
+  display: grid;
+  gap: var(--ff-space-1);
+  min-width: 0;
+}
+.estado {
+  justify-self: start;
+  padding: 2px 6px;
+  font-family: var(--maquina);
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--ff-ruby-700);
+  border: 1px solid currentColor;
+}
+.lector {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
 }
 .datos {
   display: grid;
@@ -53,8 +119,10 @@
 }
 .datos dd {
   margin: 0;
-  font-family: var(--ff-font-display);
-  font-size: 36px;
+  min-height: 1em;
+  font-family: var(--maquina);
+  font-weight: 700;
+  font-size: 26px;
   line-height: 1;
   font-variant-numeric: tabular-nums;
 }
