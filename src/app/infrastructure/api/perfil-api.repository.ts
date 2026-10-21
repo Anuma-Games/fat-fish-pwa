@@ -3,10 +3,11 @@ import { Injectable, inject } from '@angular/core';
 import { Observable, map } from 'rxjs';
 import { API_BASE } from '../../core/config/api.config';
 import { Perfil } from '../../domain/models/perfil';
+import { PerfilRepository } from '../../domain/ports/perfil.repository';
 import { PerfilDto } from './dto/partida.dto';
 
 @Injectable({ providedIn: 'root' })
-export class PerfilApiRepository {
+export class PerfilApiRepository implements PerfilRepository {
   private readonly http = inject(HttpClient);
 
   perfil(jugadorId: string): Observable<Perfil> {

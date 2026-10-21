@@ -1,21 +1,23 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Injectable, inject, signal } from '@angular/core';
 import { forkJoin } from 'rxjs';
-import { LOG_PREFIX } from '../../core/config/api.config';
+import { LAB_PLAYER_ID, LOG_PREFIX } from '../../core/config/api.config';
 import { Partida } from '../../domain/models/partida';
 import { Perfil } from '../../domain/models/perfil';
-import { PartidaApiRepository } from '../../infrastructure/api/partida-api.repository';
-import { PerfilApiRepository } from '../../infrastructure/api/perfil-api.repository';
-import { SyncStatusService } from '../../infrastructure/pwa/sync-status.service';
+import { PartidaRepository } from '../../domain/ports/partida.repository';
+import { PerfilRepository } from '../../domain/ports/perfil.repository';
+import { SesionRepository } from '../../domain/ports/sesion.repository';
+import { SincronizacionFacade } from './sincronizacion.facade';
 
 const TAMANO_PAGINA = 10;
 
 /** Expediente: profile with statistics plus the run history, 10 runs per page ("Ver más partidas"). */
 @Injectable({ providedIn: 'root' })
 export class HistorialFacade {
-  private readonly partidasRepo = inject(PartidaApiRepository);
-  private readonly perfilRepo = inject(PerfilApiRepository);
-  private readonly sync = inject(SyncStatusService);
+  private readonly partidasRepo = inject(PartidaRepository);
+  private readonly perfilRepo = inject(PerfilRepository);
+  private readonly sesion = inject(SesionRepository);
+  private readonly sync = inject(SincronizacionFacade);
 
   readonly perfil = signal<Perfil | null>(null);
   readonly partidas = signal<Partida[]>([]);
@@ -30,7 +32,14 @@ export class HistorialFacade {
   private jugadorId = '';
   private pagina = 0;
 
+  /** Player consulted last time; ignores ids saved by older versions of the lab (UUIDs). */
+  idGuardado(): string {
+    const guardado = this.sesion.jugadorId();
+    return guardado && /^\d+$/.test(guardado) ? guardado : LAB_PLAYER_ID;
+  }
+
   buscar(jugadorId: string): void {
+    this.sesion.guardarJugadorId(jugadorId);
     this.jugadorId = jugadorId;
     this.pagina = 0;
     this.cargando.set(true);

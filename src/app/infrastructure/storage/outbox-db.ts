@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { EnvioOutbox } from '../../domain/models/retroalimentacion';
+import { OutboxRepository } from '../../domain/ports/outbox.repository';
 
 const DB_NAME = 'fatfish-pwa';
 const DB_VERSION = 1;
@@ -7,7 +8,7 @@ const STORE = 'outbox';
 
 /** Outbox in IndexedDB: submissions that could not reach the API wait here until there is a connection. */
 @Injectable({ providedIn: 'root' })
-export class OutboxDb {
+export class OutboxDb implements OutboxRepository {
   private dbPromise?: Promise<IDBDatabase>;
 
   guardar(envio: EnvioOutbox): Promise<void> {

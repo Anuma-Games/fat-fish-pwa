@@ -11,9 +11,8 @@ import {
 } from '@angular/router';
 import { SwUpdate } from '@angular/service-worker';
 import { filter, map } from 'rxjs';
+import { SincronizacionFacade } from './application/facades/sincronizacion.facade';
 import { LOG_PREFIX } from './core/config/api.config';
-import { ConnectivityService } from './infrastructure/pwa/connectivity.service';
-import { SyncStatusService } from './infrastructure/pwa/sync-status.service';
 import { PixelIcon } from './presentation/components/pixel-icon/pixel-icon';
 
 @Component({
@@ -23,8 +22,7 @@ import { PixelIcon } from './presentation/components/pixel-icon/pixel-icon';
   templateUrl: './app.html',
 })
 export class App {
-  protected readonly conectividad = inject(ConnectivityService);
-  protected readonly sync = inject(SyncStatusService);
+  protected readonly sincronizacion = inject(SincronizacionFacade);
   protected readonly swActivo = signal(inject(SwUpdate).isEnabled);
   protected readonly menuAbierto = signal(false);
 
@@ -43,7 +41,7 @@ export class App {
   );
 
   protected readonly esHoy = computed(() => {
-    const fecha = this.sync.ultimaSincronizacion();
+    const fecha = this.sincronizacion.ultimaSincronizacion();
     return !!fecha && fecha.toDateString() === new Date().toDateString();
   });
 

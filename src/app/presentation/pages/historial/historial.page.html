@@ -27,7 +27,7 @@
 }
 
 @if (facade.perfil(); as perfil) {
-  @if (!conectividad.enLinea() && facade.generadoEn(); as fecha) {
+  @if (!sincronizacion.enLinea() && facade.generadoEn(); as fecha) {
     <div class="notice offline">
       <app-pixel-icon class="warn" name="sin-conexion" [size]="18" />
       <span>
