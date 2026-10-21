@@ -1,4 +1,4 @@
--- Laboratorio de pruebas de la PWA · 02: datos de prueba
+-- Laboratorio de pruebas de la PWA – 02: datos de prueba
 -- Ejecutar después de 01_limpieza.sql. Todo el dinero es ficticio.
 
 -- id 1 a 5 en este orden.

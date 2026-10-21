@@ -1,4 +1,4 @@
-# Laboratorio de pruebas · PWA + API + PostgreSQL
+# Laboratorio de pruebas – PWA + API + PostgreSQL
 
 Banco de pruebas de la PWA de **Fat Fish** conectada a la API (Spring Boot) y a PostgreSQL 17. Verifica:
 
@@ -11,7 +11,7 @@ Equipo: Anuma Games (IDGS101N). Los datos son **simulados** (scripts de la carpe
 
 ## Tablas que usa el laboratorio
 
-La migración `V1` de la API crea el esquema completo con `id` numérico; el diagrama y la descripción de cada tabla están en la [sección 3 del README de la PWA](../../README.md#3-modelo-de-datos). El laboratorio usa estas:
+La migración `V1` de la API crea el esquema completo con `id` numérico; el diagrama y la descripción de cada tabla están en la [sección 5 del README de la PWA](../../README.md#5-modelo-de-datos). El laboratorio usa estas:
 
 | Tabla | Uso en el laboratorio |
 |---|---|
