@@ -1,4 +1,4 @@
--- Laboratorio de pruebas de la PWA · 03: consultas de verificación
+-- Laboratorio de pruebas de la PWA – 03: consultas de verificación
 -- Ejecutar ANTES y DESPUÉS de usar la PWA para comparar.
 
 -- 1. Cuántos registros hay

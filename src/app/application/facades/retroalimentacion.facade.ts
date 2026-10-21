@@ -3,10 +3,9 @@ import { Injectable, effect, inject, signal } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 import { LOG_PREFIX } from '../../core/config/api.config';
 import { EnvioOutbox, Retroalimentacion } from '../../domain/models/retroalimentacion';
-import { RetroalimentacionApiRepository } from '../../infrastructure/api/retroalimentacion-api.repository';
-import { ConnectivityService } from '../../infrastructure/pwa/connectivity.service';
-import { SyncStatusService } from '../../infrastructure/pwa/sync-status.service';
-import { OutboxDb } from '../../infrastructure/storage/outbox-db';
+import { OutboxRepository } from '../../domain/ports/outbox.repository';
+import { RetroalimentacionRepository } from '../../domain/ports/retroalimentacion.repository';
+import { SincronizacionFacade } from './sincronizacion.facade';
 
 const MAX_INTENTOS = 5;
 
@@ -18,17 +17,16 @@ export type ResultadoEnvio = 'ENVIADO' | 'EN_COLA' | 'RECHAZADO';
  */
 @Injectable({ providedIn: 'root' })
 export class RetroalimentacionFacade {
-  private readonly api = inject(RetroalimentacionApiRepository);
-  private readonly outbox = inject(OutboxDb);
-  private readonly conectividad = inject(ConnectivityService);
-  private readonly sync = inject(SyncStatusService);
+  private readonly api = inject(RetroalimentacionRepository);
+  private readonly outbox = inject(OutboxRepository);
+  private readonly sync = inject(SincronizacionFacade);
 
   readonly envios = signal<EnvioOutbox[]>([]);
   private sincronizando = false;
 
   constructor() {
     effect(() => {
-      if (this.conectividad.enLinea()) {
+      if (this.sync.enLinea()) {
         void this.sincronizar();
       }
     });
@@ -44,7 +42,7 @@ export class RetroalimentacionFacade {
       estado: 'PENDIENTE',
     };
     await this.outbox.guardar(envio);
-    if (!navigator.onLine) {
+    if (!this.sync.enLinea()) {
       console.warn(
         `${LOG_PREFIX} Sin conexión: retroalimentación ${envio.id} guardada en IndexedDB (outbox)`,
       );

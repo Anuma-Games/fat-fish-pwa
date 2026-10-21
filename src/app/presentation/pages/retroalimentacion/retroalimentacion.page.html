@@ -50,7 +50,7 @@
 
     <button class="btn block" type="submit" [disabled]="enviando()">
       <app-pixel-icon name="enviar" [size]="14" />
-      {{ conectividad.enLinea() ? 'Enviar' : 'Guardar para enviar después' }}
+      {{ sincronizacion.enLinea() ? 'Enviar' : 'Guardar para enviar después' }}
     </button>
   </form>
 
@@ -77,7 +77,7 @@
     class="btn ghost"
     type="button"
     (click)="facade.sincronizar()"
-    [disabled]="!conectividad.enLinea()"
+    [disabled]="!sincronizacion.enLinea()"
   >
     Reintentar pendientes
   </button>

@@ -2,8 +2,8 @@ import { DatePipe, DecimalPipe } from '@angular/common';
 import { Component, afterRenderEffect, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HistorialFacade } from '../../../application/facades/historial.facade';
-import { LAB_PLAYER_ID, LOG_PREFIX } from '../../../core/config/api.config';
-import { ConnectivityService } from '../../../infrastructure/pwa/connectivity.service';
+import { SincronizacionFacade } from '../../../application/facades/sincronizacion.facade';
+import { LOG_PREFIX } from '../../../core/config/api.config';
 import { PixelIcon } from '../../components/pixel-icon/pixel-icon';
 
 @Component({
@@ -14,8 +14,8 @@ import { PixelIcon } from '../../components/pixel-icon/pixel-icon';
 })
 export class HistorialPage {
   protected readonly facade = inject(HistorialFacade);
-  protected readonly conectividad = inject(ConnectivityService);
-  protected readonly jugadorId = signal(this.idGuardado());
+  protected readonly sincronizacion = inject(SincronizacionFacade);
+  protected readonly jugadorId = signal(this.facade.idGuardado());
 
   constructor() {
     this.consultar();
@@ -32,13 +32,7 @@ export class HistorialPage {
   }
 
   protected consultar(): void {
-    const id = this.jugadorId().trim().replace(/^#/, '');
-    try {
-      localStorage.setItem('fatfish.jugadorId', id);
-    } catch {
-      // Private mode: the id is not remembered
-    }
-    this.facade.buscar(id);
+    this.facade.buscar(this.jugadorId().trim().replace(/^#/, ''));
   }
 
   protected horas(segundos: number): string {
@@ -49,15 +43,5 @@ export class HistorialPage {
 
   protected minutos(segundos: number): string {
     return `${Math.round(segundos / 60)} min`;
-  }
-
-  /** Ignores ids saved by older versions of the lab (UUIDs). */
-  private idGuardado(): string {
-    try {
-      const guardado = localStorage.getItem('fatfish.jugadorId');
-      return guardado && /^\d+$/.test(guardado) ? guardado : LAB_PLAYER_ID;
-    } catch {
-      return LAB_PLAYER_ID;
-    }
   }
 }

@@ -5,8 +5,8 @@ import {
   ResultadoEnvio,
   RetroalimentacionFacade,
 } from '../../../application/facades/retroalimentacion.facade';
+import { SincronizacionFacade } from '../../../application/facades/sincronizacion.facade';
 import { Categoria, Componente } from '../../../domain/models/retroalimentacion';
-import { ConnectivityService } from '../../../infrastructure/pwa/connectivity.service';
 import { PixelIcon } from '../../components/pixel-icon/pixel-icon';
 
 @Component({
@@ -17,7 +17,7 @@ import { PixelIcon } from '../../components/pixel-icon/pixel-icon';
 })
 export class RetroalimentacionPage {
   protected readonly facade = inject(RetroalimentacionFacade);
-  protected readonly conectividad = inject(ConnectivityService);
+  protected readonly sincronizacion = inject(SincronizacionFacade);
 
   protected readonly categorias: { valor: Categoria; texto: string }[] = [
     { valor: 'ERROR', texto: 'Error' },

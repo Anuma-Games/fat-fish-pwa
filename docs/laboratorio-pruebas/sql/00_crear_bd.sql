@@ -1,4 +1,4 @@
--- Laboratorio de pruebas de la PWA · 00: usuario y bases de datos
+-- Laboratorio de pruebas de la PWA – 00: usuario y bases de datos
 -- Ejecutar con el superusuario postgres. OJO: borra las bases fatfish y fatfish_test si ya existen.
 -- Las tablas las crea la API (Flyway) al arrancar.
 
