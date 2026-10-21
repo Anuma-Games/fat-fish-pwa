@@ -8,7 +8,7 @@
 > **Idioma:** Español
 > **Versión del documento:** 0.4 (propuesta de diseño)
 > **Fuente de requisitos:** *Recuento final (versión 2): PWA de la integradora*, con los cambios acordados por el equipo
-> **Equipo:** Anuma Games (ver [9. Equipo](#9-equipo))
+> **Equipo:** Anuma Games (ver [10. Equipo](#10-equipo))
 
 ---
 
@@ -23,8 +23,9 @@
 5. [Estrategia PWA](#5-estrategia-pwa)
 6. [Experiencia de usuario (UI/UX)](#6-experiencia-de-usuario-uiux)
 7. [Diagramas de la aplicación](#7-diagramas-de-la-aplicación)
-8. [Integración continua y flujo de trabajo](#8-integración-continua-y-flujo-de-trabajo)
-9. [Equipo](#9-equipo)
+8. [Contenedor con Docker](#8-contenedor-con-docker)
+9. [Integración continua y flujo de trabajo](#9-integración-continua-y-flujo-de-trabajo)
+10. [Equipo](#10-equipo)
 
 ---
 
@@ -93,7 +94,7 @@ La PWA cierra el ciclo **jugar → registrar → reflexionar → opinar**:
 | Service Worker, caché y funcionamiento sin conexión | [5. Estrategia PWA](#5-estrategia-pwa) |
 | Interfaz modular (JS/CSS) y adaptativa | [6. Experiencia de usuario](#6-experiencia-de-usuario-uiux) |
 | Diagramas de la aplicación | [2.1](#21-vista-general), [3](#3-modelo-de-datos), [5.5](#55-cola-de-envío-outbox) y [7](#7-diagramas-de-la-aplicación) |
-| Documentación en un `.md` con los integrantes | Este README; [9. Equipo](#9-equipo) |
+| Documentación en un `.md` con los integrantes | Este README; [10. Equipo](#10-equipo) |
 
 ---
 
@@ -735,12 +736,49 @@ Cómo se instala la PWA, cómo atiende sin red y cómo se actualiza.
 
 ---
 
-## 8. Integración continua y flujo de trabajo
+## 8. Contenedor con Docker
+
+La PWA se empaqueta en una imagen con un [`Dockerfile`](Dockerfile) de dos etapas:
+
+1. **Compilación** (`node:24-alpine`): `npm ci` y `ng build`.
+2. **Servidor** (`nginxinc/nginx-unprivileged`, sin root, puerto 8080): Nginx sirve el build y reenvía `/api` a la API, así la PWA y la API quedan en el mismo origen (sin CORS) y el service worker funciona. La configuración está en [`docker/nginx/default.conf.template`](docker/nginx/default.conf.template): ruta de respaldo de la SPA, sin caché para `index.html`, `ngsw.json` y `ngsw-worker.js`, y caché larga para los archivos con hash.
+
+| Variable | Valor por defecto | Uso |
+|---|---|---|
+| `API_URL` | `http://api:8080` | Dirección de la API a la que Nginx reenvía `/api` |
+| `API_KEY` | vacía | Se envía a la API como cabecera `X-Api-Key` desde Nginx, si la API la pide; nunca llega al navegador |
+
+**Todo en local (PostgreSQL + API + PWA)** con [`docker-compose.yml`](docker-compose.yml). Requiere `fat-fish-api` clonado junto a este repositorio:
+
+```bash
+docker compose up -d --build
+```
+
+- PWA: <http://localhost:8080> · Swagger de la API: <http://localhost:8081/swagger-ui.html>
+- Datos de prueba (después de que la API haya creado las tablas):
+
+  ```bash
+  docker compose exec -T postgres psql -U fatfish -d fatfish < docs/laboratorio-pruebas/sql/02_carga.sql
+  ```
+
+- Detener: `docker compose down` (agrega `-v` para borrar también la base de datos local).
+
+**Solo la PWA, conectada a la API publicada:**
+
+```bash
+docker build -t fat-fish-pwa .
+docker run -d -p 8080:8080 -e API_URL=https://<url-de-la-api> -e API_KEY=<llave, si aplica> fat-fish-pwa
+```
+
+---
+
+## 9. Integración continua y flujo de trabajo
 
 El workflow [`.github/workflows/ci.yml`](.github/workflows/ci.yml) corre en cada push a `main` y `develop` y en cada Pull Request hacia esas ramas:
 
 1. **Analizar y probar:** formato del código (`npm run format:check`) y pruebas (`ng test`).
 2. **Compilar** (solo si el paso anterior pasa): `ng build` y sube el resultado como artefacto `fat-fish-pwa-dist`.
+3. **Construir imagen Docker** (solo si el paso anterior pasa): valida el `Dockerfile` y publica en el *Summary* el tamaño de la imagen.
 
 - Ramas: `main` (producción), `develop` (integración) y `feature/FF-<ticket>-<descripcion>`; ambas ramas principales están protegidas.
 - Todo cambio entra por Pull Request con una aprobación y el CI en verde. `CODEOWNERS` asigna revisores y la plantilla de PR pide el ticket de Jira.
@@ -748,7 +786,7 @@ El workflow [`.github/workflows/ci.yml`](.github/workflows/ci.yml) corre en cada
 
 ---
 
-## 9. Equipo
+## 10. Equipo
 
 **Anuma Games**, Proyecto integrador, grupo IDGS101N, Universidad Tecnológica de Chihuahua.
 
