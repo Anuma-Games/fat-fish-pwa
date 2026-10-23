@@ -11,6 +11,7 @@ import { ComodinesSection } from './sections/comodines/comodines.section';
 import { ExpedienteSection } from './sections/expediente/expediente.section';
 import { HeroSection } from './sections/hero/hero.section';
 import { MensajeSection } from './sections/mensaje/mensaje.section';
+import { MenuLateral } from './sections/menu-lateral/menu-lateral';
 import { VisitHud } from './sections/visit-hud/visit-hud';
 import { SonidoMesa } from './sonido-mesa';
 import { VisitDossier } from './visit-dossier';
@@ -35,6 +36,7 @@ import { VisitDossier } from './visit-dossier';
     CierreSection,
     VisitHud,
     CrupierVoz,
+    MenuLateral,
   ],
   providers: [VisitDossier, Crupier, SonidoMesa],
   templateUrl: './landing.page.html',

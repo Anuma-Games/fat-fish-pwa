@@ -1,9 +1,11 @@
-/* Deliberately plain: no pixel fonts, no felt, no gold. */
+/* Deliberately plain: the room with the lamp off. Same dark palette as the page, no pixel fonts,
+   no felt and almost no gold, so the message stands on its own. */
 .mensaje {
   display: block;
   padding-block: 96px;
-  color: #1b2324;
-  background: #d9dcdb;
+  color: var(--ff-cream-100);
+  background: #060a0b;
+  border-block: 1px solid var(--ff-line);
   scroll-margin-top: 56px;
 }
 .cuerpo {
@@ -15,7 +17,7 @@
   font-weight: 600;
   letter-spacing: 0.04em;
   text-transform: uppercase;
-  opacity: 0.7;
+  color: var(--ff-fog-400);
 }
 .tesis {
   margin: 0;
@@ -30,16 +32,17 @@
   margin: 0;
   max-width: 60ch;
   font-size: 18px;
+  color: var(--ff-fog-400);
 }
 .ayuda {
   margin: 0;
   max-width: 60ch;
   padding-top: var(--ff-space-4);
-  border-top: 1px solid rgb(27 35 36 / 25%);
+  border-top: 1px solid var(--ff-line);
 }
 .telefono {
   font-weight: 600;
-  color: inherit;
+  color: var(--ff-gold-400);
   white-space: nowrap;
   font-variant-numeric: tabular-nums;
 }

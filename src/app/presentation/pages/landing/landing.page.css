@@ -36,8 +36,7 @@
   position: sticky;
   top: 0;
   z-index: 30;
-  background: color-mix(in srgb, var(--ff-felt-800) 92%, transparent);
-  backdrop-filter: blur(6px);
+  background: color-mix(in srgb, var(--ff-felt-800) 97%, transparent);
   border-bottom: 2px solid var(--ff-gold-600);
 }
 .nav-row {
@@ -56,6 +55,9 @@
   text-decoration: none;
   text-transform: uppercase;
 }
+.lp-brand span {
+  white-space: nowrap;
+}
 .lp-brand img {
   border-radius: 50%;
 }
@@ -71,6 +73,7 @@
 .foot-links a {
   color: var(--ff-fog-400);
   text-decoration: none;
+  white-space: nowrap;
 }
 .lp-links a:hover,
 .foot-links a:hover {
@@ -78,7 +81,7 @@
 }
 /* Optional room sound */
 .sonido {
-  display: inline-flex;
+  display: none;
   align-items: center;
   gap: var(--ff-space-2);
   min-height: 40px;
@@ -119,7 +122,7 @@
   display: none;
 }
 .nav-cta {
-  margin-left: 0;
+  margin-left: auto;
   min-height: 40px;
   font-size: 18px;
   padding-inline: var(--ff-space-3);
@@ -244,11 +247,29 @@ details[open]::details-content {
   text-transform: uppercase;
 }
 
-@media (min-width: 768px) {
+/* Very narrow phones: the nav keeps the brand on one line */
+@media (max-width: 380px) {
+  .nav-row {
+    gap: var(--ff-space-2);
+  }
+  .lp-brand {
+    font-size: 20px;
+  }
+  .nav-cta {
+    font-size: 16px;
+    padding-inline: var(--ff-space-2);
+  }
+}
+/* Desktop (same breakpoint as the PWA sidebar): section links in the bar, no side menu */
+@media (min-width: 1024px) {
   .lp-links {
     display: flex;
   }
   .sonido {
+    display: inline-flex;
+    margin-left: 0;
+  }
+  .nav-cta {
     margin-left: 0;
   }
   .sonido-texto {

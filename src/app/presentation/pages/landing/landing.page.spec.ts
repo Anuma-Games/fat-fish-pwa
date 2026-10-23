@@ -45,6 +45,23 @@ describe('LandingPage', () => {
     expect(el.querySelector('.ficha dl')?.textContent).toMatch(/Volviste a empezar\s*1 vez/);
   });
 
+  it('opens the side menu from the hamburger and closes it with Escape', async () => {
+    const fixture = TestBed.createComponent(LandingPage);
+    await fixture.whenStable();
+    const el = fixture.nativeElement as HTMLElement;
+    const boton = el.querySelector('.hamburguesa') as HTMLButtonElement;
+    const panel = el.querySelector('#lp-menu') as HTMLElement;
+    expect(panel.hasAttribute('inert')).toBe(true);
+    boton.click();
+    await fixture.whenStable();
+    expect(boton.getAttribute('aria-expanded')).toBe('true');
+    expect(panel.hasAttribute('inert')).toBe(false);
+    document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
+    await fixture.whenStable();
+    expect(boton.getAttribute('aria-expanded')).toBe('false');
+    expect(panel.hasAttribute('inert')).toBe(true);
+  });
+
   it('explains how to play without counting rounds or naming conditions', async () => {
     const el = await render();
     expect(el.querySelectorAll('.pasos li').length).toBe(5);
