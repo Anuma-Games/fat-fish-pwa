@@ -1,0 +1,222 @@
+<section class="hero" id="inicio" data-seccion="inicio" [class.encendiendo]="encendiendo()">
+  <img
+    class="ambiente"
+    src="img/landing/hero-mesa.jpg"
+    alt=""
+    width="1600"
+    height="862"
+    fetchpriority="high"
+  />
+  <div class="penumbra" aria-hidden="true"></div>
+
+  <!-- Lamp and its beam: they span the title and the table, so the light ends on the wheel -->
+  <div class="luz" aria-hidden="true">
+    <div class="lampara">
+      <span class="cable"></span>
+      <span class="pantalla"></span>
+      <span class="foco"></span>
+    </div>
+    <div class="haz">
+      @for (p of polvo; track $index) {
+        <i
+          [style.left.%]="p.x"
+          [style.top.%]="p.y"
+          [style.width.px]="p.tam"
+          [style.height.px]="p.tam"
+          [style.animation-delay.s]="p.retraso"
+          [style.animation-duration.s]="p.duracion"
+        ></i>
+      }
+    </div>
+  </div>
+
+  <div class="lp-wrap titulo">
+    <span class="eyebrow lp-gold">{{ hero.eyebrow }}</span>
+    <h1 class="crt">{{ hero.titulo }}</h1>
+    <p class="claim">{{ hero.claim }}</p>
+  </div>
+
+  <button
+    type="button"
+    class="mesa"
+    [class.girando]="girando()"
+    aria-label="Girar la ruleta"
+    [attr.aria-disabled]="girando()"
+    (click)="alClic()"
+    (pointerdown)="arrastreInicio($event)"
+    (pointerup)="arrastreFin($event)"
+  >
+    <!-- The Crupier, on the other side of the table, almost lost in the dark -->
+    <svg class="crupier" viewBox="0 0 200 170" shape-rendering="crispEdges" aria-hidden="true">
+      <defs>
+        <linearGradient id="ff-bolsa" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#a8814f" />
+          <stop offset="1" stop-color="#76552f" />
+        </linearGradient>
+        <linearGradient id="ff-traje" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#2b2b2e" />
+          <stop offset="1" stop-color="#0d0d0f" />
+        </linearGradient>
+      </defs>
+      <!-- Black suit, white shirt, black tie and a pocket square -->
+      <path
+        d="M38 170 42 112c4-14 16-18 28-20l18-4 12 8 12-8 18 4c12 2 24 6 28 20l4 58Z"
+        fill="url(#ff-traje)"
+      />
+      <path d="M60 112v58M140 112v58" stroke="#08080a" stroke-width="2" />
+      <path d="M88 88 100 128 112 88 100 93Z" fill="#b7b1a6" />
+      <path d="M88 88 83 99 96 122 100 128ZM112 88 117 99 104 122 100 128Z" fill="#232326" />
+      <path d="M96 92h8l-2 5h-4ZM98 97h4l3 37-5 6-5-6Z" fill="#09090a" />
+      <path d="M120 112l9-2 1 3-9 2Z" fill="#d6d0c4" />
+      <!-- Paper bag with the drawn face -->
+      <g class="bolsa">
+        <path d="M68 8h72l-4 6H64Z" fill="#2a1a0c" />
+        <path d="M136 14l4-6 1 68-3 4Z" fill="#5c4226" />
+        <path
+          d="M64 14h72l2 66-5 8-5-8-5 8-5-8-5 8-5-8-5 8-5-8-5 8-5-8-5 8-5-8-5 8-5-8-6 6Z"
+          fill="url(#ff-bolsa)"
+        />
+        <ellipse cx="78" cy="56" rx="9" ry="6" fill="#5a3f20" opacity="0.25" />
+        <ellipse cx="118" cy="30" rx="10" ry="5" fill="#5a3f20" opacity="0.2" />
+        <g fill="#140f07">
+          <rect x="82" y="33" width="4" height="16" />
+          <rect x="79.5" y="31" width="9" height="4" rx="1.5" />
+          <rect x="79.5" y="47" width="9" height="4" rx="1.5" />
+          <rect x="114" y="33" width="4" height="16" />
+          <rect x="111.5" y="31" width="9" height="4" rx="1.5" />
+          <rect x="111.5" y="47" width="9" height="4" rx="1.5" />
+        </g>
+        <path
+          d="M80 60q20 16 40 0"
+          fill="none"
+          stroke="#140f07"
+          stroke-width="2.6"
+          stroke-linecap="round"
+          shape-rendering="geometricPrecision"
+        />
+      </g>
+    </svg>
+    <div class="plano" #plano>
+      <!-- Bowl and ball track: they do not turn -->
+      <svg class="cuenco" viewBox="-130 -130 260 260" aria-hidden="true">
+        <defs>
+          <radialGradient id="ff-madera" r="0.5">
+            <stop offset="0.78" stop-color="#2a150a" />
+            <stop offset="0.9" stop-color="#5a3216" />
+            <stop offset="0.97" stop-color="#3a1e0c" />
+            <stop offset="1" stop-color="#140904" />
+          </radialGradient>
+          <radialGradient id="ff-pista" r="0.5">
+            <stop offset="0.8" stop-color="#0c0705" />
+            <stop offset="0.9" stop-color="#2b1a10" />
+            <stop offset="1" stop-color="#120a06" />
+          </radialGradient>
+        </defs>
+        <circle r="129" fill="url(#ff-madera)" />
+        <circle r="121" fill="none" class="filo" stroke-width="2.4" />
+        <circle r="119" fill="url(#ff-pista)" />
+        <circle r="104" fill="none" class="filo" stroke-width="1.2" />
+        @for (g of rombos; track g) {
+          <path
+            d="M 0 -116 L 3 -111 L 0 -106 L -3 -111 Z"
+            class="rombo"
+            [attr.transform]="'rotate(' + g + ')'"
+          />
+        }
+      </svg>
+
+      <!-- Wheel head: pockets, numbers, cone and turret. It turns. -->
+      <div class="giro-lento">
+        <div class="giro-jugado">
+          <div class="cabeza">
+            <svg class="rueda" viewBox="-130 -130 260 260" aria-hidden="true">
+              <defs>
+                <radialGradient id="ff-cono" r="0.5">
+                  <stop offset="0" stop-color="#6b4120" />
+                  <stop offset="0.7" stop-color="#3b2010" />
+                  <stop offset="1" stop-color="#1c0e06" />
+                </radialGradient>
+                <radialGradient id="ff-hondo" r="0.5">
+                  <stop offset="0.55" stop-color="#000" stop-opacity="0.65" />
+                  <stop offset="0.8" stop-color="#000" stop-opacity="0.15" />
+                  <stop offset="0.86" stop-color="#000" stop-opacity="0" />
+                </radialGradient>
+                <linearGradient id="ff-oro" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0" stop-color="#f6d98a" />
+                  <stop offset="0.5" stop-color="#c08828" />
+                  <stop offset="1" stop-color="#7a5212" />
+                </linearGradient>
+              </defs>
+              <circle r="104" fill="#1a0d06" />
+              @for (c of casillas; track c.numero) {
+                <path [attr.d]="c.bolsa" [class]="'bolsa ' + c.color" />
+                <path [attr.d]="c.banda" [class]="'banda ' + c.color" />
+              }
+              <circle r="88" fill="url(#ff-hondo)" />
+              @for (c of casillas; track c.numero) {
+                <path [attr.d]="c.separador" class="traste" />
+                <text
+                  [attr.x]="c.x"
+                  [attr.y]="c.y"
+                  [attr.transform]="'rotate(' + c.giro + ' ' + c.x + ' ' + c.y + ')'"
+                  text-anchor="middle"
+                  dominant-baseline="central"
+                >
+                  {{ c.numero }}
+                </text>
+              }
+              <circle r="102" fill="none" stroke="url(#ff-oro)" stroke-width="1.4" />
+              <circle r="88" fill="none" stroke="url(#ff-oro)" stroke-width="0.8" />
+              <circle r="60" fill="url(#ff-cono)" stroke="url(#ff-oro)" stroke-width="1.6" />
+              @for (g of radiosCono; track g) {
+                <path d="M 0 -50 L 0 -59" class="radio" [attr.transform]="'rotate(' + g + ')'" />
+              }
+            </svg>
+            <!-- The ball lives in the frame of the wheel head: it runs the other way and lands in a pocket -->
+            <div class="orbita"><span class="bola"></span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Center cap with the badge: it stays upright while the wheel turns around it -->
+      <svg class="tapa" viewBox="-130 -130 260 260" aria-hidden="true">
+        <circle r="49" fill="#0b1416" stroke="url(#ff-oro)" stroke-width="2.4" />
+        <image
+          style="image-rendering: pixelated"
+          href="img/landing/insignia-ruleta.png"
+          x="-46"
+          y="-46"
+          width="92"
+          height="92"
+        />
+      </svg>
+
+      <!-- Still light over the turning wheel -->
+      <span class="brillo"></span>
+    </div>
+    <span class="sombra"></span>
+  </button>
+
+  <div class="lp-wrap pie">
+    <p class="resultado" aria-live="polite">
+      @if (girando()) {
+        La bola corre…
+      } @else if (resultado(); as r) {
+        Salió el <strong>{{ r.numero }}</strong
+        >, {{ r.color }}.
+      } @else {
+        {{ ruleta.pista }}
+      }
+    </p>
+    <p class="lead">{{ hero.texto }}</p>
+    <div class="actions">
+      <a class="btn" appIman [href]="cta.demo">Jugar la demo</a>
+      <a class="btn lp-alt" appIman [routerLink]="cta.expediente">Ver un expediente</a>
+    </div>
+  </div>
+
+  <a class="scroll-hint" href="#como-se-juega" aria-label="Bajar a cómo se juega">
+    <span class="eyebrow">Cómo se juega</span>
+    <span class="flecha" aria-hidden="true"></span>
+  </a>
+</section>

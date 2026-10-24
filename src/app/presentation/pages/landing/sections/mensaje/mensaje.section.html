@@ -1,0 +1,13 @@
+<section class="mensaje" id="mensaje" data-seccion="mensaje">
+  <div class="lp-wrap cuerpo" appReveal>
+    <span class="etiqueta">Por qué lo hacemos</span>
+    <p class="tesis">{{ mensaje.titulo }}</p>
+    <p class="texto">{{ mensaje.texto }}</p>
+    <p class="ayuda">
+      {{ mensaje.ayuda }}
+      <a class="telefono" [href]="'tel:' + mensaje.telefono.replaceAll(' ', '')">{{
+        mensaje.telefono
+      }}</a>
+    </p>
+  </div>
+</section>

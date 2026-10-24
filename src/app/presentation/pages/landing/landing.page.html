@@ -1,0 +1,89 @@
+<a class="skip" href="#contenido">Saltar al contenido</a>
+
+<header class="lp-nav">
+  <div class="lp-wrap nav-row">
+    <app-landing-menu-lateral />
+    <a class="lp-brand" href="#inicio">
+      <img src="icons/insignia-96.png" alt="" width="32" height="32" />
+      <span>Fat Fish</span>
+    </a>
+    <nav class="lp-links" aria-label="Secciones">
+      <a href="#como-se-juega">Cómo se juega</a>
+      <a href="#comodines">Comodines</a>
+      <a href="#expediente">Expediente</a>
+      <a href="#faq">Preguntas</a>
+    </nav>
+    <button
+      class="sonido"
+      type="button"
+      [attr.aria-pressed]="sonido.activo()"
+      (click)="sonido.alternar()"
+    >
+      <span class="bocina" [class.on]="sonido.activo()" aria-hidden="true"></span>
+      <span class="sonido-texto">Sonido {{ sonido.activo() ? 'sí' : 'no' }}</span>
+    </button>
+    <a class="btn nav-cta" [href]="cta.demo">Jugar la demo</a>
+  </div>
+  <span class="progreso" aria-hidden="true"></span>
+</header>
+
+<main id="contenido">
+  <app-landing-hero />
+  <app-landing-como-se-juega />
+  <app-landing-comodines />
+  <app-landing-expediente />
+  <app-landing-cierre />
+
+  <section class="lp-section creditos" id="equipo" data-seccion="equipo">
+    <div class="lp-wrap">
+      <header class="lp-head" appReveal>
+        <span class="eyebrow">Créditos</span>
+        <h2>Anuma Games</h2>
+        <p class="muted">
+          Proyecto integrador del grupo IDGS101N de la Universidad Tecnológica de Chihuahua.
+        </p>
+      </header>
+      <ul class="equipo">
+        @for (n of equipo; track n) {
+          <li appReveal>{{ n }}</li>
+        }
+      </ul>
+    </div>
+  </section>
+
+  <app-landing-mensaje />
+
+  <section class="lp-section faq" id="faq" data-seccion="faq">
+    <div class="lp-wrap">
+      <header class="lp-head" appReveal>
+        <span class="eyebrow">Preguntas frecuentes</span>
+        <h2>Lo que suelen preguntarnos</h2>
+      </header>
+      <div class="preguntas">
+        @for (p of preguntas; track p.titulo) {
+          <details>
+            <summary>{{ p.titulo }}</summary>
+            <p class="muted">{{ p.respuesta }}</p>
+          </details>
+        }
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="lp-footer">
+  <div class="lp-wrap footer-row">
+    <span class="foot-brand">
+      <img src="icons/insignia-96.png" alt="" width="24" height="24" />
+      Fat Fish · Anuma Games
+    </span>
+    <nav class="foot-links" aria-label="Enlaces del pie">
+      <a [routerLink]="cta.expediente">Expediente</a>
+      <a [routerLink]="cta.opinion">Enviar opinión</a>
+      <a href="#faq">Preguntas</a>
+    </nav>
+  </div>
+</footer>
+
+<app-landing-visit-hud />
+<app-landing-crupier-voz />
