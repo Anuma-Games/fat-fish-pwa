@@ -7,6 +7,12 @@ export interface Retroalimentacion {
   mensaje: string;
 }
 
+/** What the API returns after storing a submission. */
+export interface RespuestaEnvio {
+  id: string;
+  creadaEn: Date;
+}
+
 /** State of a submission stored in the outbox (IndexedDB). */
 export type EstadoEnvio = 'PENDIENTE' | 'ENVIANDO' | 'ENVIADO' | 'FALLIDO';
 

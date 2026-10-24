@@ -7,13 +7,13 @@ flowchart TD
     ACCESO -->|"un resultado"| PERFIL
     LISTA -->|"elige uno"| PERFIL
 
-    PERFIL["Lo que el casino sabe de ti<br/>/perfil · consulta"] --> HIST["Historial<br/>botón Ver más partidas"]
+    PERFIL["Lo que el casino sabe de ti<br/>/perfil (consulta)"] --> HIST["Historial<br/>botón Ver más partidas"]
 
     MENU{{"Menú lateral<br/>(botón en teléfono)"}}
     MENU --> PERFIL
-    MENU --> RANK["Ranking mundial<br/>/ranking · consulta<br/>10 por página, hasta el 50"]
+    MENU --> RANK["Ranking mundial<br/>/ranking (consulta)<br/>10 por página, hasta el 50"]
     MENU --> OPI["Opinión"]
-    MENU -.->|deseable| WIKI["Wiki<br/>/wiki · consulta"]
+    MENU -.->|deseable| WIKI["Wiki<br/>/wiki (consulta)"]
 
-    OPI --> RETRO["Retroalimentación<br/>/opinion/retroalimentacion · captura"]
-    OPI --> ENC["Encuesta anónima<br/>/opinion/encuesta · captura"]
+    OPI --> RETRO["Retroalimentación<br/>/opinion/retroalimentacion (captura)"]
+    OPI --> ENC["Encuesta anónima<br/>/opinion/encuesta (captura)"]

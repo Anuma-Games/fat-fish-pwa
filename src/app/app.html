@@ -49,12 +49,12 @@
         </a>
       </nav>
       <div class="sync small">
-        @if (!conectividad.enLinea()) {
+        @if (!sincronizacion.enLinea()) {
           <span class="chip fallido">Sin conexión</span>
         }
         <p class="muted">
           Última sincronización:
-          @if (sync.ultimaSincronizacion(); as fecha) {
+          @if (sincronizacion.ultimaSincronizacion(); as fecha) {
             {{ esHoy() ? 'hoy, ' + (fecha | date: 'HH:mm') : (fecha | date: 'd MMM, HH:mm') }}
           } @else {
             todavía no

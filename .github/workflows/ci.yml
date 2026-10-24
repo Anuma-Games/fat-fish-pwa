@@ -64,3 +64,26 @@ jobs:
           name: fat-fish-pwa-dist
           path: dist/
           if-no-files-found: error
+
+  docker:
+    name: Construir imagen Docker
+    needs: build
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      # Validates the multi-stage Dockerfile; the image is not published yet
+      - name: Construir imagen
+        run: docker build --tag fat-fish-pwa:${{ github.sha }} .
+
+      - name: Resumen de la imagen
+        run: |
+          {
+            echo "## Imagen Docker"
+            echo
+            echo "| Imagen | Tamaño |"
+            echo "|---|---|"
+            docker image ls fat-fish-pwa:${{ github.sha }} --format '| `{{.Repository}}:{{.Tag}}` | {{.Size}} |'
+          } >> "$GITHUB_STEP_SUMMARY"

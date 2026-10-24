@@ -9,8 +9,8 @@ flowchart LR
         APP --> LS
     end
 
-    subgraph CR["Cloud Run · contenedor único"]
+    subgraph CR["Cloud Run: contenedor único"]
         SB["Spring Boot<br/>sirve la PWA (estáticos) y /api/pwa/..."]
     end
 
-    SW -->|"HTTPS · mismo origen"| SB
+    SW -->|"HTTPS, mismo origen"| SB

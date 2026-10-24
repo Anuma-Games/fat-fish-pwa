@@ -13,8 +13,8 @@ flowchart LR
     end
 
     subgraph GCP["Google Cloud"]
-        subgraph CR["Cloud Run · contenedor único"]
-            BE["Spring Boot<br/>/api/juego/** · /api/pwa/**<br/>+ archivos de la PWA"]
+        subgraph CR["Cloud Run: contenedor único"]
+            BE["Spring Boot<br/>/api/juego/**<br/>/api/pwa/**<br/>+ archivos de la PWA"]
         end
         DB[("Cloud SQL<br/>PostgreSQL")]
     end
