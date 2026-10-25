@@ -1,0 +1,32 @@
+<aside class="hud" aria-label="Expediente de tu visita">
+  <button
+    class="toggle"
+    type="button"
+    [attr.aria-expanded]="abierto()"
+    aria-controls="hud-datos"
+    (click)="abierto.set(!abierto())"
+  >
+    <span><span class="punto" aria-hidden="true"></span>Tu expediente · {{ visita.tiempo() }}</span>
+    <span aria-hidden="true">{{ abierto() ? '−' : '+' }}</span>
+  </button>
+  @if (abierto()) {
+    <dl id="hud-datos">
+      <dt>Secciones vistas</dt>
+      <dd>{{ visita.seccionesVistas() }} / {{ visita.seccionesTotales() }}</dd>
+      <dt>Giros de ruleta</dt>
+      <dd>{{ visita.girosRuleta() }}</dd>
+      <dt>Clics</dt>
+      <dd>{{ visita.clics() }}</dd>
+      <dt>Mayor duda</dt>
+      <dd>
+        @if (visita.mayorDuda(); as duda) {
+          {{ duda | number: '1.1-1' }} s
+        } @else {
+          —
+        }
+      </dd>
+      <dt>Recorrido</dt>
+      <dd>{{ visita.metros() | number: '1.1-1' }} m</dd>
+    </dl>
+  }
+</aside>

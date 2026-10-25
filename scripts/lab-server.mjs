@@ -21,6 +21,8 @@ const TYPES = {
   '.ico': 'image/x-icon',
   '.png': 'image/png',
   '.svg': 'image/svg+xml',
+  '.jpg': 'image/jpeg',
+  '.woff2': 'font/woff2',
 };
 // Control files must never be cached by the browser, so new versions of the app arrive.
 const NO_CACHE = new Set(['/index.html', '/ngsw.json', '/ngsw-worker.js', '/manifest.webmanifest']);

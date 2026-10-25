@@ -1,0 +1,64 @@
+<button
+  #boton
+  class="hamburguesa"
+  type="button"
+  aria-label="Abrir el menú"
+  aria-controls="lp-menu"
+  [attr.aria-expanded]="abierto()"
+  (click)="abrir()"
+>
+  <app-pixel-icon name="menu" [size]="20" />
+</button>
+
+<div class="velo" [class.abierto]="abierto()" (click)="cerrar()" aria-hidden="true"></div>
+
+<aside
+  id="lp-menu"
+  class="panel"
+  [class.abierto]="abierto()"
+  [attr.inert]="abierto() ? null : ''"
+  aria-label="Menú"
+  (keydown.tab)="atrapar($event)"
+  (keydown.shift.tab)="atrapar($event)"
+>
+  <div class="cabecera">
+    <img src="icons/insignia-96.png" alt="" width="36" height="36" />
+    <span class="marca">Fat Fish</span>
+    <button
+      #cerrarBoton
+      class="cerrar"
+      type="button"
+      aria-label="Cerrar el menú"
+      (click)="cerrar()"
+    >
+      <app-pixel-icon name="cerrar" [size]="18" />
+    </button>
+  </div>
+
+  <nav class="enlaces" aria-label="Secciones" (click)="cerrar()">
+    <a href="#como-se-juega"><app-pixel-icon name="ruleta" [size]="16" /> Cómo se juega</a>
+    <a href="#comodines"><app-pixel-icon name="comodin" [size]="16" /> Comodines</a>
+    <a href="#expediente"><app-pixel-icon name="expediente" [size]="16" /> Expediente</a>
+    <a href="#faq"><app-pixel-icon name="alerta" [size]="16" /> Preguntas</a>
+  </nav>
+
+  <span class="grupo">En la PWA</span>
+  <nav class="enlaces" aria-label="PWA" (click)="cerrar()">
+    <a [routerLink]="cta.expediente"
+      ><app-pixel-icon name="buscar" [size]="16" /> Ver un expediente</a
+    >
+    <a [routerLink]="cta.opinion"><app-pixel-icon name="opinion" [size]="16" /> Enviar opinión</a>
+  </nav>
+
+  <div class="pie">
+    <button
+      class="sonido"
+      type="button"
+      [attr.aria-pressed]="sonido.activo()"
+      (click)="sonido.alternar()"
+    >
+      Sonido de la mesa: {{ sonido.activo() ? 'sí' : 'no' }}
+    </button>
+    <a class="btn" [href]="cta.demo" (click)="cerrar()">Jugar la demo</a>
+  </div>
+</aside>

@@ -1,0 +1,42 @@
+<section class="lp-section comodines" id="comodines" data-seccion="comodines">
+  <!-- Tall scene: while it scrolls by, the stage stays on screen and the cards turn over -->
+  <div class="escena" #escena>
+    <div class="escenario">
+      <header class="lp-wrap lp-head">
+        <span class="eyebrow">Entre rondas</span>
+        <h2>Cuatro comodines y una tienda</h2>
+        <p class="muted">
+          Se compran con dinero del juego desde el final de la ronda 1 y suben de nivel con las
+          copias. Los puntos nunca se convierten en dinero.
+        </p>
+      </header>
+
+      <div class="mazo">
+        @for (c of comodines; track c.titulo; let i = $index) {
+          <article
+            class="carta3d"
+            #carta
+            (pointermove)="apuntar($event, i)"
+            (pointerleave)="soltar(i)"
+          >
+            <div class="cara frente">
+              <span class="categoria">{{ c.categoria }}</span>
+              <span class="glifo" aria-hidden="true">{{ c.glifo }}</span>
+              <div>
+                <h3>{{ c.titulo }}</h3>
+                <p class="small muted">{{ c.texto }}</p>
+              </div>
+            </div>
+            <!-- Edge of the card: thin layers between the two faces -->
+            @for (z of laminas; track z) {
+              <span class="lamina" [style.--z.px]="z" aria-hidden="true"></span>
+            }
+            <div class="cara dorso" aria-hidden="true">
+              <img src="icons/insignia-96.png" alt="" width="96" height="96" />
+            </div>
+          </article>
+        }
+      </div>
+    </div>
+  </div>
+</section>

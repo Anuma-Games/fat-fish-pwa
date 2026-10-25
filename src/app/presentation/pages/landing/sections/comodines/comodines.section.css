@@ -1,0 +1,158 @@
+.comodines {
+  background: var(--ff-bg-800);
+  border-block: 1px solid var(--ff-line);
+}
+
+/* At rest (no JavaScript or reduced motion): a grid of cards, face up */
+.mazo {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: var(--ff-space-4);
+  max-width: var(--ff-content-max);
+  margin-inline: auto;
+  padding-inline: var(--ff-space-4);
+}
+.carta3d {
+  position: relative;
+  aspect-ratio: 5 / 7;
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+.cara,
+.lamina {
+  position: absolute;
+  inset: 0;
+  border-radius: 12px;
+  backface-visibility: hidden;
+}
+.frente {
+  display: grid;
+  align-content: space-between;
+  gap: var(--ff-space-3);
+  padding: var(--ff-space-4);
+  overflow: hidden;
+  background: linear-gradient(160deg, var(--ff-felt-700), var(--ff-felt-800) 60%, #08241a);
+  border: 2px solid var(--ff-gold-600);
+  transform: translateZ(1.6px);
+}
+.lamina {
+  background: #7a5212;
+  backface-visibility: visible;
+  transform: translateZ(var(--z));
+}
+/* Back of the card: lattice of the casino and the badge */
+.dorso {
+  display: grid;
+  place-items: center;
+  background:
+    repeating-linear-gradient(45deg, rgb(232 184 80 / 14%) 0 2px, transparent 2px 14px),
+    repeating-linear-gradient(-45deg, rgb(232 184 80 / 14%) 0 2px, transparent 2px 14px),
+    radial-gradient(circle, #105030, #062016 75%);
+  border: 2px solid var(--ff-gold-600);
+  box-shadow:
+    inset 0 0 0 6px #062016,
+    inset 0 0 0 8px var(--ff-gold-600);
+  transform: rotateY(180deg) translateZ(1.6px);
+}
+.dorso img {
+  width: 48%;
+  height: auto;
+  image-rendering: pixelated;
+  filter: drop-shadow(0 4px 6px rgb(0 0 0 / 60%));
+}
+/* Glint of the lamp, sliding across the face as the card turns */
+.cara::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: linear-gradient(115deg, transparent 38%, rgb(255 236 200 / 24%) 50%, transparent 62%);
+  background-size: 300% 100%;
+  background-position: calc(var(--luz, 0.5) * 100%) 0;
+  mix-blend-mode: screen;
+}
+.categoria {
+  font-family: var(--ff-font-label);
+  font-size: 8px;
+  text-transform: uppercase;
+  color: var(--ff-gold-400);
+}
+.glifo {
+  font-family: var(--ff-font-display);
+  font-size: 80px;
+  line-height: 0.8;
+  color: var(--ff-gold-400);
+  text-shadow: 4px 4px 0 #000;
+}
+.frente h3 {
+  font-size: 28px;
+  line-height: 1;
+  margin-bottom: var(--ff-space-2);
+}
+.frente p {
+  margin: 0;
+}
+
+/* Animated scene: the stage stays on screen while the tall section scrolls by */
+.comodines:has(.animada) {
+  padding-block: 0;
+}
+.escena.animada {
+  --w: clamp(150px, 17vw, 220px);
+  height: 330vh;
+}
+.animada .escenario {
+  position: sticky;
+  top: 0;
+  display: grid;
+  grid-template-rows: auto 1fr;
+  height: 100vh;
+  height: 100svh;
+  padding-top: 88px;
+  overflow: hidden;
+}
+.animada .lp-head {
+  margin-bottom: 0;
+}
+.animada .mazo {
+  display: block;
+  position: relative;
+  max-width: none;
+  perspective: 1100px;
+}
+.animada .carta3d {
+  position: absolute;
+  left: calc(50% - var(--w) / 2);
+  top: calc(50% - var(--w) * 0.7);
+  width: var(--w);
+}
+.animada .frente {
+  box-shadow: 0 30px 40px -18px rgb(0 0 0 / 70%);
+}
+
+@media (max-width: 640px) {
+  .escena.animada {
+    --w: 41vw;
+    height: 280vh;
+  }
+  .animada .escenario {
+    padding-top: 72px;
+  }
+  .animada .lp-head p {
+    display: none;
+  }
+  .frente {
+    gap: var(--ff-space-2);
+    padding: var(--ff-space-3);
+  }
+  .glifo {
+    font-size: 52px;
+  }
+  .frente h3 {
+    font-size: 19px;
+  }
+  .animada .frente p {
+    font-size: 12px;
+  }
+}

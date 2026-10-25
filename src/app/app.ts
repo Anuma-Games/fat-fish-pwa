@@ -27,15 +27,19 @@ export class App {
   protected readonly menuAbierto = signal(false);
 
   private readonly route = inject(ActivatedRoute);
+  /** Layout of the current route: the landing page takes the whole window, without the app shell. */
+  protected readonly esLanding = toSignal(
+    inject(Router).events.pipe(
+      filter((e) => e instanceof NavigationEnd),
+      map(() => this.datos()['layout'] === 'landing'),
+    ),
+    { initialValue: this.datos()['layout'] === 'landing' },
+  );
   /** Title of the current section for the phone top bar (route data `seccion`). */
   protected readonly seccion = toSignal(
     inject(Router).events.pipe(
       filter((e) => e instanceof NavigationEnd),
-      map(() => {
-        let r = this.route;
-        while (r.firstChild) r = r.firstChild;
-        return (r.snapshot.data['seccion'] as string | undefined) ?? 'Fat Fish';
-      }),
+      map(() => this.datos()['seccion'] ?? 'Fat Fish'),
     ),
     { initialValue: 'Fat Fish' },
   );
@@ -49,5 +53,12 @@ export class App {
     console.info(
       `${LOG_PREFIX} PWA iniciada · service worker ${this.swActivo() ? 'activo' : 'inactivo (modo desarrollo)'} · ${navigator.onLine ? 'en línea' : 'sin conexión'}`,
     );
+  }
+
+  /** Data of the deepest active route. */
+  private datos(): Record<string, unknown> {
+    let r = this.route;
+    while (r.firstChild) r = r.firstChild;
+    return r.snapshot.data as Record<string, unknown>;
   }
 }
