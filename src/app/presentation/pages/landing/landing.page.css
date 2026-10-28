@@ -1,0 +1,283 @@
+/* Landing page frame: nav, credits, questions and footer. Each section has its own component. */
+:host {
+  display: block;
+  overflow-x: clip;
+  interpolate-size: allow-keywords;
+}
+
+/* Film grain over the whole page */
+:host::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  pointer-events: none;
+  opacity: 0.06;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+.skip {
+  position: absolute;
+  left: -9999px;
+}
+.skip:focus {
+  left: var(--ff-space-4);
+  top: var(--ff-space-4);
+  z-index: 70;
+  padding: var(--ff-space-2) var(--ff-space-3);
+  background: var(--ff-felt-700);
+  border: 2px solid var(--ff-gold-400);
+  border-radius: var(--ff-radius-field);
+}
+
+/* Nav */
+.lp-nav {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  background: color-mix(in srgb, var(--ff-felt-800) 97%, transparent);
+  border-bottom: 2px solid var(--ff-gold-600);
+}
+.nav-row {
+  display: flex;
+  align-items: center;
+  gap: var(--ff-space-4);
+  padding-block: var(--ff-space-2);
+}
+.lp-brand {
+  display: flex;
+  align-items: center;
+  gap: var(--ff-space-2);
+  font-family: var(--ff-font-display);
+  font-size: 24px;
+  color: var(--ff-cream-100);
+  text-decoration: none;
+  text-transform: uppercase;
+}
+.lp-brand span {
+  white-space: nowrap;
+}
+.lp-brand img {
+  border-radius: 50%;
+}
+.lp-links {
+  display: none;
+  gap: var(--ff-space-4);
+  margin-left: auto;
+  font-family: var(--ff-font-label);
+  font-size: 9px;
+  text-transform: uppercase;
+}
+.lp-links a,
+.foot-links a {
+  color: var(--ff-fog-400);
+  text-decoration: none;
+  white-space: nowrap;
+}
+.lp-links a:hover,
+.foot-links a:hover {
+  color: var(--ff-gold-400);
+}
+/* Optional room sound */
+.sonido {
+  display: none;
+  align-items: center;
+  gap: var(--ff-space-2);
+  min-height: 40px;
+  margin-left: auto;
+  padding: 0 var(--ff-space-2);
+  font-family: var(--ff-font-label);
+  font-size: 8px;
+  text-transform: uppercase;
+  color: var(--ff-fog-400);
+  background: transparent;
+  border: 1px solid var(--ff-line);
+  border-radius: var(--ff-radius-field);
+  cursor: pointer;
+}
+.sonido[aria-pressed='true'] {
+  color: var(--ff-gold-400);
+  border-color: var(--ff-gold-600);
+}
+.bocina {
+  position: relative;
+  width: 10px;
+  height: 12px;
+  background: currentColor;
+  clip-path: polygon(0 30%, 40% 30%, 100% 0, 100% 100%, 40% 70%, 0 70%);
+}
+.bocina.on::after {
+  content: '';
+  position: absolute;
+  left: 12px;
+  top: 1px;
+  width: 6px;
+  height: 10px;
+  border: 2px solid currentColor;
+  border-left: 0;
+  border-radius: 0 10px 10px 0;
+}
+.sonido-texto {
+  display: none;
+}
+.nav-cta {
+  margin-left: auto;
+  min-height: 40px;
+  font-size: 18px;
+  padding-inline: var(--ff-space-3);
+}
+
+/* Reading progress: scroll-driven animation, or --avance from motion.ts where it is missing */
+.progreso {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -2px;
+  height: 2px;
+  background: var(--ff-gold-400);
+  transform-origin: left;
+  transform: scaleX(var(--avance, 0));
+}
+@supports (animation-timeline: scroll()) {
+  .progreso {
+    animation: avanzar linear both;
+    animation-timeline: scroll(root);
+  }
+}
+@keyframes avanzar {
+  to {
+    transform: scaleX(1);
+  }
+}
+
+/* Credits */
+.creditos {
+  text-align: center;
+}
+.creditos .lp-head {
+  margin-inline: auto;
+  justify-items: center;
+}
+.equipo {
+  display: grid;
+  gap: var(--ff-space-3);
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  font-family: var(--ff-font-display);
+  font-size: clamp(26px, 4vw, 36px);
+  line-height: 1.1;
+}
+
+/* Questions */
+.faq {
+  background: var(--ff-bg-800);
+  border-top: 1px solid var(--ff-line);
+}
+.preguntas {
+  display: grid;
+  border-top: 1px solid var(--ff-line);
+}
+details {
+  border-bottom: 1px solid var(--ff-line);
+}
+summary {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--ff-space-3);
+  padding-block: var(--ff-space-4);
+  font-family: var(--ff-font-display);
+  font-size: 24px;
+  cursor: pointer;
+  list-style: none;
+}
+summary::-webkit-details-marker {
+  display: none;
+}
+summary::after {
+  content: '+';
+  color: var(--ff-gold-400);
+}
+details[open] summary::after {
+  content: '−';
+}
+details p {
+  margin: 0;
+  padding-bottom: var(--ff-space-4);
+  max-width: 64ch;
+}
+details::details-content {
+  height: 0;
+  overflow: clip;
+  transition:
+    height 0.3s ease,
+    content-visibility 0.3s allow-discrete;
+}
+details[open]::details-content {
+  height: auto;
+}
+
+/* Footer */
+.lp-footer {
+  padding-block: var(--ff-space-6) 96px;
+  background: var(--ff-bg-900);
+  border-top: 2px solid var(--ff-gold-600);
+}
+.footer-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ff-space-3);
+  align-items: center;
+  justify-content: space-between;
+}
+.foot-brand {
+  display: flex;
+  align-items: center;
+  gap: var(--ff-space-2);
+  font-family: var(--ff-font-display);
+  font-size: 20px;
+}
+.foot-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ff-space-4);
+  font-family: var(--ff-font-label);
+  font-size: 9px;
+  text-transform: uppercase;
+}
+
+/* Very narrow phones: the nav keeps the brand on one line */
+@media (max-width: 380px) {
+  .nav-row {
+    gap: var(--ff-space-2);
+  }
+  .lp-brand {
+    font-size: 20px;
+  }
+  .nav-cta {
+    font-size: 16px;
+    padding-inline: var(--ff-space-2);
+  }
+}
+/* Desktop (same breakpoint as the PWA sidebar): section links in the bar, no side menu */
+@media (min-width: 1024px) {
+  .lp-links {
+    display: flex;
+  }
+  .sonido {
+    display: inline-flex;
+    margin-left: 0;
+  }
+  .nav-cta {
+    margin-left: 0;
+  }
+  .sonido-texto {
+    display: inline;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  details::details-content {
+    transition: none;
+  }
+}

@@ -1,0 +1,196 @@
+:host {
+  --papel: #e6dec8;
+  --papel-linea: rgb(34 30 22 / 9%);
+  --tinta: #221e16;
+  --tinta-suave: #5b5444;
+  --maquina: 'Courier New', Courier, ui-monospace, monospace;
+}
+.split {
+  display: grid;
+  gap: var(--ff-space-8);
+  align-items: center;
+}
+.split .lp-head {
+  margin-bottom: 0;
+}
+.acciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ff-space-3);
+  margin-top: var(--ff-space-2);
+}
+
+/* The sheet */
+.archivo {
+  position: relative;
+  display: grid;
+  gap: var(--ff-space-3);
+  padding: var(--ff-space-6);
+  color: var(--tinta);
+  background-color: var(--papel);
+  background-image: repeating-linear-gradient(transparent 0 27px, var(--papel-linea) 27px 28px);
+  box-shadow: 8px 8px 0 #000;
+  rotate: -1deg;
+}
+.archivo .eyebrow {
+  color: var(--tinta-suave);
+}
+.archivo h3 {
+  margin: 0;
+  min-height: 1em;
+  font-family: var(--maquina);
+  font-weight: 700;
+  font-size: 30px;
+  line-height: 1;
+}
+
+/* Police file header: mugshot with a height chart, file number and status */
+.cabecera {
+  display: grid;
+  grid-template-columns: 92px minmax(0, 1fr);
+  gap: var(--ff-space-4);
+  align-items: center;
+  padding-bottom: var(--ff-space-3);
+  border-bottom: 2px solid var(--tinta);
+}
+.foto {
+  position: relative;
+  aspect-ratio: 9 / 11;
+  max-width: 100%;
+  overflow: hidden;
+  background-color: #cfc6ae;
+  background-image: repeating-linear-gradient(transparent 0 9px, rgb(34 30 22 / 35%) 9px 10px);
+  border: 2px solid var(--tinta);
+}
+.foto svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  fill: #2b2620;
+}
+.placa {
+  position: absolute;
+  left: 50%;
+  bottom: 6px;
+  translate: -50% 0;
+  padding: 1px 6px;
+  font-family: var(--maquina);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--papel);
+  background: var(--tinta);
+}
+.ident {
+  display: grid;
+  gap: var(--ff-space-1);
+  min-width: 0;
+}
+.estado {
+  justify-self: start;
+  padding: 2px 6px;
+  font-family: var(--maquina);
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--ff-ruby-700);
+  border: 1px solid currentColor;
+}
+.lector {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+.datos {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: var(--ff-space-4) var(--ff-space-6);
+  margin: 0;
+}
+.datos div {
+  display: grid;
+  gap: var(--ff-space-1);
+  min-width: 0;
+  padding-top: var(--ff-space-2);
+  border-top: 1px solid rgb(34 30 22 / 20%);
+}
+.datos dd {
+  margin: 0;
+  min-height: 1em;
+  font-family: var(--maquina);
+  font-weight: 700;
+  font-size: 26px;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+.datos dd.perdida {
+  color: var(--ff-ruby-700);
+}
+
+/* Black bars that slide away */
+.tachado {
+  position: relative;
+  display: inline-block;
+}
+.tachado::after {
+  content: '';
+  position: absolute;
+  inset: -2px -4px;
+  background: var(--tinta);
+  transform: scaleX(0);
+  transform-origin: right;
+}
+.revelando .tachado::after {
+  animation: destapar 0.9s var(--retraso, 0s) both cubic-bezier(0.7, 0, 0.3, 1);
+}
+@keyframes destapar {
+  from {
+    transform: scaleX(1);
+  }
+  to {
+    transform: scaleX(0);
+  }
+}
+
+/* Stamp */
+.sello {
+  position: absolute;
+  top: var(--ff-space-4);
+  right: var(--ff-space-4);
+  padding: 6px 8px;
+  font-family: var(--ff-font-label);
+  font-size: 10px;
+  text-transform: uppercase;
+  color: var(--ff-ruby-700);
+  border: 3px solid var(--ff-ruby-700);
+  rotate: -8deg;
+  opacity: 0.85;
+}
+.revelando .sello {
+  animation: sellar 0.45s 1.5s both cubic-bezier(0.2, 1.6, 0.4, 1);
+}
+@keyframes sellar {
+  from {
+    scale: 2.4;
+    opacity: 0;
+  }
+  to {
+    scale: 1;
+    opacity: 0.85;
+  }
+}
+
+@media (min-width: 900px) {
+  .split {
+    grid-template-columns: 1fr 1.1fr;
+  }
+}
+@media (max-width: 640px) {
+  .sello {
+    position: static;
+    justify-self: start;
+  }
+}

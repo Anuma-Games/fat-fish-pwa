@@ -1,0 +1,63 @@
+<section class="lp-section cierre" id="cierre" data-seccion="cierre">
+  <div class="lp-wrap grid">
+    <div class="ficha" appReveal appFoco>
+      <span class="eyebrow">Expediente de tu visita</span>
+      <h2>Esto supimos de ti sin que jugaras</h2>
+      <dl>
+        <div>
+          <dt>Tiempo en la página</dt>
+          <dd>{{ visita.tiempo() }}</dd>
+        </div>
+        <div>
+          <dt>Secciones vistas</dt>
+          <dd>{{ visita.seccionesVistas() }} de {{ visita.seccionesTotales() }}</dd>
+        </div>
+        <div>
+          <dt>Clics</dt>
+          <dd>{{ visita.clics() }}</dd>
+        </div>
+        <div>
+          <dt>Mayor duda antes de un clic</dt>
+          <dd>
+            @if (visita.mayorDuda(); as duda) {
+              {{ duda | number: '1.1-1' }} s
+            } @else {
+              Todavía no
+            }
+          </dd>
+        </div>
+        <div>
+          <dt>Giraste la ruleta</dt>
+          <dd>{{ visita.girosRuleta() }} {{ visita.girosRuleta() === 1 ? 'vez' : 'veces' }}</dd>
+        </div>
+        <div>
+          <dt>Volviste a empezar</dt>
+          <dd>{{ visita.reinicios() }} {{ visita.reinicios() === 1 ? 'vez' : 'veces' }}</dd>
+        </div>
+        <div>
+          <dt>Recorriste</dt>
+          <dd>{{ visita.metros() | number: '1.1-1' }} m de página</dd>
+        </div>
+      </dl>
+    </div>
+
+    <div class="llamado" appReveal>
+      <h2>En Fat Fish, el casino anota esto en cada ronda.</h2>
+      <p class="muted">
+        Cuánto inviertes, cuándo lo arriesgas todo y qué empeñas para seguir. Al final te lo
+        muestra.
+      </p>
+      <div class="botones">
+        <a class="btn" appIman [href]="cta.demo">Jugar la demo</a>
+        <button class="btn lp-alt" appIman type="button" (click)="visita.otraRonda()">
+          Otra ronda
+        </button>
+      </div>
+      <ul class="plataformas" aria-label="Plataformas">
+        @for (p of plataformas; track p) {
+          <li class="chip">{{ p }}</li>
+        }
+      </ul>
+    </div>
+  </div>
+</section>

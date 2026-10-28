@@ -1,0 +1,94 @@
+:host {
+  position: fixed;
+  z-index: 25;
+  right: calc(var(--ff-space-4) + env(safe-area-inset-right, 0px));
+  bottom: calc(var(--ff-space-4) + env(safe-area-inset-bottom, 0px));
+  width: 250px;
+  max-width: calc(100vw - 2 * var(--ff-space-4));
+  opacity: 0;
+  translate: 0 16px;
+  pointer-events: none;
+  transition:
+    opacity 0.3s ease,
+    translate 0.3s ease;
+}
+:host(.visible) {
+  opacity: 1;
+  translate: 0 0;
+  pointer-events: auto;
+}
+.hud {
+  color: #221e16;
+  background: #e6dec8;
+  border: 2px solid #221e16;
+  box-shadow: 6px 6px 0 #000;
+}
+.toggle {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--ff-space-2);
+  width: 100%;
+  min-height: 40px;
+  padding: var(--ff-space-2) var(--ff-space-3);
+  font-family: var(--ff-font-label);
+  font-size: 8px;
+  text-transform: uppercase;
+  color: #e6dec8;
+  background: #221e16;
+  border: 0;
+  cursor: pointer;
+}
+.toggle:focus-visible {
+  outline: 2px solid var(--ff-gold-400);
+  outline-offset: 2px;
+  box-shadow: none;
+}
+.punto {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  margin-right: 6px;
+  border-radius: 50%;
+  background: var(--ff-ruby-300);
+  animation: latido 1.6s infinite;
+}
+@keyframes latido {
+  50% {
+    opacity: 0.2;
+  }
+}
+dl {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 6px var(--ff-space-3);
+  margin: 0;
+  padding: var(--ff-space-3);
+  font-size: 13px;
+}
+dt {
+  color: #5b5444;
+}
+dd {
+  margin: 0;
+  font-family: var(--ff-font-display);
+  font-size: 22px;
+  line-height: 1;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+@media (max-width: 640px) {
+  :host {
+    width: auto;
+    left: calc(var(--ff-space-4) + env(safe-area-inset-left, 0px));
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  :host {
+    transition: none;
+  }
+  .punto {
+    animation: none;
+  }
+}
