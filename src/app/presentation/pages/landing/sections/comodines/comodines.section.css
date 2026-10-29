@@ -25,11 +25,13 @@
   border-radius: 12px;
   backface-visibility: hidden;
 }
+/* The face scales with the card: padding in % of its width, text in cqi of the face */
 .frente {
+  container-type: inline-size;
   display: grid;
   align-content: space-between;
-  gap: var(--ff-space-3);
-  padding: var(--ff-space-4);
+  gap: 5%;
+  padding: 7.3%;
   overflow: hidden;
   background: linear-gradient(160deg, var(--ff-felt-700), var(--ff-felt-800) 60%, #08241a);
   border: 2px solid var(--ff-gold-600);
@@ -74,32 +76,34 @@
 }
 .categoria {
   font-family: var(--ff-font-label);
-  font-size: 8px;
+  font-size: clamp(6px, 4.3cqi, 8px);
   text-transform: uppercase;
   color: var(--ff-gold-400);
 }
 .glifo {
   font-family: var(--ff-font-display);
-  font-size: 80px;
+  font-size: 42cqi;
   line-height: 0.8;
   color: var(--ff-gold-400);
   text-shadow: 4px 4px 0 #000;
 }
 .frente h3 {
-  font-size: 28px;
+  font-size: 14.8cqi;
   line-height: 1;
-  margin-bottom: var(--ff-space-2);
+  margin-bottom: 4cqi;
 }
 .frente p {
   margin: 0;
+  font-size: 7cqi;
 }
 
 /* Animated scene: the stage stays on screen while the tall section scrolls by */
 .comodines:has(.animada) {
   padding-block: 0;
 }
+/* Card width from both sides of the window: the row fits across, and the cards fit under the header */
 .escena.animada {
-  --w: clamp(150px, 17vw, 220px);
+  --w: clamp(96px, min(17vw, (100svh - 290px) / 1.45), 220px);
   height: 330vh;
 }
 .animada .escenario {
@@ -131,10 +135,10 @@
   box-shadow: 0 30px 40px -18px rgb(0 0 0 / 70%);
 }
 
-@media (max-width: 640px) {
+/* Low windows (landscape phones, a docked inspector): the header loses its paragraph */
+@media (max-width: 640px), (max-height: 600px) {
   .escena.animada {
-    --w: 41vw;
-    height: 280vh;
+    --w: clamp(96px, min(17vw, (100svh - 200px) / 1.45), 220px);
   }
   .animada .escenario {
     padding-top: 72px;
@@ -142,17 +146,11 @@
   .animada .lp-head p {
     display: none;
   }
-  .frente {
-    gap: var(--ff-space-2);
-    padding: var(--ff-space-3);
-  }
-  .glifo {
-    font-size: 52px;
-  }
-  .frente h3 {
-    font-size: 19px;
-  }
-  .animada .frente p {
-    font-size: 12px;
+}
+/* Phones: two rows of two cards */
+@media (max-width: 640px) {
+  .escena.animada {
+    --w: clamp(84px, min(41vw, (100svh - 200px) / 3.05), 220px);
+    height: 280vh;
   }
 }
