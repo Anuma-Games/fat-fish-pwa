@@ -9,19 +9,19 @@ export const routes: Routes = [
   {
     path: '',
     component: LandingPage,
-    title: 'Fat Fish · Lo que el casino sabe de ti',
+    title: 'Fat Fish: lo que el casino sabe de ti',
     data: { layout: 'landing' },
   },
   {
     path: 'perfil',
     component: HistorialPage,
-    title: 'Expediente · Fat Fish',
+    title: 'Expediente - Fat Fish',
     data: { seccion: 'Expediente' },
   },
   {
     path: 'opinion/retroalimentacion',
     component: RetroalimentacionPage,
-    title: 'Opinión · Fat Fish',
+    title: 'Opinión - Fat Fish',
     data: { seccion: 'Opinión' },
   },
   { path: '**', redirectTo: '' },

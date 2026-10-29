@@ -44,6 +44,12 @@
   outline-offset: 2px;
   box-shadow: none;
 }
+.tiempo {
+  margin-left: var(--ff-space-2);
+  padding: 2px 4px;
+  color: #221e16;
+  background: #e6dec8;
+}
 .punto {
   display: inline-block;
   width: 8px;

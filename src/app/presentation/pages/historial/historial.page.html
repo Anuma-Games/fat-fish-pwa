@@ -116,7 +116,7 @@
           <li class="match-card">
             <div class="match-head">
               <span class="small muted"
-                >{{ p.creadaEn | date: 'd MMM y' }} · {{ minutos(p.duracionSeg) }}</span
+                >{{ p.creadaEn | date: 'd MMM y' }}, {{ minutos(p.duracionSeg) }}</span
               >
               <span class="chip" [class]="p.resultado.toLowerCase()">{{ p.resultado }}</span>
             </div>
@@ -135,7 +135,7 @@
       <p class="small muted count">
         {{ facade.partidas().length }} de {{ facade.totalPartidas() }} partidas
         @if (facade.generadoEn(); as fecha) {
-          · datos del {{ fecha | date: 'd MMM, HH:mm' }}
+          (datos del {{ fecha | date: 'd MMM, HH:mm' }})
         }
       </p>
       @if (facade.hayMas()) {
