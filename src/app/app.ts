@@ -1,4 +1,4 @@
-import { DatePipe } from '@angular/common';
+import { DatePipe, ViewportScroller } from '@angular/common';
 import { Component, computed, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import {
@@ -13,6 +13,7 @@ import { SwUpdate } from '@angular/service-worker';
 import { filter, map } from 'rxjs';
 import { SincronizacionFacade } from './application/facades/sincronizacion.facade';
 import { LOG_PREFIX } from './core/config/api.config';
+import { MENU } from './core/config/landing.config';
 import { PixelIcon } from './presentation/components/pixel-icon/pixel-icon';
 
 @Component({
@@ -22,6 +23,8 @@ import { PixelIcon } from './presentation/components/pixel-icon/pixel-icon';
   templateUrl: './app.html',
 })
 export class App {
+  /** Same groups as the side panel of the landing page. */
+  protected readonly menu = MENU;
   protected readonly sincronizacion = inject(SincronizacionFacade);
   protected readonly swActivo = signal(inject(SwUpdate).isEnabled);
   protected readonly menuAbierto = signal(false);
@@ -50,6 +53,8 @@ export class App {
   });
 
   constructor() {
+    // Links to a section of the landing page (/#comodines) leave it below the sticky nav
+    inject(ViewportScroller).setOffset([0, 64]);
     console.info(
       `${LOG_PREFIX} PWA iniciada · service worker ${this.swActivo() ? 'activo' : 'inactivo (modo desarrollo)'} · ${navigator.onLine ? 'en línea' : 'sin conexión'}`,
     );

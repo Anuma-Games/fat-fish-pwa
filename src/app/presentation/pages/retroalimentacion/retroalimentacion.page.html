@@ -46,7 +46,7 @@
       maxlength="1000"
       [(ngModel)]="mensaje"
     ></textarea>
-    <p class="counter small muted">{{ mensaje.length }} / 1000 · mínimo 10</p>
+    <p class="counter small muted">{{ mensaje.length }} / 1000 (mínimo 10)</p>
 
     <button class="btn block" type="submit" [disabled]="enviando()">
       <app-pixel-icon name="enviar" [size]="14" />
@@ -70,7 +70,7 @@
   <span class="eyebrow">Vista del laboratorio de pruebas</span>
   <h2>Envíos desde este dispositivo</h2>
   <p class="small muted">
-    Bandeja de salida guardada en IndexedDB (<code>fatfish-pwa</code> → <code>outbox</code>). Sin
+    Bandeja de salida guardada en este navegador (IndexedDB, almacén <code>outbox</code>). Sin
     conexión, los envíos esperan aquí y se mandan solos al volver la red.
   </p>
   <button
@@ -97,7 +97,10 @@
         @for (e of facade.envios(); track e.id) {
           <tr>
             <td>{{ e.creadoEn | date: 'd MMM, HH:mm:ss' }}</td>
-            <td>{{ e.contenido.categoria }} · {{ e.contenido.componente }}</td>
+            <td>
+              {{ textoDe(categorias, e.contenido.categoria) }},
+              {{ textoDe(componentes, e.contenido.componente) }}
+            </td>
             <td class="msg">{{ e.contenido.mensaje }}</td>
             <td>
               <span class="chip" [class]="e.estado.toLowerCase()">{{ e.estado }}</span>

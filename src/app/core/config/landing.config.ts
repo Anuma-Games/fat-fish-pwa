@@ -12,6 +12,36 @@ export const CTA = {
   opinion: '/opinion/retroalimentacion',
 };
 
+export interface EnlaceMenu {
+  texto: string;
+  icono: string;
+}
+
+/**
+ * Menu shared by the whole site: the side panel of the landing page and the side menu of
+ * Expediente and Opinión show the same two groups, so both feel like one site.
+ */
+export const MENU = {
+  /** Sections of the landing page (anchors of `/`). */
+  mesa: {
+    titulo: 'La mesa',
+    enlaces: [
+      { id: 'inicio', texto: 'Inicio', icono: 'ruleta' },
+      { id: 'como-se-juega', texto: 'Cómo se juega', icono: 'flecha' },
+      { id: 'comodines', texto: 'Comodines', icono: 'comodin' },
+      { id: 'faq', texto: 'Preguntas', icono: 'alerta' },
+    ] as (EnlaceMenu & { id: string })[],
+  },
+  /** Pages of the app that read and write data. */
+  app: {
+    titulo: 'Tu expediente y tu opinión',
+    enlaces: [
+      { ruta: '/perfil', texto: 'Expediente', icono: 'expediente' },
+      { ruta: '/opinion/retroalimentacion', texto: 'Opinión', icono: 'opinion' },
+    ] as (EnlaceMenu & { ruta: string })[],
+  },
+};
+
 /** Hero. */
 export const HERO = {
   eyebrow: 'Anuma Games presenta',
@@ -25,8 +55,6 @@ export const HERO = {
 export interface Paso {
   titulo: string;
   texto: string;
-  /** Optional worked example shown under the text. */
-  ejemplo?: string;
 }
 
 /**
@@ -44,8 +72,7 @@ export const PASOS: Paso[] = [
   },
   {
     titulo: 'Suma puntos',
-    texto: 'Lo que invertiste por el pago, por tu combo y por tus comodines.',
-    ejemplo: '150 × 1.5 × 1.25 = 281',
+    texto: 'Cada jugada que aciertas te acerca a la meta, y tus comodines te ayudan a llegar.',
   },
   {
     titulo: 'Alcanza la meta',
@@ -153,11 +180,11 @@ export const MENSAJE = {
 
 /** Available platforms and commercial model (fat-fish-negocio). */
 export const PLATAFORMAS = [
-  'PC · Windows',
+  'PC con Windows',
   'Demo en itch.io',
   'Venta única',
   'Sin microtransacciones',
-  'PWA instalable',
+  'App web instalable',
 ];
 
 export const EQUIPO = [
@@ -195,7 +222,7 @@ export const PREGUNTAS: Pregunta[] = [
   {
     titulo: '¿Cuánto cuesta?',
     respuesta:
-      'Por ahora hay una demo jugable y la PWA de consulta. La versión completa se compra una sola vez y no tiene microtransacciones.',
+      'Por ahora hay una demo jugable y una app web para consultar tu expediente. La versión completa se compra una sola vez y no tiene microtransacciones.',
   },
   {
     titulo: '¿Puedo jugar sin conexión?',

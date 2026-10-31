@@ -16,6 +16,7 @@ import { Iman } from '../../iman.directive';
 import { prefiereMenosMovimiento } from '../../motion';
 import { Rodado, SonidoMesa } from '../../sonido-mesa';
 import { VisitDossier } from '../../visit-dossier';
+import { iniciarFondo } from './fondo-remolino';
 
 /** European wheel order, from the 0 clockwise. */
 const ORDEN = [
@@ -23,55 +24,6 @@ const ORDEN = [
   31, 9, 22, 18, 29, 7, 28, 12, 35, 3, 26,
 ];
 const ROJOS = new Set([1, 3, 5, 7, 9, 12, 14, 16, 18, 19, 21, 23, 25, 27, 30, 32, 34, 36]);
-
-/** Radii of the wheel in its -130..130 viewBox. */
-const R = {
-  cono: 60,
-  fondo: 88,
-  numeros: 102,
-  texto: 95,
-};
-
-const PASO = (Math.PI * 2) / ORDEN.length;
-const punto = (r: number, a: number) =>
-  `${(r * Math.sin(a)).toFixed(2)} ${(-r * Math.cos(a)).toFixed(2)}`;
-const anillo = (r0: number, r1: number, a0: number, a1: number) =>
-  `M ${punto(r0, a0)} L ${punto(r1, a0)} A ${r1} ${r1} 0 0 1 ${punto(r1, a1)} ` +
-  `L ${punto(r0, a1)} A ${r0} ${r0} 0 0 0 ${punto(r0, a0)} Z`;
-
-interface Casilla {
-  numero: number;
-  /** Pocket where the ball lands, and the band with the number above it. */
-  bolsa: string;
-  banda: string;
-  color: 'cero' | 'rojo' | 'negro';
-  separador: string;
-  x: number;
-  y: number;
-  giro: number;
-}
-
-/** Pockets of the wheel: colored bands, numbers and the gold frets between them. */
-function casillas(): Casilla[] {
-  return ORDEN.map((numero, i) => {
-    const a0 = i * PASO - PASO / 2;
-    const a1 = a0 + PASO;
-    const medio = i * PASO;
-    return {
-      numero,
-      bolsa: anillo(R.cono, R.fondo, a0, a1),
-      banda: anillo(R.fondo, R.numeros, a0, a1),
-      color: numero === 0 ? 'cero' : ROJOS.has(numero) ? 'rojo' : 'negro',
-      separador: `M ${punto(R.cono, a0)} L ${punto(R.numeros, a0)}`,
-      x: +(R.texto * Math.sin(medio)).toFixed(2),
-      y: +(-R.texto * Math.cos(medio)).toFixed(2),
-      giro: +((medio * 180) / Math.PI).toFixed(1),
-    };
-  });
-}
-
-/** Gold diamonds on the ball track, as on a real bowl. */
-const ROMBOS = Array.from({ length: 8 }, (_, i) => i * 45 + 22.5);
 
 /** Specks of dust floating in the lamp light (fixed positions, so the page looks the same each load). */
 const POLVO = Array.from({ length: 16 }, (_, i) => ({
@@ -82,9 +34,21 @@ const POLVO = Array.from({ length: 16 }, (_, i) => ({
   duracion: 8 + (i % 5) * 2,
 }));
 
+/** Chips the swirl drags into the wheel (fixed values, so the page looks the same each load). */
+const FICHAS = ['ficha-5', 'ficha-10', 'ficha-25', 'ficha-50', 'ficha-100'];
+const ARRASTRADAS = Array.from({ length: 8 }, (_, i) => ({
+  ficha: FICHAS[(i * 3) % FICHAS.length],
+  tam: 28 + ((i * 7) % 4) * 6,
+  vuelta: 26 + ((i * 11) % 5) * 6,
+  caida: 18 + ((i * 5) % 4) * 5,
+  retraso: -((i * 4.3) % 22),
+  // Spread around the wheel instead of all starting on the same side
+  desfase: -(i / 8) * (26 + ((i * 11) % 5) * 6),
+}));
+
 /** Radii of the ball (on the track and in a pocket) and size of the viewBox. */
 const R_PISTA = 111;
-const R_BOLSA = 75;
+const R_BOLSA = 72;
 const TAM = 260;
 const GRADOS = 360 / ORDEN.length;
 /** Faster than this the clicks of the ball would blur into a hiss. */
@@ -95,6 +59,11 @@ const mod = (a: number, n: number) => ((a % n) + n) % n;
 function suaveEntre(a: number, b: number, x: number): number {
   const t = Math.min(1, Math.max(0, (x - a) / (b - a)));
   return t * t * (3 - 2 * t);
+}
+
+/** Across a pocket (0 center, 0.5 fret, 1 next center): the ball lingers in the pocket and hops the fret. */
+function saltoDeTraste(f: number): number {
+  return suaveEntre(0, 1, suaveEntre(0, 1, f));
 }
 
 function aleatorio(n: number): number {
@@ -128,16 +97,16 @@ export class HeroSection {
   protected readonly hero = HERO;
   protected readonly cta = CTA;
   protected readonly ruleta = RULETA;
-  protected readonly casillas = casillas();
-  protected readonly rombos = ROMBOS;
   protected readonly polvo = POLVO;
-  protected readonly radiosCono = Array.from({ length: 8 }, (_, i) => i * 45);
+  protected readonly arrastradas = ARRASTRADAS;
 
   protected readonly girando = signal(false);
   protected readonly encendiendo = signal(true);
   protected readonly resultado = signal<{ numero: number; color: string } | null>(null);
 
   private readonly plano = viewChild.required<ElementRef<HTMLElement>>('plano');
+  private readonly fondo = viewChild.required<ElementRef<HTMLCanvasElement>>('fondo');
+  private readonly mesa = viewChild.required<ElementRef<HTMLElement>>('mesa');
   private readonly visita = inject(VisitDossier);
   private readonly crupier = inject(Crupier);
   private readonly sonido = inject(SonidoMesa);
@@ -146,6 +115,9 @@ export class HeroSection {
   /** Ball angle in the frame of the wheel head (degrees, clockwise from the top) and its radius. */
   private fi = 0;
   private radio = R_PISTA;
+  /** Among the pockets: how far the ball is from its smooth path (degrees) and how high it hops (0..1). */
+  private desvio = 0;
+  private altura = 0;
   /** Extra turn of the wheel head given by the spins. */
   private impulso = 0;
   private enBolsa = false;
@@ -164,6 +136,15 @@ export class HeroSection {
     afterNextRender(() => {
       this.pintar();
       this.encender();
+      const detenerFondo = iniciarFondo(this.fondo().nativeElement, {
+        contenedor: host,
+        centro: this.mesa().nativeElement,
+        quieto: this.quieto,
+        girando: () => this.girando(),
+        // The swirl lights the rim of the wheel and the Crupier with its own color (hero.section.css)
+        alCalor: (calor) => host.style.setProperty('--calor', calor.toFixed(2)),
+      });
+      destroyRef.onDestroy(() => detenerFondo?.());
       let observador: IntersectionObserver | undefined;
       if (!this.quieto && typeof IntersectionObserver !== 'undefined') {
         observador = new IntersectionObserver(([entrada]) => {
@@ -241,6 +222,12 @@ export class HeroSection {
       this.fi = desde + delta * suave;
       this.impulso = impulsoDesde + 600 * suave;
       this.radio = radioEn(k01, radioDesde);
+      // Once it falls among the frets the ball goes from pocket to pocket, hopping each fret
+      const enBolsas = suaveEntre(0.55, 0.75, k01);
+      const x = (this.fi - (desde + delta)) / GRADOS;
+      const f = x - Math.floor(x);
+      this.desvio = (saltoDeTraste(f) - f) * GRADOS * enBolsas;
+      this.altura = enBolsas * Math.pow(Math.sin(Math.PI * f), 4) * Math.min(1, (1 - k01) * 4);
       this.pintar();
       this.sonar(rodado, k01, fiPrevio, (t - tPrevio) / 1000, radioAntes, radioPrevio);
       radioAntes = radioPrevio;
@@ -296,6 +283,8 @@ export class HeroSection {
   private terminar(k: number): void {
     this.fi = mod(this.fi, 360);
     this.radio = R_BOLSA;
+    this.desvio = 0;
+    this.altura = 0;
     this.pintar();
     this.enBolsa = true;
     this.girando.set(false);
@@ -340,8 +329,12 @@ export class HeroSection {
 
   private pintar(): void {
     const el = this.plano().nativeElement;
-    el.style.setProperty('--fi', `${this.fi.toFixed(2)}deg`);
+    el.style.setProperty('--fi', `${(this.fi + this.desvio).toFixed(2)}deg`);
     el.style.setProperty('--rb', `${((this.radio / TAM) * 100).toFixed(2)}%`);
+    // Down in a pocket the ball is smaller and in the shade; over a fret, higher and in the light
+    const hondo = Math.min(1, Math.max(0, (R_PISTA - this.radio) / (R_PISTA - R_BOLSA)));
+    el.style.setProperty('--hondo', hondo.toFixed(2));
+    el.style.setProperty('--alt', this.altura.toFixed(2));
     el.style.setProperty('--jw', `${this.impulso.toFixed(2)}deg`);
   }
 }

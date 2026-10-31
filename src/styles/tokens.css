@@ -11,6 +11,15 @@
   font-weight: 400;
   font-display: swap;
 }
+/* Spanish accented capitals of Press Start 2P at full height (scripts/fuente-acentos.py): that font
+   squeezes Á É Í Ó Ú Ñ Ü so they look lowercase with text-transform: uppercase */
+@font-face {
+  font-family: 'Fat Fish Acentos';
+  src: url('/fonts/fat-fish-acentos.woff') format('woff');
+  font-weight: 400;
+  font-display: swap;
+  unicode-range: U+00C1, U+00C9, U+00CD, U+00D1, U+00D3, U+00DA, U+00DC;
+}
 @font-face {
   font-family: 'Geist';
   src: url('/fonts/geist-latin-400-normal.woff2') format('woff2');
@@ -40,7 +49,7 @@
   --ff-win-300: #6fd39a;
 
   --ff-font-display: 'Jersey 10', system-ui, sans-serif;
-  --ff-font-label: 'Press Start 2P', ui-monospace, monospace;
+  --ff-font-label: 'Fat Fish Acentos', 'Press Start 2P', ui-monospace, monospace;
   --ff-font-body: 'Geist', system-ui, -apple-system, 'Segoe UI', sans-serif;
 
   --ff-space-1: 4px;

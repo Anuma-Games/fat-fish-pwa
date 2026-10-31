@@ -46,15 +46,15 @@
 .pasos::before {
   content: '';
   position: absolute;
-  left: 19px;
-  top: 20px;
-  bottom: 20px;
+  left: 23px;
+  top: 24px;
+  bottom: 24px;
   border-left: 2px dashed var(--ff-gold-600);
 }
 .pasos li {
   position: relative;
   display: grid;
-  grid-template-columns: 40px minmax(0, 1fr);
+  grid-template-columns: 48px minmax(0, 1fr);
   column-gap: var(--ff-space-4);
   align-content: start;
   transition-delay: calc(var(--i, 0) * 80ms);
@@ -62,19 +62,19 @@
 .pasos li > :not(.ficha) {
   grid-column: 2;
 }
+/* Chips of the game (ficha_5 to ficha_100), with the number of the step on their cream center */
 .ficha {
   grid-row: 1 / span 3;
   display: grid;
   place-items: center;
-  width: 40px;
-  height: 40px;
+  width: 48px;
+  height: 48px;
   font-family: var(--ff-font-display);
-  font-size: 24px;
-  color: var(--ff-bg-900);
-  background: var(--ff-gold-400);
-  border: 4px dashed var(--ff-cream-100);
-  border-radius: 50%;
-  box-shadow: 3px 3px 0 #000;
+  font-size: 22px;
+  line-height: 1;
+  color: #140e0a;
+  background: var(--ficha) center / contain no-repeat;
+  filter: drop-shadow(3px 3px 0 #000);
 }
 .pasos h3 {
   margin: 4px 0 var(--ff-space-1);
@@ -83,65 +83,6 @@
 }
 .pasos p {
   margin: 0;
-}
-.ejemplo {
-  justify-self: start;
-  margin-top: var(--ff-space-2);
-  padding: 4px 8px;
-  font-family: var(--ff-font-display);
-  font-size: 20px;
-  color: var(--ff-gold-400);
-  border: 1px solid var(--ff-gold-600);
-  font-variant-numeric: tabular-nums;
-}
-
-/* Chips dropping onto the table (step 1) */
-.pila {
-  display: flex;
-  flex-direction: column-reverse;
-  justify-self: start;
-  margin-top: var(--ff-space-3);
-}
-.pila i {
-  width: 46px;
-  height: 14px;
-  margin-top: -8px;
-  border-radius: 50%;
-  background: var(--ff-ruby-700);
-  border: 2px dashed var(--ff-cream-100);
-  box-shadow: 0 3px 0 #3a0c0a;
-  transition:
-    translate 0.45s cubic-bezier(0.3, 1.5, 0.5, 1),
-    opacity 0.3s ease;
-  transition-delay: calc(0.35s + var(--n) * 110ms);
-}
-.pila i:nth-child(2n) {
-  background: #151515;
-  box-shadow: 0 3px 0 #000;
-}
-.pila i:nth-child(3) {
-  background: var(--ff-gold-600);
-  box-shadow: 0 3px 0 #5e3f0c;
-}
-.lp-wait .pila i {
-  translate: 0 -48px;
-  opacity: 0;
-}
-
-/* Typed worked example */
-.cursor-tipo {
-  display: inline-block;
-  width: 0.45em;
-  height: 0.85em;
-  margin-left: 2px;
-  vertical-align: -0.08em;
-  background: currentColor;
-  animation: titilar 0.9s steps(1) infinite;
-}
-@keyframes titilar {
-  50% {
-    opacity: 0;
-  }
 }
 
 .vuelta {
@@ -202,9 +143,9 @@
     gap: var(--ff-space-4);
   }
   .pasos::before {
-    left: 20px;
-    right: 20px;
-    top: 19px;
+    left: 24px;
+    right: 24px;
+    top: 23px;
     bottom: auto;
     border-left: 0;
     border-top: 2px dashed var(--ff-gold-600);
@@ -228,11 +169,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .barras i,
-  .pila i {
+  .barras i {
     transition: none;
-  }
-  .cursor-tipo {
-    animation: none;
   }
 }

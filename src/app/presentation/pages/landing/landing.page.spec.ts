@@ -70,6 +70,22 @@ describe('LandingPage', () => {
     expect(texto).not.toMatch(/Ruina financiera|Aislamiento|Pérdida familiar/);
   });
 
+  it('uses words for the general public: no "PWA", no university, no middle dot', async () => {
+    const el = await render();
+    const texto = el.textContent ?? '';
+    expect(texto).not.toMatch(/PWA/);
+    expect(texto).not.toMatch(/UTCH|Universidad|IDGS101N/);
+    expect(texto).not.toContain('·');
+    expect(texto).not.toContain('150 × 1.5');
+  });
+
+  it('links the side menu to Expediente and Opinión', async () => {
+    const el = await render();
+    const rutas = [...el.querySelectorAll('#lp-menu a')].map((a) => a.getAttribute('href'));
+    expect(rutas).toContain('/perfil');
+    expect(rutas).toContain('/opinion/retroalimentacion');
+  });
+
   it('has no video', async () => {
     const el = await render();
     expect(el.querySelector('video')).toBeNull();
