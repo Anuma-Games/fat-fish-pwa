@@ -47,6 +47,9 @@
   --ff-cream-100: #f2e8cc;
   --ff-fog-400: #9aa8a2;
   --ff-win-300: #6fd39a;
+  /* Paper and ink of the dossier sheets: expediente, cierre and the visit panel of the landing */
+  --ff-paper-200: #e6dec8;
+  --ff-ink-900: #221e16;
 
   --ff-font-display: 'Jersey 10', system-ui, sans-serif;
   --ff-font-label: 'Fat Fish Acentos', 'Press Start 2P', ui-monospace, monospace;
