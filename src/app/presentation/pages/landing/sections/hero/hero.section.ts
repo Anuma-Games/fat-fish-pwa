@@ -128,10 +128,21 @@ export class HeroSection {
   private apagado?: ReturnType<typeof setTimeout>;
   /** Fraction of a click carried from one frame to the next during a spin. */
   private clicsPendientes = 0;
+  /** Next frame of the running spin and its roll sound, so leaving the page can stop both. */
+  private cuadroGiro = 0;
+  private rodado?: Rodado;
+  private destruido = false;
 
   constructor() {
     const destroyRef = inject(DestroyRef);
     const host = inject<ElementRef<HTMLElement>>(ElementRef).nativeElement;
+
+    // Leaving in the middle of a spin: no more frames on the removed wheel, no sound, no result
+    destroyRef.onDestroy(() => {
+      this.destruido = true;
+      cancelAnimationFrame(this.cuadroGiro);
+      this.rodado?.detener();
+    });
 
     afterNextRender(() => {
       this.pintar();
@@ -215,8 +226,10 @@ export class HeroSection {
     this.enBolsa = false;
     // The roll sounds from the first frame and follows the speed of the ball
     const rodado = this.sonido.rodar();
+    this.rodado = rodado;
 
     const paso = (t: number) => {
+      if (this.destruido) return;
       const k01 = duracion ? Math.min(1, (t - inicio) / duracion) : 1;
       const suave = 1 - Math.pow(1 - k01, 3);
       this.fi = desde + delta * suave;
@@ -235,14 +248,16 @@ export class HeroSection {
       fiPrevio = this.fi;
       tPrevio = t;
       if (k01 < 1) {
-        requestAnimationFrame(paso);
+        this.cuadroGiro = requestAnimationFrame(paso);
       } else {
+        this.cuadroGiro = 0;
+        this.rodado = undefined;
         rodado.detener();
         this.sonido.caida();
         this.terminar(k);
       }
     };
-    requestAnimationFrame(paso);
+    this.cuadroGiro = requestAnimationFrame(paso);
   }
 
   /**

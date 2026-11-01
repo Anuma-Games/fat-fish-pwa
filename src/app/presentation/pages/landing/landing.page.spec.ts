@@ -1,6 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { LandingPage } from './landing.page';
+import { SonidoMesa } from './sonido-mesa';
 
 describe('LandingPage', () => {
   beforeEach(async () => {
@@ -31,6 +32,24 @@ describe('LandingPage', () => {
     expect(numero).toBeGreaterThanOrEqual(0);
     expect(numero).toBeLessThanOrEqual(36);
     expect(el.querySelector('.ficha dl')?.textContent).toContain('1 vez');
+  });
+
+  it('leaving in the middle of a spin stops the ball and its sound', async () => {
+    const fixture = TestBed.createComponent(LandingPage);
+    await fixture.whenStable();
+    const el = fixture.nativeElement as HTMLElement;
+    const sonido = fixture.debugElement.injector.get(SonidoMesa);
+    const rodado = { actualizar: vi.fn(), detener: vi.fn() };
+    vi.spyOn(sonido, 'rodar').mockReturnValue(rodado);
+    const caida = vi.spyOn(sonido, 'caida');
+
+    (el.querySelector('button.mesa') as HTMLButtonElement).click();
+    fixture.destroy();
+    await esperar(60);
+
+    // The spin never reaches its end: no ball falling into a pocket, and the roll stopped once
+    expect(caida).not.toHaveBeenCalled();
+    expect(rodado.detener).toHaveBeenCalledTimes(1);
   });
 
   it('"Otra ronda" counts a restart in the visit dossier', async () => {
