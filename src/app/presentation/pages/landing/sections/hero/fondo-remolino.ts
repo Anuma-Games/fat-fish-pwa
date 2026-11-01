@@ -16,9 +16,15 @@ const VERTICES = 'attribute vec2 p;void main(){gl_Position=vec4(p,0.,1.);}';
  * of the screen, the plane is squashed by APLANADO, and while the color is changing (heat between 0
  * and 1) the 10 color levels are dithered (Bayer 4x4), so the change to red is gradual instead of
  * jumping level by level; at rest the paint keeps the flat levels of the game.
+ * It asks for highp where the phone has it: with mediump (16 bits on many phones) the time `t`
+ * loses precision after a few minutes and the swirl starts to shake.
  */
 const FRAGMENTOS = `
+#ifdef GL_FRAGMENT_PRECISION_HIGH
+precision highp float;
+#else
 precision mediump float;
+#endif
 uniform vec2 r;uniform vec2 c;uniform float t;uniform float spin;uniform float heat;
 float b2(vec2 a){a=floor(a);return fract(dot(a,vec2(.5,a.y*.75)));}
 float bayer(vec2 a){return b2(.5*a)*.25+b2(a);}
@@ -134,10 +140,16 @@ export function iniciarFondo(canvas: HTMLCanvasElement, op: OpcionesFondo): (() 
   tamano.observe(op.contenedor);
 
   if (op.quieto) {
-    return () => tamano.disconnect();
+    return () => {
+      tamano.disconnect();
+      liberar(gl!);
+    };
   }
 
-  let visible = true;
+  // The swirl runs only while both hold: the hero is on screen and the tab is in front
+  let enPantalla = true;
+  let pestanaVisible = document.visibilityState === 'visible';
+  let visible = pestanaVisible;
   let cuadro = 0;
   let avisado = 0;
   let ultimo = performance.now();
@@ -147,7 +159,8 @@ export function iniciarFondo(canvas: HTMLCanvasElement, op: OpcionesFondo): (() 
     const girando = op.girando();
     // Color and speed both follow the heat, so neither jumps when a spin starts or ends
     calor += ((girando ? 1 : 0) - calor) * Math.min(1, dt * 1.2);
-    giro += dt * (0.12 + 1.28 * calor);
+    // An angle: wrapping it keeps the number small without changing the picture
+    giro = (giro + dt * (0.12 + 1.28 * calor)) % (2 * Math.PI);
     tiempo += dt * (1 + 2 * calor);
     if (Math.abs(calor - avisado) > 0.02) {
       avisado = calor;
@@ -162,14 +175,17 @@ export function iniciarFondo(canvas: HTMLCanvasElement, op: OpcionesFondo): (() 
     cuadro = requestAnimationFrame(paso);
   };
 
-  // Only while the hero is on screen and the tab is visible
+  // Each event updates its own flag, so coming back to the tab with the hero scrolled away does
+  // not wake the swirl up
   const pantalla = new IntersectionObserver(([entrada]) => {
-    visible = entrada.isIntersecting && document.visibilityState === 'visible';
+    enPantalla = entrada.isIntersecting;
+    visible = enPantalla && pestanaVisible;
     arrancar();
   });
   pantalla.observe(op.contenedor);
   const alCambiarPestana = () => {
-    visible = document.visibilityState === 'visible';
+    pestanaVisible = document.visibilityState === 'visible';
+    visible = enPantalla && pestanaVisible;
     arrancar();
   };
   document.addEventListener('visibilitychange', alCambiarPestana);
@@ -180,7 +196,16 @@ export function iniciarFondo(canvas: HTMLCanvasElement, op: OpcionesFondo): (() 
     tamano.disconnect();
     pantalla.disconnect();
     document.removeEventListener('visibilitychange', alCambiarPestana);
+    liberar(gl!);
   };
+}
+
+/**
+ * Gives the GPU context back right away. Browsers keep only about 16 WebGL contexts and wait for the
+ * garbage collector to free the rest, so going back and forth to the landing page would pile them up.
+ */
+function liberar(gl: WebGLRenderingContext): void {
+  gl.getExtension('WEBGL_lose_context')?.loseContext();
 }
 
 function crearPrograma(gl: WebGLRenderingContext): WebGLProgram | null {
@@ -194,7 +219,7 @@ function crearPrograma(gl: WebGLRenderingContext): WebGLProgram | null {
   gl.attachShader(programa, compilar(gl.VERTEX_SHADER, VERTICES));
   gl.attachShader(
     programa,
-    compilar(gl.FRAGMENT_SHADER, FRAGMENTOS.replace('APLANADO', APLANADO.toFixed(3))),
+    compilar(gl.FRAGMENT_SHADER, FRAGMENTOS.replaceAll('APLANADO', APLANADO.toFixed(3))),
   );
   gl.linkProgram(programa);
   if (!gl.getProgramParameter(programa, gl.LINK_STATUS)) return null;
