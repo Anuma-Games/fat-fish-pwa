@@ -47,6 +47,30 @@
         "maxAge": "7d",
         "timeout": "5s"
       }
+    },
+    {
+      "name": "api-ranking",
+      "urls": [
+        "/api/pwa/ranking**"
+      ],
+      "cacheConfig": {
+        "strategy": "freshness",
+        "maxSize": 20,
+        "maxAge": "7d",
+        "timeout": "5s"
+      }
+    },
+    {
+      "name": "api-busqueda",
+      "urls": [
+        "/api/pwa/jugadores**"
+      ],
+      "cacheConfig": {
+        "strategy": "freshness",
+        "maxSize": 20,
+        "maxAge": "1d",
+        "timeout": "5s"
+      }
     }
   ]
 }

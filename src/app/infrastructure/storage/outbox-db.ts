@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { EnvioOutbox } from '../../domain/models/retroalimentacion';
+import { EnvioOutbox } from '../../domain/models/envio-outbox';
 import { OutboxRepository } from '../../domain/ports/outbox.repository';
 
 const DB_NAME = 'fatfish-pwa';

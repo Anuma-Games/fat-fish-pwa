@@ -12,13 +12,19 @@ import { provideRouter } from '@angular/router';
 import { provideServiceWorker } from '@angular/service-worker';
 import { routes } from './app.routes';
 import { Conectividad } from './domain/ports/conectividad';
+import { EncuestaRepository } from './domain/ports/encuesta.repository';
+import { JugadorRepository } from './domain/ports/jugador.repository';
 import { OutboxRepository } from './domain/ports/outbox.repository';
 import { PartidaRepository } from './domain/ports/partida.repository';
 import { PerfilRepository } from './domain/ports/perfil.repository';
+import { RankingRepository } from './domain/ports/ranking.repository';
 import { RetroalimentacionRepository } from './domain/ports/retroalimentacion.repository';
 import { SesionRepository } from './domain/ports/sesion.repository';
+import { EncuestaApiRepository } from './infrastructure/api/encuesta-api.repository';
+import { JugadorApiRepository } from './infrastructure/api/jugador-api.repository';
 import { PartidaApiRepository } from './infrastructure/api/partida-api.repository';
 import { PerfilApiRepository } from './infrastructure/api/perfil-api.repository';
+import { RankingApiRepository } from './infrastructure/api/ranking-api.repository';
 import { RetroalimentacionApiRepository } from './infrastructure/api/retroalimentacion-api.repository';
 import { ConnectivityService } from './infrastructure/pwa/connectivity.service';
 import { OutboxDb } from './infrastructure/storage/outbox-db';
@@ -31,6 +37,9 @@ export const puertos: Provider[] = [
   { provide: PerfilRepository, useExisting: PerfilApiRepository },
   { provide: PartidaRepository, useExisting: PartidaApiRepository },
   { provide: RetroalimentacionRepository, useExisting: RetroalimentacionApiRepository },
+  { provide: JugadorRepository, useExisting: JugadorApiRepository },
+  { provide: RankingRepository, useExisting: RankingApiRepository },
+  { provide: EncuestaRepository, useExisting: EncuestaApiRepository },
   { provide: OutboxRepository, useExisting: OutboxDb },
   { provide: SesionRepository, useExisting: SesionStorage },
   { provide: Conectividad, useExisting: ConnectivityService },
