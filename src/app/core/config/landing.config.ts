@@ -29,6 +29,8 @@ export const MENU = {
       { id: 'inicio', texto: 'Inicio', icono: 'ruleta' },
       { id: 'como-se-juega', texto: 'Cómo se juega', icono: 'flecha' },
       { id: 'comodines', texto: 'Comodines', icono: 'comodin' },
+      // The sample dossier on the landing page; "Expediente" below is the visitor's own, at /perfil
+      { id: 'expediente', texto: 'Lo que sabe el casino', icono: 'buscar' },
       { id: 'faq', texto: 'Preguntas', icono: 'alerta' },
     ] as (EnlaceMenu & { id: string })[],
   },

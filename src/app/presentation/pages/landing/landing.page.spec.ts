@@ -105,6 +105,18 @@ describe('LandingPage', () => {
     expect(rutas).toContain('/opinion/retroalimentacion');
   });
 
+  it('links the side menu to sections that exist, the sample dossier among them', async () => {
+    const el = await render();
+    // Leaves out "Jugar la demo", still on '#' until the demo exists
+    const anclas = [...el.querySelectorAll('#lp-menu a[href^="#"]')]
+      .map((a) => a.getAttribute('href') ?? '')
+      .filter((h) => h.length > 1);
+    expect(anclas).toContain('#expediente');
+    for (const ancla of anclas) {
+      expect(el.querySelector(ancla), ancla).not.toBeNull();
+    }
+  });
+
   it('has no video', async () => {
     const el = await render();
     expect(el.querySelector('video')).toBeNull();
