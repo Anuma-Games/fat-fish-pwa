@@ -1,6 +1,7 @@
 import { DatePipe, DecimalPipe } from '@angular/common';
 import { Component, afterRenderEffect, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 import { HistorialFacade } from '../../../application/facades/historial.facade';
 import { SincronizacionFacade } from '../../../application/facades/sincronizacion.facade';
 import { LOG_PREFIX } from '../../../core/config/api.config';
@@ -8,7 +9,7 @@ import { PixelIcon } from '../../components/pixel-icon/pixel-icon';
 
 @Component({
   selector: 'app-historial-page',
-  imports: [FormsModule, DatePipe, DecimalPipe, PixelIcon],
+  imports: [FormsModule, RouterLink, DatePipe, DecimalPipe, PixelIcon],
   templateUrl: './historial.page.html',
   styleUrl: './historial.page.css',
 })
@@ -18,7 +19,8 @@ export class HistorialPage {
   protected readonly jugadorId = signal(this.facade.idGuardado());
 
   constructor() {
-    this.consultar();
+    // Coming from /acceso the dossier of the chosen player is already on its way
+    if (!this.facade.cargando()) this.consultar();
     // Logs how long it took from the GET until the rows were painted.
     afterRenderEffect(() => {
       const partidas = this.facade.partidas();

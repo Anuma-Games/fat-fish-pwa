@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { AccesoPage } from './presentation/pages/acceso/acceso.page';
 import { LandingPage } from './presentation/pages/landing/landing.page';
 import { HistorialPage } from './presentation/pages/historial/historial.page';
 import { RetroalimentacionPage } from './presentation/pages/retroalimentacion/retroalimentacion.page';
@@ -11,6 +12,12 @@ export const routes: Routes = [
     component: LandingPage,
     title: 'Fat Fish · Lo que el casino sabe de ti',
     data: { layout: 'landing' },
+  },
+  {
+    path: 'acceso',
+    component: AccesoPage,
+    title: 'Buscar jugador - Fat Fish',
+    data: { seccion: 'Expediente' },
   },
   {
     path: 'perfil',

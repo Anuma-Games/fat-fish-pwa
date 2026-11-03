@@ -1,0 +1,376 @@
+:host {
+  --calida: 255 214 150;
+  display: block;
+  max-width: 720px;
+}
+
+/* Lamp and title, as in the hero of the landing page */
+.cabecera {
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  gap: var(--ff-space-2);
+  padding-top: 72px;
+}
+.luz {
+  position: absolute;
+  z-index: -1;
+  left: 50%;
+  top: calc(-1 * var(--ff-space-6));
+  translate: -50% 0;
+  display: grid;
+  justify-items: center;
+  width: min(560px, 100%);
+  pointer-events: none;
+  transform-origin: 50% 0;
+  animation:
+    balanceo 9s ease-in-out infinite,
+    lp-encender 1.6s steps(1) both;
+}
+.cable {
+  width: 2px;
+  height: 22px;
+  background: #1c1c1a;
+}
+.pantalla {
+  width: 84px;
+  height: 32px;
+  background: linear-gradient(#34342e, #111110 70%, #050505);
+  clip-path: polygon(32% 0, 68% 0, 100% 100%, 0 100%);
+}
+.foco {
+  width: 48px;
+  height: 10px;
+  margin-top: -5px;
+  border-radius: 50%;
+  background: radial-gradient(#fff6dc, rgb(var(--calida)) 60%, transparent 75%);
+  box-shadow: 0 0 34px 14px rgb(var(--calida) / 40%);
+}
+.haz {
+  width: 100%;
+  height: 260px;
+  background: linear-gradient(rgb(var(--calida) / 20%), rgb(var(--calida) / 5%) 70%, transparent);
+  clip-path: polygon(44% 0, 56% 0, 100% 100%, 0 100%);
+  mix-blend-mode: screen;
+}
+/* Phones: the top bar covers the space above the content, so the lamp hangs from its edge */
+@media (max-width: 767px) {
+  .luz {
+    top: 0;
+  }
+}
+@keyframes balanceo {
+  0%,
+  100% {
+    rotate: -0.8deg;
+  }
+  50% {
+    rotate: 0.8deg;
+  }
+}
+.crt {
+  position: relative;
+  margin: 0;
+  font-size: clamp(40px, 8vw, 64px);
+  line-height: 0.9;
+  color: var(--ff-cream-100);
+  text-shadow:
+    2px 0 0 rgb(136 32 32 / 80%),
+    -2px 0 0 rgb(232 184 80 / 45%),
+    0 0 30px rgb(var(--calida) / 25%),
+    4px 4px 0 #000;
+}
+.crt::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(transparent 0 3px, rgb(0 0 0 / 35%) 3px 4px);
+}
+.claim {
+  margin: 0;
+  font-family: var(--ff-font-display);
+  font-size: clamp(20px, 3vw, 24px);
+  line-height: 1.15;
+  color: var(--ff-gold-400);
+}
+
+/* The felt of the table: lattice of the casino, as on the back of the wildcards */
+.mesa {
+  position: relative;
+  margin-top: var(--ff-space-6);
+  padding: var(--ff-space-4);
+  background:
+    repeating-linear-gradient(45deg, rgb(232 184 80 / 7%) 0 2px, transparent 2px 14px),
+    repeating-linear-gradient(-45deg, rgb(232 184 80 / 7%) 0 2px, transparent 2px 14px),
+    linear-gradient(160deg, var(--ff-felt-700), var(--ff-felt-800) 70%);
+  border: 2px solid var(--ff-gold-600);
+  border-radius: var(--ff-radius-card);
+  box-shadow:
+    inset 0 0 0 4px rgb(0 0 0 / 25%),
+    var(--ff-shadow-hard);
+}
+.mesa .search {
+  max-width: none;
+}
+.mesa input {
+  flex: 1;
+  min-width: 0;
+  min-height: 48px;
+  font-size: 18px;
+  background: rgb(5 8 9 / 70%);
+}
+.buscar {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ff-space-2);
+  margin-top: 0;
+  background: var(--ff-felt-800);
+}
+.buscando .icono {
+  animation: girar 0.8s steps(8) infinite;
+}
+@keyframes girar {
+  to {
+    rotate: 360deg;
+  }
+}
+@media (max-width: 480px) {
+  .texto-boton {
+    display: none;
+  }
+}
+
+/* The Crupier's answer, like his voice on the landing page */
+.voz {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--ff-space-1) var(--ff-space-3);
+  margin: var(--ff-space-4) 0 0;
+  padding: var(--ff-space-2) var(--ff-space-4);
+  background: rgb(5 8 9 / 92%);
+  border: 1px solid rgb(var(--calida) / 25%);
+  box-shadow: 0 8px 30px rgb(0 0 0 / 60%);
+  animation: aparecer 0.3s ease both;
+}
+.quien {
+  flex-shrink: 0;
+  font-family: var(--ff-font-label);
+  font-size: 8px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--ff-ruby-300);
+}
+.dicho {
+  font-family: var(--ff-font-display);
+  font-size: 22px;
+  line-height: 1.1;
+  color: var(--ff-cream-100);
+}
+.cursor {
+  display: inline-block;
+  width: 0.5em;
+  height: 0.9em;
+  margin-left: 2px;
+  vertical-align: -0.1em;
+  background: var(--ff-gold-400);
+  animation: titilar 0.9s steps(1) infinite;
+}
+@keyframes titilar {
+  50% {
+    opacity: 0;
+  }
+}
+.aviso {
+  flex-shrink: 0;
+  color: var(--ff-gold-400);
+}
+.aparece {
+  animation: aparecer 0.3s ease both;
+}
+.notice.error {
+  animation: sacudir 0.4s steps(6) both;
+}
+@keyframes aparecer {
+  from {
+    opacity: 0;
+    translate: 0 -6px;
+  }
+}
+@keyframes sacudir {
+  20%,
+  60% {
+    translate: -4px 0;
+  }
+  40%,
+  80% {
+    translate: 4px 0;
+  }
+}
+.reintentar {
+  font-size: 20px;
+}
+
+/* Players found, dealt like cards; the whole card opens the dossier */
+.titulo-lista {
+  display: flex;
+  align-items: center;
+  gap: var(--ff-space-2);
+  margin-top: var(--ff-space-6);
+}
+.cuenta {
+  display: inline-grid;
+  place-items: center;
+  min-width: 24px;
+  height: 24px;
+  padding: 0 6px;
+  font-family: var(--ff-font-label);
+  font-size: 9px;
+  color: var(--ff-cream-100);
+  background: var(--ff-felt-700);
+  border-radius: 999px;
+}
+.jugadores {
+  display: grid;
+  gap: var(--ff-space-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  perspective: 900px;
+}
+.jugadores li {
+  animation: repartir 0.55s cubic-bezier(0.2, 0.8, 0.3, 1.25) calc(var(--i, 0) * 80ms) both;
+}
+@keyframes repartir {
+  from {
+    opacity: 0;
+    transform: translateY(-36px) rotateX(55deg) rotateZ(-4deg) scale(0.9);
+  }
+}
+.jugador {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--ff-space-3);
+  width: 100%;
+  min-height: 64px;
+  padding: var(--ff-space-3) var(--ff-space-4);
+  overflow: hidden;
+  font: inherit;
+  color: var(--ff-cream-100);
+  text-align: left;
+  background: linear-gradient(160deg, var(--ff-bg-700), var(--ff-bg-800) 70%);
+  border: 1px solid var(--ff-line);
+  border-left: 4px solid var(--ff-gold-600);
+  border-radius: var(--ff-radius-card);
+  box-shadow: 0 12px 20px -14px rgb(0 0 0 / 80%);
+  cursor: pointer;
+  transition:
+    translate 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+/* Glint of the lamp across the card, as on the wildcards */
+.jugador::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(115deg, transparent 38%, rgb(255 236 200 / 18%) 50%, transparent 62%);
+  background-size: 300% 100%;
+  background-position: 100% 0;
+  transition: background-position 0.6s ease;
+}
+.jugador:hover,
+.jugador:focus-visible {
+  translate: 0 -3px;
+  border-color: var(--ff-gold-400);
+  box-shadow: 0 16px 24px -14px rgb(0 0 0 / 90%);
+}
+.jugador:hover::after,
+.jugador:focus-visible::after {
+  background-position: 0 0;
+}
+.sello img {
+  display: block;
+  image-rendering: pixelated;
+}
+.nombre {
+  display: grid;
+  justify-items: start;
+  gap: var(--ff-space-1);
+  min-width: 0;
+}
+.alias {
+  max-width: 100%;
+  overflow: hidden;
+  font-family: var(--ff-font-display);
+  font-size: 26px;
+  line-height: 1;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.abrir {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ff-space-2);
+  font-family: var(--ff-font-label);
+  font-size: 8px;
+  text-transform: uppercase;
+  color: var(--ff-gold-400);
+}
+/* The arrow icon points down: turned, it says "open" */
+.ir {
+  rotate: -90deg;
+  transition: translate 0.2s ease;
+}
+.jugador:hover .ir {
+  translate: 4px 0;
+}
+@media (max-width: 480px) {
+  .abrir-texto {
+    display: none;
+  }
+}
+/* While typing, the cards on the table dim a little until the next answer arrives */
+.jugadores {
+  transition: opacity 0.2s ease;
+}
+.jugadores.actualizando {
+  opacity: 0.6;
+}
+/* The chosen card lifts toward the lamp; the others fold away */
+.saliendo .jugador {
+  transition:
+    opacity 0.3s ease,
+    scale 0.3s ease;
+  opacity: 0.25;
+  scale: 0.96;
+}
+.saliendo .jugador.elegido {
+  opacity: 1;
+  scale: 1.03;
+  border-color: var(--ff-gold-400);
+  box-shadow:
+    0 0 0 2px var(--ff-gold-400),
+    0 0 40px rgb(var(--calida) / 35%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .luz,
+  .buscando .icono,
+  .voz,
+  .cursor,
+  .aparece,
+  .notice.error,
+  .jugadores li {
+    animation: none;
+  }
+  .jugador,
+  .jugador::after,
+  .ir {
+    transition: none;
+  }
+}
