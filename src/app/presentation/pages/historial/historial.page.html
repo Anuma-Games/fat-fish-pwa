@@ -99,7 +99,7 @@
                 <td>
                   <span class="chip" [class]="p.resultado.toLowerCase()">{{ p.resultado }}</span>
                 </td>
-                <td>Ronda {{ p.rondaAlcanzada }} de 9</td>
+                <td>Ronda {{ p.rondaAlcanzada }}</td>
                 <td class="num">{{ p.puntaje | number }}</td>
                 <td class="num">${{ p.dineroInvertido | number }}</td>
                 <td class="num">${{ p.dineroGanado | number }}</td>
@@ -122,7 +122,7 @@
             </div>
             <dl>
               <dt>Ronda alcanzada</dt>
-              <dd>Ronda {{ p.rondaAlcanzada }} de 9</dd>
+              <dd>Ronda {{ p.rondaAlcanzada }}</dd>
               <dt>Puntaje</dt>
               <dd>{{ p.puntaje | number }}</dd>
               <dt>Invertido / perdido</dt>
