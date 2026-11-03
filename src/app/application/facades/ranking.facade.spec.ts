@@ -1,6 +1,6 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { TestBed } from '@angular/core/testing';
-import { Observable, of, throwError } from 'rxjs';
+import { Observable, Subject, of, throwError } from 'rxjs';
 import { EntradaRanking, PaginaRanking } from '../../domain/models/ranking';
 import { Conectividad } from '../../domain/ports/conectividad';
 import { RankingRepository } from '../../domain/ports/ranking.repository';
@@ -121,6 +121,30 @@ describe('RankingFacade', () => {
     responder = () => of({ ...pagina(0, true), contenido: [], totalElementos: 0 });
     facade.cargar();
     expect(facade.estado()).toBe('VACIO');
+  });
+
+  it('drops the answers of an earlier load when cargar() runs again', () => {
+    conectividad.enLinea.set(false); // no prefetch, so only the requested pages are asked
+    const vieja = new Subject<PaginaRanking>();
+    const masVieja = new Subject<PaginaRanking>();
+    responder = (n) => (n === 0 ? vieja : masVieja);
+    facade.cargar();
+    vieja.next(pagina(0)); // first load arrives, then "Ver más" stays in flight
+    facade.verMas();
+    expect(facade.cargandoMas()).toBe(true);
+
+    const nueva = new Subject<PaginaRanking>();
+    responder = () => nueva;
+    facade.cargar();
+    expect(facade.cargandoMas()).toBe(false);
+    masVieja.next(pagina(1)); // late page of the earlier load
+    nueva.next(pagina(0, true));
+
+    expect(facade.entradas().map((e) => e.posicion)).toEqual(
+      pagina(0).contenido.map((e) => e.posicion),
+    );
+    expect(facade.hayMas()).toBe(false);
+    expect(vieja.observed || masVieja.observed).toBe(false);
   });
 
   it('keeps the rows already shown when "Ver más" fails', () => {

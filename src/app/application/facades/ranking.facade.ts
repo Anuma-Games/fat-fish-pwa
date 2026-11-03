@@ -1,6 +1,6 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Injectable, effect, inject, signal, untracked } from '@angular/core';
-import { EMPTY, catchError, expand, take } from 'rxjs';
+import { EMPTY, Subscription, catchError, expand, take } from 'rxjs';
 import { LOG_PREFIX } from '../../core/config/api.config';
 import { esSinConexion } from '../../core/http/errores-http';
 import { EstadoPantalla } from '../../domain/models/estado-pantalla';
@@ -43,6 +43,8 @@ export class RankingFacade {
   readonly error = signal<string | null>(null);
   readonly enLinea = this.sync.enLinea;
   private pagina = 0;
+  /** Requests of the current load (first page, prefetch and "Ver más"); a new load cancels them. */
+  private peticiones = new Subscription();
 
   constructor() {
     effect(() => {
@@ -55,11 +57,14 @@ export class RankingFacade {
   /** Loads the first page again from zero (also the "Reintentar" button). */
   cargar(): void {
     const jugadorId = this.jugadorId();
+    this.peticiones.unsubscribe();
+    this.peticiones = new Subscription();
     this.pagina = 0;
+    this.cargandoMas.set(false);
     this.estado.set('CARGANDO');
     this.error.set(null);
     console.info(`${LOG_PREFIX} GET /api/pwa/ranking?pagina=0${this.sufijo(jugadorId)}`);
-    this.repo.pagina(0, jugadorId).subscribe({
+    const primera = this.repo.pagina(0, jugadorId).subscribe({
       next: (pagina) => {
         this.entradas.set(pagina.contenido);
         this.aplicar(pagina);
@@ -81,6 +86,7 @@ export class RankingFacade {
         }
       },
     });
+    this.peticiones.add(primera);
   }
 
   /** Appends the next page ("Ver más"). On failure the rows already shown stay as they are. */
@@ -91,7 +97,7 @@ export class RankingFacade {
     this.cargandoMas.set(true);
     this.error.set(null);
     console.info(`${LOG_PREFIX} GET /api/pwa/ranking?pagina=${siguiente}${this.sufijo(jugadorId)}`);
-    this.repo.pagina(siguiente, jugadorId).subscribe({
+    const siguientePagina = this.repo.pagina(siguiente, jugadorId).subscribe({
       next: (pagina) => {
         this.pagina = siguiente;
         this.entradas.update((actuales) => [...actuales, ...pagina.contenido]);
@@ -109,6 +115,7 @@ export class RankingFacade {
         this.cargandoMas.set(false);
       },
     });
+    this.peticiones.add(siguientePagina);
   }
 
   private aplicar(pagina: PaginaRanking): void {
@@ -126,7 +133,7 @@ export class RankingFacade {
   /** Requests pages 1..4 one after another, only to leave them in the Service Worker cache. */
   private precargarRestantes(jugadorId: string | null): void {
     if (!this.enLinea() || !this.hayMas()) return;
-    this.repo
+    const precarga = this.repo
       .pagina(1, jugadorId)
       .pipe(
         expand((pagina) =>
@@ -136,6 +143,7 @@ export class RankingFacade {
         catchError(() => EMPTY),
       )
       .subscribe();
+    this.peticiones.add(precarga);
   }
 
   /** Numeric ID saved by the last profile consult, or null when the visitor has not consulted one. */
