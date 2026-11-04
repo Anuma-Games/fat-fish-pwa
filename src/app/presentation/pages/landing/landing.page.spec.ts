@@ -1,6 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { LandingPage } from './landing.page';
+import { SonidoMesa } from './sonido-mesa';
 
 describe('LandingPage', () => {
   beforeEach(async () => {
@@ -31,6 +32,24 @@ describe('LandingPage', () => {
     expect(numero).toBeGreaterThanOrEqual(0);
     expect(numero).toBeLessThanOrEqual(36);
     expect(el.querySelector('.ficha dl')?.textContent).toContain('1 vez');
+  });
+
+  it('leaving in the middle of a spin stops the ball and its sound', async () => {
+    const fixture = TestBed.createComponent(LandingPage);
+    await fixture.whenStable();
+    const el = fixture.nativeElement as HTMLElement;
+    const sonido = fixture.debugElement.injector.get(SonidoMesa);
+    const rodado = { actualizar: vi.fn(), detener: vi.fn() };
+    vi.spyOn(sonido, 'rodar').mockReturnValue(rodado);
+    const caida = vi.spyOn(sonido, 'caida');
+
+    (el.querySelector('button.mesa') as HTMLButtonElement).click();
+    fixture.destroy();
+    await esperar(60);
+
+    // The spin never reaches its end: no ball falling into a pocket, and the roll stopped once
+    expect(caida).not.toHaveBeenCalled();
+    expect(rodado.detener).toHaveBeenCalledTimes(1);
   });
 
   it('"Otra ronda" counts a restart in the visit dossier', async () => {
@@ -68,6 +87,34 @@ describe('LandingPage', () => {
     const texto = el.textContent ?? '';
     expect(texto).not.toMatch(/nueve rondas|9 rondas/i);
     expect(texto).not.toMatch(/Ruina financiera|Aislamiento|Pérdida familiar/);
+  });
+
+  it('uses words for the general public: no "PWA", no university, no middle dot', async () => {
+    const el = await render();
+    const texto = el.textContent ?? '';
+    expect(texto).not.toMatch(/PWA/);
+    expect(texto).not.toMatch(/UTCH|Universidad|IDGS101N/);
+    expect(texto).not.toContain('·');
+    expect(texto).not.toContain('150 × 1.5');
+  });
+
+  it('links the side menu to Expediente and Opinión', async () => {
+    const el = await render();
+    const rutas = [...el.querySelectorAll('#lp-menu a')].map((a) => a.getAttribute('href'));
+    expect(rutas).toContain('/perfil');
+    expect(rutas).toContain('/opinion/retroalimentacion');
+  });
+
+  it('links the side menu to sections that exist, the sample dossier among them', async () => {
+    const el = await render();
+    // Leaves out "Jugar la demo", still on '#' until the demo exists
+    const anclas = [...el.querySelectorAll('#lp-menu a[href^="#"]')]
+      .map((a) => a.getAttribute('href') ?? '')
+      .filter((h) => h.length > 1);
+    expect(anclas).toContain('#expediente');
+    for (const ancla of anclas) {
+      expect(el.querySelector(ancla), ancla).not.toBeNull();
+    }
   });
 
   it('has no video', async () => {

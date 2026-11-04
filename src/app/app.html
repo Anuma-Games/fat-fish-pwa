@@ -37,16 +37,22 @@
           <app-pixel-icon name="cerrar" [size]="18" />
         </button>
       </div>
-      <nav class="nav" (click)="menuAbierto.set(false)">
-        <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
-          <app-pixel-icon name="ruleta" [size]="16" /> Inicio
-        </a>
-        <a routerLink="/perfil" routerLinkActive="active">
-          <app-pixel-icon name="expediente" [size]="16" /> Expediente
-        </a>
-        <a routerLink="/opinion/retroalimentacion" routerLinkActive="active">
-          <app-pixel-icon name="opinion" [size]="16" /> Opinión
-        </a>
+      <span class="nav-grupo">{{ menu.app.titulo }}</span>
+      <nav class="nav" [attr.aria-label]="menu.app.titulo" (click)="menuAbierto.set(false)">
+        @for (e of menu.app.enlaces; track e.ruta) {
+          <a [routerLink]="e.ruta" routerLinkActive="active">
+            <app-pixel-icon [name]="e.icono" [size]="16" /> {{ e.texto }}
+          </a>
+        }
+      </nav>
+      <span class="nav-grupo">{{ menu.mesa.titulo }}</span>
+      <nav class="nav" [attr.aria-label]="menu.mesa.titulo" (click)="menuAbierto.set(false)">
+        @for (e of menu.mesa.enlaces; track e.id) {
+          <a routerLink="/" [fragment]="e.id === 'inicio' ? undefined : e.id">
+            <app-pixel-icon [name]="e.icono" [size]="16" />
+            {{ e.id === 'inicio' ? 'Volver al inicio' : e.texto }}
+          </a>
+        }
       </nav>
       <div class="sync small">
         @if (!sincronizacion.enLinea()) {

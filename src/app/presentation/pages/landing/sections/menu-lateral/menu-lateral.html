@@ -35,19 +35,18 @@
     </button>
   </div>
 
-  <nav class="enlaces" aria-label="Secciones" (click)="cerrar()">
-    <a href="#como-se-juega"><app-pixel-icon name="ruleta" [size]="16" /> Cómo se juega</a>
-    <a href="#comodines"><app-pixel-icon name="comodin" [size]="16" /> Comodines</a>
-    <a href="#expediente"><app-pixel-icon name="expediente" [size]="16" /> Expediente</a>
-    <a href="#faq"><app-pixel-icon name="alerta" [size]="16" /> Preguntas</a>
+  <span class="grupo">{{ menu.mesa.titulo }}</span>
+  <nav class="enlaces" [attr.aria-label]="menu.mesa.titulo" (click)="cerrar()">
+    @for (e of menu.mesa.enlaces; track e.id) {
+      <a [href]="'#' + e.id"><app-pixel-icon [name]="e.icono" [size]="16" /> {{ e.texto }}</a>
+    }
   </nav>
 
-  <span class="grupo">En la PWA</span>
-  <nav class="enlaces" aria-label="PWA" (click)="cerrar()">
-    <a [routerLink]="cta.expediente"
-      ><app-pixel-icon name="buscar" [size]="16" /> Ver un expediente</a
-    >
-    <a [routerLink]="cta.opinion"><app-pixel-icon name="opinion" [size]="16" /> Enviar opinión</a>
+  <span class="grupo">{{ menu.app.titulo }}</span>
+  <nav class="enlaces" [attr.aria-label]="menu.app.titulo" (click)="cerrar()">
+    @for (e of menu.app.enlaces; track e.ruta) {
+      <a [routerLink]="e.ruta"><app-pixel-icon [name]="e.icono" [size]="16" /> {{ e.texto }}</a>
+    }
   </nav>
 
   <div class="pie">
