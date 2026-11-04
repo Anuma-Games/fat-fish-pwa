@@ -1,15 +1,21 @@
-import { HttpErrorResponse } from '@angular/common/http';
 import { Injectable, effect, inject, signal } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 import { LOG_PREFIX } from '../../core/config/api.config';
-import { EnvioOutbox, Retroalimentacion } from '../../domain/models/retroalimentacion';
+import {
+  EnvioOutbox,
+  EnvioRetroalimentacion,
+  ResultadoEnvio,
+} from '../../domain/models/envio-outbox';
+import { Retroalimentacion } from '../../domain/models/retroalimentacion';
 import { OutboxRepository } from '../../domain/ports/outbox.repository';
 import { RetroalimentacionRepository } from '../../domain/ports/retroalimentacion.repository';
+import { intentarEnvio } from '../outbox/intentar-envio';
 import { SincronizacionFacade } from './sincronizacion.facade';
 
-const MAX_INTENTOS = 5;
+export type { ResultadoEnvio } from '../../domain/models/envio-outbox';
 
-export type ResultadoEnvio = 'ENVIADO' | 'EN_COLA' | 'RECHAZADO';
+const esRetroalimentacion = (envio: EnvioOutbox): envio is EnvioRetroalimentacion =>
+  envio.tipo === 'retroalimentacion';
 
 /**
  * Sends feedback to the API. If there is no connection, the submission waits in the IndexedDB
@@ -21,7 +27,7 @@ export class RetroalimentacionFacade {
   private readonly outbox = inject(OutboxRepository);
   private readonly sync = inject(SincronizacionFacade);
 
-  readonly envios = signal<EnvioOutbox[]>([]);
+  readonly envios = signal<EnvioRetroalimentacion[]>([]);
   private sincronizando = false;
 
   constructor() {
@@ -33,7 +39,7 @@ export class RetroalimentacionFacade {
   }
 
   async enviar(datos: Retroalimentacion): Promise<ResultadoEnvio> {
-    const envio: EnvioOutbox = {
+    const envio: EnvioRetroalimentacion = {
       id: crypto.randomUUID(),
       tipo: 'retroalimentacion',
       contenido: datos,
@@ -60,7 +66,9 @@ export class RetroalimentacionFacade {
     if (this.sincronizando) return;
     this.sincronizando = true;
     try {
-      const pendientes = (await this.outbox.todos()).filter((e) => e.estado === 'PENDIENTE');
+      const pendientes = (await this.outbox.todos())
+        .filter(esRetroalimentacion)
+        .filter((e) => e.estado === 'PENDIENTE');
       if (pendientes.length > 0) {
         console.info(
           `${LOG_PREFIX} Sincronizando outbox: ${pendientes.length} envío(s) pendiente(s)`,
@@ -76,31 +84,17 @@ export class RetroalimentacionFacade {
   }
 
   async refrescar(): Promise<void> {
-    this.envios.set(await this.outbox.todos());
+    this.envios.set((await this.outbox.todos()).filter(esRetroalimentacion));
   }
 
-  private async intentar(envio: EnvioOutbox): Promise<EnvioOutbox['estado']> {
-    envio.intentos += 1;
-    envio.estado = 'ENVIANDO';
-    await this.outbox.guardar(envio);
-    const inicio = performance.now();
-    try {
-      const respuesta = await firstValueFrom(this.api.enviar(envio.contenido, envio.id));
-      envio.estado = 'ENVIADO';
-      envio.idServidor = respuesta.id;
-      envio.ultimoError = undefined;
-      this.sync.registrar();
-      console.info(
-        `${LOG_PREFIX} POST /api/pwa/retroalimentacion OK en ${(performance.now() - inicio).toFixed(1)} ms: id ${respuesta.id} (Idempotency-Key ${envio.id})`,
-      );
-    } catch (e) {
-      const err = e as HttpErrorResponse;
-      const sinRed = err.status === 0 || err.status >= 500;
-      envio.ultimoError = sinRed ? 'Sin conexión con el servidor' : `Rechazado (${err.status})`;
-      envio.estado = !sinRed || envio.intentos >= MAX_INTENTOS ? 'FALLIDO' : 'PENDIENTE';
-      console.warn(`${LOG_PREFIX} POST falló (${err.status}); estado ${envio.estado}`, err.message);
-    }
-    await this.outbox.guardar(envio);
-    return envio.estado;
+  private async intentar(envio: EnvioRetroalimentacion): Promise<EnvioRetroalimentacion['estado']> {
+    const estado = await intentarEnvio(
+      envio,
+      this.outbox,
+      async () => (await firstValueFrom(this.api.enviar(envio.contenido, envio.id))).id,
+      'POST /api/pwa/retroalimentacion',
+    );
+    if (estado === 'ENVIADO') this.sync.registrar();
+    return estado;
   }
 }
