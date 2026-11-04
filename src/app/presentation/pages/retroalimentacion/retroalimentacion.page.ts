@@ -26,9 +26,14 @@ export class RetroalimentacionPage {
   ];
   protected readonly componentes: { valor: Componente; texto: string }[] = [
     { valor: 'JUEGO', texto: 'Juego' },
-    { valor: 'PWA', texto: 'PWA' },
+    { valor: 'PWA', texto: 'App web' },
     { valor: 'OTRO', texto: 'Otro' },
   ];
+
+  /** Visible text of a value of `categorias` or `componentes` (the API keeps its own codes). */
+  protected textoDe<T>(lista: { valor: T; texto: string }[], valor: T): string {
+    return lista.find((o) => o.valor === valor)?.texto ?? String(valor);
+  }
 
   protected categoria: Categoria = 'SUGERENCIA';
   protected componente: Componente = 'PWA';

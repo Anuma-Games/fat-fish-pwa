@@ -102,7 +102,7 @@
                 <td>
                   <span class="chip" [class]="p.resultado.toLowerCase()">{{ p.resultado }}</span>
                 </td>
-                <td>Ronda {{ p.rondaAlcanzada }} de 9</td>
+                <td>Ronda {{ p.rondaAlcanzada }}</td>
                 <td class="num">{{ p.puntaje | number }}</td>
                 <td class="num">${{ p.dineroInvertido | number }}</td>
                 <td class="num">${{ p.dineroGanado | number }}</td>
@@ -119,13 +119,13 @@
           <li class="match-card">
             <div class="match-head">
               <span class="small muted"
-                >{{ p.creadaEn | date: 'd MMM y' }} · {{ minutos(p.duracionSeg) }}</span
+                >{{ p.creadaEn | date: 'd MMM y' }}, {{ minutos(p.duracionSeg) }}</span
               >
               <span class="chip" [class]="p.resultado.toLowerCase()">{{ p.resultado }}</span>
             </div>
             <dl>
               <dt>Ronda alcanzada</dt>
-              <dd>Ronda {{ p.rondaAlcanzada }} de 9</dd>
+              <dd>Ronda {{ p.rondaAlcanzada }}</dd>
               <dt>Puntaje</dt>
               <dd>{{ p.puntaje | number }}</dd>
               <dt>Invertido / perdido</dt>
@@ -138,7 +138,7 @@
       <p class="small muted count">
         {{ facade.partidas().length }} de {{ facade.totalPartidas() }} partidas
         @if (facade.generadoEn(); as fecha) {
-          · datos del {{ fecha | date: 'd MMM, HH:mm' }}
+          (datos del {{ fecha | date: 'd MMM, HH:mm' }})
         }
       </p>
       @if (facade.hayMas()) {

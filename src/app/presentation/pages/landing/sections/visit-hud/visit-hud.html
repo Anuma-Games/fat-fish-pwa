@@ -6,7 +6,10 @@
     aria-controls="hud-datos"
     (click)="abierto.set(!abierto())"
   >
-    <span><span class="punto" aria-hidden="true"></span>Tu expediente · {{ visita.tiempo() }}</span>
+    <span
+      ><span class="punto" aria-hidden="true"></span>Tu expediente
+      <span class="tiempo">{{ visita.tiempo() }}</span></span
+    >
     <span aria-hidden="true">{{ abierto() ? '−' : '+' }}</span>
   </button>
   @if (abierto()) {

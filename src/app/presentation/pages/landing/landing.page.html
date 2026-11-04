@@ -10,8 +10,10 @@
     <nav class="lp-links" aria-label="Secciones">
       <a href="#como-se-juega">Cómo se juega</a>
       <a href="#comodines">Comodines</a>
-      <a href="#expediente">Expediente</a>
       <a href="#faq">Preguntas</a>
+      <span class="separador" aria-hidden="true"></span>
+      <a [routerLink]="cta.expediente">Expediente</a>
+      <a [routerLink]="cta.opinion">Opinión</a>
     </nav>
     <button
       class="sonido"
@@ -39,9 +41,6 @@
       <header class="lp-head" appReveal>
         <span class="eyebrow">Créditos</span>
         <h2>Anuma Games</h2>
-        <p class="muted">
-          Proyecto integrador del grupo IDGS101N de la Universidad Tecnológica de Chihuahua.
-        </p>
       </header>
       <ul class="equipo">
         @for (n of equipo; track n) {
@@ -75,7 +74,8 @@
   <div class="lp-wrap footer-row">
     <span class="foot-brand">
       <img src="icons/insignia-96.png" alt="" width="24" height="24" />
-      Fat Fish · Anuma Games
+      Fat Fish
+      <span class="foot-estudio">Anuma Games</span>
     </span>
     <nav class="foot-links" aria-label="Enlaces del pie">
       <a [routerLink]="cta.expediente">Expediente</a>

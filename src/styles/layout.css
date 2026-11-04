@@ -75,6 +75,16 @@
   gap: var(--ff-space-1);
   margin-top: var(--ff-space-6);
 }
+.nav-grupo {
+  margin: var(--ff-space-6) var(--ff-space-3) var(--ff-space-1);
+  font-family: var(--ff-font-label);
+  font-size: 8px;
+  text-transform: uppercase;
+  color: var(--ff-gold-600);
+}
+.nav-grupo + .nav {
+  margin-top: 0;
+}
 .nav a {
   display: flex;
   align-items: center;

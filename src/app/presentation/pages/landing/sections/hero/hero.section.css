@@ -4,6 +4,12 @@
   --techo: 104px;
   --tilt: 56deg;
   --calida: 255 214 150;
+  /* Color of the swirl shining on the wheel and the Crupier: green and gold at rest, red on a spin */
+  --reflejo: color-mix(
+    in srgb,
+    rgb(150 196 96) calc(100% - var(--calor, 0) * 100%),
+    rgb(238 72 44)
+  );
   position: relative;
   display: grid;
   grid-template-columns: minmax(0, 1fr);
@@ -14,28 +20,18 @@
   overflow: hidden;
   isolation: isolate;
   text-align: center;
-  background: #050809;
+  background: radial-gradient(ellipse at 50% 40%, #0b1714, #040706 70%);
   border-bottom: 2px solid var(--ff-gold-600);
 }
-.ambiente {
-  position: absolute;
-  inset: 0;
-  z-index: -2;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center 42%;
-  opacity: 0.35;
-  filter: grayscale(0.5) brightness(0.55) blur(3px);
-  transform: scale(1.05);
-}
+/* Room in shadow: dark at the edges and behind the title, open around the wheel */
 .penumbra {
   position: absolute;
   inset: 0;
   z-index: -1;
   background:
-    radial-gradient(ellipse 55% 60% at 50% 55%, transparent 0, rgb(5 8 9 / 80%) 65%, #050809 100%),
-    linear-gradient(transparent 70%, var(--ff-bg-900));
+    radial-gradient(ellipse 46% 30% at 50% 14%, rgb(4 7 6 / 70%), transparent),
+    radial-gradient(ellipse 70% 62% at 50% 58%, transparent 30%, rgb(4 7 6 / 75%) 80%, #040706),
+    linear-gradient(transparent 72%, var(--ff-bg-900));
 }
 
 /* Lamp and beam (span the title and the table rows, end at the center of the wheel) */
@@ -161,7 +157,7 @@
   width: var(--ancho);
   height: calc(var(--ancho) * 0.62);
   /* Room for the Crupier's head between the claim and the wheel */
-  margin-top: calc(var(--ancho) * 0.2);
+  margin-top: calc(var(--ancho) * 0.28);
   padding: 0;
   font: inherit;
   color: inherit;
@@ -180,19 +176,24 @@
 .mesa.girando {
   cursor: progress;
 }
-/* Pool of lamp light on the felt around the wheel */
+/* Pool of lamp light around the wheel, with a dark ring where the paint drains under it */
 .mesa::before {
   content: '';
   position: absolute;
-  inset: -8% -30% -14%;
+  inset: -12% -34% -18%;
   z-index: -1;
   border-radius: 50%;
-  background: radial-gradient(closest-side, rgb(var(--calida) / 16%), transparent);
+  background: radial-gradient(
+    closest-side,
+    rgb(0 0 0 / 75%) 52%,
+    rgb(var(--calida) / 18%) 62%,
+    transparent
+  );
   animation: parpadeo-luz 11s infinite steps(1);
 }
 .plano {
   position: absolute;
-  z-index: 1;
+  z-index: 2;
   left: 0;
   top: 50%;
   width: var(--ancho);
@@ -212,76 +213,36 @@
   width: 100%;
   height: 100%;
 }
+/* Pixel-art sprites of the game's table (scripts/sprites-hero.py) */
 .cuenco,
 .tapa,
-.rueda {
+.rueda,
+.crupier img {
   display: block;
-  overflow: visible;
+  image-rendering: pixelated;
 }
-.filo {
-  stroke: var(--ff-gold-600);
-}
-.rombo {
-  fill: var(--ff-gold-400);
-}
-.bolsa.rojo {
-  fill: #6e1612;
-}
-.banda.rojo {
-  fill: #a42c26;
-}
-.bolsa.negro {
-  fill: #080808;
-}
-.banda.negro {
-  fill: #151515;
-}
-.bolsa.cero {
-  fill: #073a20;
-}
-.banda.cero {
-  fill: #105030;
-}
-.traste {
-  stroke: #d9b45a;
-  stroke-width: 0.7;
-}
-.rueda text {
-  font-family: var(--ff-font-display);
-  font-size: 8px;
-  fill: var(--ff-cream-100);
-}
-.radio {
-  stroke: #c08828;
-  stroke-width: 0.8;
-  opacity: 0.55;
-}
-
-/* The Crupier: a dark figure across the table, barely touched by the lamp */
+/* The Crupier across the wheel: lamp on his head, the swirl shining on his sides */
 .crupier {
   position: absolute;
   z-index: 0;
   left: 50%;
-  bottom: 72%;
+  bottom: 84%;
   width: 36%;
+  aspect-ratio: 64 / 54;
   translate: -50% 0;
-  overflow: visible;
   pointer-events: none;
-  filter: brightness(0.78) saturate(0.85);
+  filter: brightness(0.8) drop-shadow(-3px 0 0 var(--reflejo)) drop-shadow(3px 0 0 var(--reflejo))
+    drop-shadow(0 -3px 0 rgb(var(--calida) / 60%));
 }
+.crupier img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+/* The bag nods one pixel at a time */
 .crupier .bolsa {
-  transform-box: fill-box;
-  transform-origin: 50% 100%;
-  animation: cabeceo 12s ease-in-out infinite;
-}
-@keyframes cabeceo {
-  0%,
-  100% {
-    rotate: -1.5deg;
-  }
-  50% {
-    rotate: 2deg;
-  }
+  animation: lp-cabeceo 6s steps(1) infinite;
 }
 .encendiendo .luz {
   animation:
@@ -307,9 +268,10 @@
   width: 3.4%;
   aspect-ratio: 1;
   translate: -50% -50%;
-  border-radius: 50%;
-  background: radial-gradient(circle at 35% 30%, #fff, #e8e2d2 45%, #8f8a7e);
-  box-shadow: 0 2px 3px rgb(0 0 0 / 60%);
+  background: url('/img/landing/hero/bola.png') center / 100% no-repeat;
+  image-rendering: pixelated;
+  scale: calc(1 - var(--hondo, 0) * 0.18 + var(--alt, 0) * 0.4);
+  filter: brightness(calc(1 - var(--hondo, 0) * 0.3 + var(--alt, 0) * 0.3));
 }
 
 /* Light that stays put while the wheel turns: a warm spot from above and dark edges */
@@ -324,15 +286,23 @@
   inset: 0;
   border-radius: 50%;
 }
+/* In hard steps, like the posterized light of the swirl */
 .brillo::before {
-  background: radial-gradient(circle at 50% 42%, transparent 40%, rgb(0 0 0 / 70%) 78%);
+  background: radial-gradient(
+    circle at 50% 42%,
+    transparent 46%,
+    rgb(0 0 0 / 28%) 46% 60%,
+    rgb(0 0 0 / 50%) 60% 72%,
+    rgb(0 0 0 / 66%) 72%
+  );
 }
 .brillo::after {
   background: radial-gradient(
     ellipse 55% 50% at 50% 46%,
-    rgb(var(--calida) / 40%),
-    rgb(var(--calida) / 10%) 45%,
-    transparent 70%
+    rgb(var(--calida) / 32%) 22%,
+    rgb(var(--calida) / 18%) 22% 44%,
+    rgb(var(--calida) / 8%) 44% 66%,
+    transparent 66%
   );
   mix-blend-mode: screen;
   animation: parpadeo-luz 11s infinite steps(1);
@@ -343,7 +313,7 @@
   right: 6%;
   bottom: 2%;
   height: 22%;
-  z-index: -1;
+  z-index: 1;
   border-radius: 50%;
   background: radial-gradient(closest-side, rgb(0 0 0 / 85%), transparent);
   filter: blur(6px);

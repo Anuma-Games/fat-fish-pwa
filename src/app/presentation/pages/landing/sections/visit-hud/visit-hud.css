@@ -18,9 +18,9 @@
   pointer-events: auto;
 }
 .hud {
-  color: #221e16;
-  background: #e6dec8;
-  border: 2px solid #221e16;
+  color: var(--ff-ink-900);
+  background: var(--ff-paper-200);
+  border: 2px solid var(--ff-ink-900);
   box-shadow: 6px 6px 0 #000;
 }
 .toggle {
@@ -34,8 +34,8 @@
   font-family: var(--ff-font-label);
   font-size: 8px;
   text-transform: uppercase;
-  color: #e6dec8;
-  background: #221e16;
+  color: var(--ff-paper-200);
+  background: var(--ff-ink-900);
   border: 0;
   cursor: pointer;
 }
@@ -43,6 +43,12 @@
   outline: 2px solid var(--ff-gold-400);
   outline-offset: 2px;
   box-shadow: none;
+}
+.tiempo {
+  margin-left: var(--ff-space-2);
+  padding: 2px 4px;
+  color: var(--ff-ink-900);
+  background: var(--ff-paper-200);
 }
 .punto {
   display: inline-block;
