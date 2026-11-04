@@ -20,7 +20,7 @@ export class HistorialPage {
 
   constructor() {
     // Coming from /acceso the dossier of the chosen player is already on its way
-    if (!this.facade.cargando()) this.consultar();
+    if (!this.facade.consultando(this.jugadorId())) this.consultar();
     // Logs how long it took from the GET until the rows were painted.
     afterRenderEffect(() => {
       const partidas = this.facade.partidas();

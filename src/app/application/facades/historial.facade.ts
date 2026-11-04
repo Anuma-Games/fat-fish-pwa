@@ -1,6 +1,6 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Injectable, inject, signal } from '@angular/core';
-import { forkJoin } from 'rxjs';
+import { Subscription, forkJoin } from 'rxjs';
 import { LAB_PLAYER_ID, LOG_PREFIX } from '../../core/config/api.config';
 import { Partida } from '../../domain/models/partida';
 import { Perfil } from '../../domain/models/perfil';
@@ -31,6 +31,8 @@ export class HistorialFacade {
   inicioConsulta = 0;
   private jugadorId = '';
   private pagina = 0;
+  /** Requests of the current player (profile, first page and "Ver más"); a new search cancels them. */
+  private peticiones = new Subscription();
 
   /** Player consulted last time; ignores ids saved by older versions of the lab (UUIDs). */
   idGuardado(): string {
@@ -38,7 +40,16 @@ export class HistorialFacade {
     return guardado && /^\d+$/.test(guardado) ? guardado : LAB_PLAYER_ID;
   }
 
+  /** True while the dossier of `jugadorId` is on its way. */
+  consultando(jugadorId: string): boolean {
+    return this.cargando() && this.jugadorId === jugadorId;
+  }
+
   buscar(jugadorId: string): void {
+    // A slower answer for the previous player must not replace this one
+    this.peticiones.unsubscribe();
+    this.peticiones = new Subscription();
+    this.cargandoMas.set(false);
     this.sesion.guardarJugadorId(jugadorId);
     this.jugadorId = jugadorId;
     this.pagina = 0;
@@ -49,7 +60,7 @@ export class HistorialFacade {
     console.info(
       `${LOG_PREFIX} GET /api/pwa/partidas?id=${jugadorId}&pagina=0&tamano=${TAMANO_PAGINA}`,
     );
-    forkJoin({
+    const consulta = forkJoin({
       perfil: this.perfilRepo.perfil(jugadorId),
       pagina: this.partidasRepo.historial(jugadorId, 0, TAMANO_PAGINA),
     }).subscribe({
@@ -78,6 +89,7 @@ export class HistorialFacade {
         this.cargando.set(false);
       },
     });
+    this.peticiones.add(consulta);
   }
 
   verMas(): void {
@@ -87,7 +99,7 @@ export class HistorialFacade {
     console.info(
       `${LOG_PREFIX} GET /api/pwa/partidas?id=${this.jugadorId}&pagina=${siguiente}&tamano=${TAMANO_PAGINA}`,
     );
-    this.partidasRepo.historial(this.jugadorId, siguiente, TAMANO_PAGINA).subscribe({
+    const pagina = this.partidasRepo.historial(this.jugadorId, siguiente, TAMANO_PAGINA).subscribe({
       next: (pagina) => {
         console.info(
           `${LOG_PREFIX} Página ${siguiente} respondió en ${this.ms()} ms: ${pagina.contenido.length} partidas más`,
@@ -107,6 +119,7 @@ export class HistorialFacade {
         this.cargandoMas.set(false);
       },
     });
+    this.peticiones.add(pagina);
   }
 
   private ms(): string {

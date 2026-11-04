@@ -248,6 +248,7 @@
   padding: 0;
   list-style: none;
   perspective: 900px;
+  transition: opacity 0.2s ease;
 }
 .jugadores li {
   animation: repartir 0.55s cubic-bezier(0.2, 0.8, 0.3, 1.25) calc(var(--i, 0) * 80ms) both;
@@ -345,9 +346,6 @@
   }
 }
 /* While typing, the cards on the table dim a little until the next answer arrives */
-.jugadores {
-  transition: opacity 0.2s ease;
-}
 .jugadores.actualizando {
   opacity: 0.6;
 }

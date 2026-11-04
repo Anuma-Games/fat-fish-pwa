@@ -42,7 +42,7 @@
      the whole line, so screen readers announce it once instead of letter by letter -->
 <span class="solo-lector" aria-live="polite">{{ linea() }}</span>
 @if (frase()) {
-  <p class="voz" [class.vacio]="busqueda.estado() === 'VACIO'" aria-hidden="true">
+  <p class="voz" aria-hidden="true">
     <span class="quien">
       @if (busqueda.estado() === 'VACIO') {
         Sin resultados
@@ -54,6 +54,7 @@
   </p>
 }
 
+<!-- Only the notices are announced: the Crupier's line already says how many players there are -->
 <div aria-live="polite">
   @switch (busqueda.estado()) {
     @case ('SIN_RED') {
@@ -80,44 +81,45 @@
     }
   }
 
-  @if (mostrados().length > 0) {
-    @if (busqueda.estado() === 'DESDE_CACHE') {
-      <div class="notice offline aparece">
-        <app-pixel-icon class="aviso" name="sin-conexion" [size]="18" />
-        <span>
-          <span class="title">Sin conexión</span>
-          Resultados guardados en tu dispositivo.
-        </span>
-      </div>
-    }
-    <h2 class="titulo-lista">
-      Jugadores <span class="cuenta">{{ mostrados().length }}</span>
-    </h2>
-    <!-- Tracked by ID: while typing, the cards already on the table stay and only new ones are dealt -->
-    <ul class="jugadores" [class.saliendo]="elegido()" [class.actualizando]="busqueda.cargando()">
-      @for (j of mostrados(); track j.jugadorId; let i = $index) {
-        <li [style.--i]="i">
-          <button
-            class="jugador"
-            type="button"
-            [class.elegido]="elegido() === j.jugadorId"
-            [attr.aria-label]="'Ver el expediente de ' + j.alias + ', ID ' + j.jugadorId"
-            (click)="elegir(j)"
-          >
-            <span class="sello" aria-hidden="true">
-              <img src="icons/insignia-96.png" alt="" width="36" height="36" />
-            </span>
-            <span class="nombre">
-              <span class="alias">{{ j.alias }}</span>
-              <span class="chip id">ID #{{ j.jugadorId }}</span>
-            </span>
-            <span class="abrir" aria-hidden="true">
-              <span class="abrir-texto">Ver expediente</span>
-              <app-pixel-icon class="ir" name="flecha" [size]="14" />
-            </span>
-          </button>
-        </li>
-      }
-    </ul>
+  @if (busqueda.estado() === 'DESDE_CACHE' && mostrados().length > 0) {
+    <div class="notice offline aparece">
+      <app-pixel-icon class="aviso" name="sin-conexion" [size]="18" />
+      <span>
+        <span class="title">Sin conexión</span>
+        Resultados guardados en tu dispositivo.
+      </span>
+    </div>
   }
 </div>
+
+@if (mostrados().length > 0) {
+  <h2 class="titulo-lista">
+    Jugadores <span class="cuenta">{{ mostrados().length }}</span>
+  </h2>
+  <!-- Tracked by ID: while typing, the cards already on the table stay and only new ones are dealt -->
+  <ul class="jugadores" [class.saliendo]="elegido()" [class.actualizando]="busqueda.cargando()">
+    @for (j of mostrados(); track j.jugadorId; let i = $index) {
+      <li [style.--i]="i">
+        <button
+          class="jugador"
+          type="button"
+          [class.elegido]="elegido() === j.jugadorId"
+          [attr.aria-label]="'Ver el expediente de ' + j.alias + ', ID ' + j.jugadorId"
+          (click)="elegir(j)"
+        >
+          <span class="sello" aria-hidden="true">
+            <img src="icons/insignia-96.png" alt="" width="36" height="36" />
+          </span>
+          <span class="nombre">
+            <span class="alias">{{ j.alias }}</span>
+            <span class="chip id">ID #{{ j.jugadorId }}</span>
+          </span>
+          <span class="abrir" aria-hidden="true">
+            <span class="abrir-texto">Ver expediente</span>
+            <app-pixel-icon class="ir" name="flecha" [size]="14" />
+          </span>
+        </button>
+      </li>
+    }
+  </ul>
+}

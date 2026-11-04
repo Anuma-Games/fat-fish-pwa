@@ -151,6 +151,11 @@ describe('AccesoPage', () => {
     expect(el.querySelector('.voz')?.getAttribute('aria-hidden')).toBe('true');
   });
 
+  it('does not announce every card again when the list changes', async () => {
+    const { el } = await buscar('pezgordo');
+    expect(el.querySelector('[aria-live] .jugadores')).toBeNull();
+  });
+
   it('searches by ID too, also when it is written as #1042', async () => {
     respuesta = of([pezgordo, { jugadorId: '1043', alias: 'otro' }]);
     const { el } = await buscar('#1042');
