@@ -1,4 +1,4 @@
-import { provideHttpClient, withFetch } from '@angular/common/http';
+import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
 import { registerLocaleData } from '@angular/common';
 import localeEsMx from '@angular/common/locales/es-MX';
 import {
@@ -20,6 +20,7 @@ import { PerfilRepository } from './domain/ports/perfil.repository';
 import { RankingRepository } from './domain/ports/ranking.repository';
 import { RetroalimentacionRepository } from './domain/ports/retroalimentacion.repository';
 import { SesionRepository } from './domain/ports/sesion.repository';
+import { apiKeyInterceptor } from './infrastructure/api/api-key.interceptor';
 import { EncuestaApiRepository } from './infrastructure/api/encuesta-api.repository';
 import { JugadorApiRepository } from './infrastructure/api/jugador-api.repository';
 import { PartidaApiRepository } from './infrastructure/api/partida-api.repository';
@@ -48,11 +49,9 @@ export const puertos: Provider[] = [
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
-    provideRouter(
-      routes,
-      withInMemoryScrolling({ anchorScrolling: 'enabled', scrollPositionRestoration: 'enabled' }),
-    ),
-    provideHttpClient(withFetch()),
+
+    provideRouter(routes),
+    provideHttpClient(withFetch(), withInterceptors([apiKeyInterceptor])),
     { provide: LOCALE_ID, useValue: 'es-MX' },
     ...puertos,
     // Only active in production builds (npm run lab); ng serve does not register it.
