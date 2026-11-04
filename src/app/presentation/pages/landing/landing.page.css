@@ -75,6 +75,13 @@
   text-decoration: none;
   white-space: nowrap;
 }
+/* Between the sections of the page and the pages of the app */
+.separador {
+  align-self: center;
+  width: 1px;
+  height: 14px;
+  background: var(--ff-line);
+}
 .lp-links a:hover,
 .foot-links a:hover {
   color: var(--ff-gold-400);
@@ -237,6 +244,11 @@ details[open]::details-content {
   gap: var(--ff-space-2);
   font-family: var(--ff-font-display);
   font-size: 20px;
+}
+.foot-estudio {
+  font-family: var(--ff-font-body);
+  font-size: 14px;
+  color: var(--ff-fog-400);
 }
 .foot-links {
   display: flex;

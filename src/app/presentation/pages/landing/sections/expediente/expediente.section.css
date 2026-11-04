@@ -1,7 +1,7 @@
 :host {
-  --papel: #e6dec8;
+  --papel: var(--ff-paper-200);
   --papel-linea: rgb(34 30 22 / 9%);
-  --tinta: #221e16;
+  --tinta: var(--ff-ink-900);
   --tinta-suave: #5b5444;
   --maquina: 'Courier New', Courier, ui-monospace, monospace;
 }

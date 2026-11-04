@@ -3,13 +3,16 @@
 // el service worker funciona (localhost cuenta como origen seguro) y no hace falta CORS.
 //   npm run lab          -> compila y levanta el servidor
 //   npm run lab:serve    -> solo levanta el servidor con el build existente
-// Variables opcionales: PORT (4200) y API_URL (http://localhost:8080).
+// Variables opcionales: PORT (4200), API_URL (http://localhost:8080) y API_KEY (llave X-Api-Key de la API).
 import { createReadStream, existsSync, statSync } from 'node:fs';
 import { request as httpRequest, createServer } from 'node:http';
+import { request as httpsRequest } from 'node:https';
 import { extname, join, normalize } from 'node:path';
 
 const PORT = Number(process.env.PORT ?? 4200);
 const API_URL = new URL(process.env.API_URL ?? 'http://localhost:8080');
+const API_KEY = process.env.API_KEY;
+const request = API_URL.protocol === 'https:' ? httpsRequest : httpRequest; // http://localhost:8080 o Cloud Run
 const ROOT = join(import.meta.dirname, '..', 'dist', 'Pwa_FatFish', 'browser');
 
 const TYPES = {
@@ -34,13 +37,13 @@ if (!existsSync(join(ROOT, 'index.html'))) {
 
 function proxyToApi(req, res) {
   const started = performance.now();
-  const upstream = httpRequest(
+  const upstream = request(
     {
       hostname: API_URL.hostname,
       port: API_URL.port,
       path: req.url,
       method: req.method,
-      headers: { ...req.headers, host: API_URL.host },
+      headers: { ...req.headers, host: API_URL.host, ...(API_KEY && { 'x-api-key': API_KEY }) },
     },
     (apiRes) => {
       res.writeHead(apiRes.statusCode ?? 502, apiRes.headers);

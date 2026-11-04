@@ -8,14 +8,14 @@ import {
   viewChild,
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { CTA } from '../../../../../core/config/landing.config';
+import { CTA, MENU } from '../../../../../core/config/landing.config';
 import { PixelIcon } from '../../../../components/pixel-icon/pixel-icon';
 import { SonidoMesa } from '../../sonido-mesa';
 
 /**
- * Side menu of the landing page on phones, like the drawer of the PWA: a ☰ button in the nav opens
- * a panel from the left with the sections, the links to the PWA, the sound and the demo. It closes
- * with the ✕ button, the dark veil, Escape or any link. From 1024 px (desktop) it is not shown.
+ * Side menu of the landing page, like the side menu of Expediente and Opinión: a ☰ button in the
+ * nav opens a panel from the left with the same groups (MENU), the sound and the demo, on phones
+ * and on desktop. It closes with the ✕ button, the dark veil, Escape or any link.
  */
 @Component({
   selector: 'app-landing-menu-lateral',
@@ -26,6 +26,7 @@ import { SonidoMesa } from '../../sonido-mesa';
 })
 export class MenuLateral {
   protected readonly cta = CTA;
+  protected readonly menu = MENU;
   protected readonly sonido = inject(SonidoMesa);
   protected readonly abierto = signal(false);
 

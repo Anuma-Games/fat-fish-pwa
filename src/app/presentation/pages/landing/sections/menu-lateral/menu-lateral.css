@@ -1,4 +1,4 @@
-/* Phones only: the same drawer as the PWA (felt panel, gold edge, dark veil) */
+/* The same drawer as the side menu of the PWA (felt panel, gold edge, dark veil), at every width */
 :host {
   display: contents;
 }
@@ -103,7 +103,7 @@
   color: var(--ff-gold-400);
 }
 .grupo {
-  margin: var(--ff-space-4) var(--ff-space-3) 0;
+  margin: var(--ff-space-2) var(--ff-space-3) 0;
   font-family: var(--ff-font-label);
   font-size: 8px;
   text-transform: uppercase;
@@ -134,13 +134,6 @@
   min-height: 48px;
 }
 
-@media (min-width: 1024px) {
-  .hamburguesa,
-  .velo,
-  .panel {
-    display: none;
-  }
-}
 @media (prefers-reduced-motion: reduce) {
   .velo,
   .panel {
