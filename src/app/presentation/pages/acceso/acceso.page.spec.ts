@@ -1,7 +1,7 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { TestBed } from '@angular/core/testing';
 import { Router, provideRouter } from '@angular/router';
-import { Observable, of, throwError } from 'rxjs';
+import { Observable, Subject, of, throwError } from 'rxjs';
 import { HistorialFacade } from '../../../application/facades/historial.facade';
 import { JugadorResumen } from '../../../domain/models/jugador-resumen';
 import { Conectividad } from '../../../domain/ports/conectividad';
@@ -75,7 +75,7 @@ describe('AccesoPage', () => {
     await vi.advanceTimersByTimeAsync(300);
     vi.useRealTimers();
     await fixture.whenStable();
-    return { el, navegar };
+    return { el, navegar, fixture };
   }
 
   afterEach(() => vi.useRealTimers());
@@ -108,6 +108,28 @@ describe('AccesoPage', () => {
     expect(el.querySelector('.jugadores')).toBeNull();
   });
 
+  it('clears the list when the text stops being worth searching', async () => {
+    await teclear('pe');
+    // "pe" erased to "p": the list of "pe" does not stay under a text that is not searched
+    const { el } = await teclear('p');
+    expect(consultas).toEqual(['pe']);
+    expect(el.querySelector('.jugadores')).toBeNull();
+  });
+
+  it('submits with Enter while a typed search is still on its way', async () => {
+    const enCamino = new Subject<JugadorResumen[]>();
+    respuesta = enCamino;
+    const { el, navegar, fixture } = await teclear('3');
+    // The browser only submits with Enter when the submit button is enabled
+    expect((el.querySelector('button[type=submit]') as HTMLButtonElement).disabled).toBe(false);
+    (el.querySelector('form') as HTMLFormElement).dispatchEvent(new Event('submit'));
+    enCamino.next([pezgordo]);
+    await fixture.whenStable();
+    expect(consultas).toEqual(['3', '3']);
+    expect(abiertos).toEqual(['1042']);
+    expect(navegar).toHaveBeenCalledWith(['/perfil']);
+  });
+
   const alias = (el: HTMLElement) =>
     [...el.querySelectorAll('.jugador')].map(
       (b) => `${b.querySelector('.alias')?.textContent} ${b.querySelector('.id')?.textContent}`,
@@ -118,7 +140,15 @@ describe('AccesoPage', () => {
     expect(consultas).toEqual(['pezgordo']);
     expect(el.querySelector('.titulo-lista')?.textContent).toContain('2');
     expect(alias(el)).toEqual(['pezgordo ID #1042', 'pezgordo ID #2317']);
-    expect(el.querySelector('.voz')?.textContent).toContain('Tengo 2 con ese nombre');
+    expect(el.querySelector('.voz')?.textContent).toContain('Encontré 2. ¿Cuál eres tú?');
+  });
+
+  it('gives screen readers the whole line at once, not the typed letters', async () => {
+    const { el } = await buscar('pezgordo');
+    expect(el.querySelector('.solo-lector[aria-live]')?.textContent).toContain(
+      'Encontré 2. ¿Cuál eres tú?',
+    );
+    expect(el.querySelector('.voz')?.getAttribute('aria-hidden')).toBe('true');
   });
 
   it('searches by ID too, also when it is written as #1042', async () => {

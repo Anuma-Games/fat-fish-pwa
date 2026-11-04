@@ -25,13 +25,8 @@
       [ngModel]="texto()"
       (ngModelChange)="escribiendo($event)"
     />
-    <button
-      class="btn buscar"
-      type="submit"
-      appIman
-      aria-label="Buscar"
-      [disabled]="busqueda.cargando()"
-    >
+    <!-- Never disabled: Enter must submit even while a typed search is on its way (it replaces it) -->
+    <button class="btn buscar" type="submit" appIman aria-label="Buscar">
       <app-pixel-icon
         class="icono"
         [name]="busqueda.cargando() ? 'ruleta' : 'buscar'"
@@ -43,9 +38,11 @@
   <p class="small muted">El alias puede repetirse; el ID es único.</p>
 </form>
 
-<!-- The Crupier answers each search, written as if typed -->
+<!-- The Crupier answers each search, written as if typed. The live region is always there and holds
+     the whole line, so screen readers announce it once instead of letter by letter -->
+<span class="solo-lector" aria-live="polite">{{ linea() }}</span>
 @if (frase()) {
-  <p class="voz" [class.vacio]="busqueda.estado() === 'VACIO'" aria-live="polite">
+  <p class="voz" [class.vacio]="busqueda.estado() === 'VACIO'" aria-hidden="true">
     <span class="quien">
       @if (busqueda.estado() === 'VACIO') {
         Sin resultados

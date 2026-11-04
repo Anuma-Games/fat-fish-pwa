@@ -53,10 +53,13 @@ export class AccesoPage {
   private salida?: ReturnType<typeof setTimeout>;
   private espera?: ReturnType<typeof setTimeout>;
 
-  /** What the Crupier says for each state of the search (nothing when a notice explains it). */
-  private readonly linea = computed(() => {
+  /**
+   * What the Crupier says for each state of the search (nothing when a notice explains it). Screen
+   * readers hear this whole line; the typed `frase` is only for the eyes.
+   */
+  protected readonly linea = computed(() => {
     const n = this.mostrados().length;
-    const lista = n === 1 ? '¿Eres tú?' : `Tengo ${n} con ese nombre. ¿Cuál eres tú?`;
+    const lista = n === 1 ? '¿Eres tú?' : `Encontré ${n}. ¿Cuál eres tú?`;
     switch (this.busqueda.estado()) {
       case 'INICIAL':
         return this.busqueda.error() ? '' : 'Dime cómo te llaman en la mesa. Ya te conozco.';
@@ -110,9 +113,10 @@ export class AccesoPage {
     clearTimeout(this.espera);
     this.espera = setTimeout(() => {
       const texto = this.limpio();
-      if (texto === '') {
+      // A text that is not worth searching any more ("pe" erased to "p") leaves no stale list behind
+      if (!buscable(texto)) {
         this.busqueda.limpiar();
-      } else if (buscable(texto) && texto !== this.busqueda.consulta()) {
+      } else if (texto !== this.busqueda.consulta()) {
         this.enviada = false;
         this.busqueda.buscar(texto);
       }

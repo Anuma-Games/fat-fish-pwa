@@ -16,7 +16,7 @@ export const routes: Routes = [
   {
     path: 'acceso',
     component: AccesoPage,
-    title: 'Buscar jugador - Fat Fish',
+    title: 'Buscar jugador · Fat Fish',
     data: { seccion: 'Expediente' },
   },
   {
