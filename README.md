@@ -4,6 +4,8 @@
 
 Aplicación web progresiva (PWA) del proyecto integrador **Fat Fish**, del equipo Anuma Games (IDGS101N, Universidad Tecnológica de Chihuahua). Está hecha con Angular, un Service Worker y un manifiesto de aplicación web, y se conecta a la API del proyecto ([fat-fish-api](https://github.com/Anuma-Games/fat-fish-api)).
 
+La PWA está publicada en Firebase Hosting y es de acceso público: <https://fat-fish-511723.web.app> (dirección predeterminada alterna: <https://fat-fish-511723.firebaseapp.com>).
+
 Este documento reúne la **propuesta de diseño** de la PWA y el **estado actual** de su construcción. Las pruebas de integración con la base de datos están en el [laboratorio de pruebas](docs/laboratorio-pruebas/README.md).
 
 ## Contenido
@@ -69,7 +71,7 @@ La PWA solo lee datos del juego y solo inserta opiniones. No registra jugadores 
 | Pantallas de búsqueda, ranking y encuesta                                     | ⏳ Pendiente (tickets de UI) |
 | Aviso de versión nueva y Background Sync                                      | ⏳ Pendiente para el MVP     |
 | Wiki                                                                          | ⏳ Deseable                  |
-| Publicación de la PWA en Google Cloud                                         | ⏳ Por definir               |
+| Publicación de la PWA en Firebase Hosting (despliegue automático desde `main`) | ✅ Construido                |
 
 Las fachadas de búsqueda, ranking y encuesta ya están listas para la UI ([4.3](#43-fachadas-contrato-con-la-ui)); las pantallas se construyen en los tickets de interfaz.
 
@@ -144,7 +146,7 @@ docker run --rm -p 8080:8080 --env-file .env fat-fish-pwa
 
 ![Vista general de la arquitectura](docs/diagramas/arquitectura.png)
 
-- **Un solo origen.** La PWA consume la API con rutas relativas (`/api/pwa/...`), por lo que no requiere CORS. En la propuesta, el mismo contenedor sirve la PWA y la API; en el laboratorio, Nginx cumple ese papel con un proxy hacia la API. El alojamiento definitivo en Google Cloud está por definir.
+- **Un solo origen.** La PWA consume la API con rutas relativas (`/api/pwa/...`), por lo que no requiere CORS. En la propuesta, el mismo contenedor sirve la PWA y la API; en el laboratorio, Nginx cumple ese papel con un proxy hacia la API. En producción, la PWA se aloja en Firebase Hosting y este reenvía `/api/**` a la API en Cloud Run, de modo que el navegador sigue viendo un solo origen ([10.1](#101-despliegue-en-firebase-hosting)).
 - **El Service Worker atiende todas las peticiones** y decide qué responder desde la caché y qué pedir a la red ([7](#7-estrategia-pwa)).
 - **Angular moderno:** componentes *standalone* y *signals* para el estado.
 
@@ -443,9 +445,26 @@ GitHub Actions ([`ci.yml`](.github/workflows/ci.yml)) corre en cada Pull Request
 2. **Compilar:** build de producción.
 3. **Construir imagen Docker:** comprueba que el `Dockerfile` funciona.
 
+Además, [`deploy.yml`](.github/workflows/deploy.yml) publica la PWA en Firebase Hosting cuando un cambio entra a `main` (ver [10.1](#101-despliegue-en-firebase-hosting)).
+
 - Ramas: `main` (producción), `develop` (integración) y `feature/FF-<ticket>-<descripción>`. Las dos principales están protegidas.
 - Todo cambio entra por Pull Request con una aprobación y el CI en verde; `CODEOWNERS` asigna a los revisores y la plantilla pide el ticket de Jira.
 - Dependabot propone cada semana las actualizaciones de dependencias.
+
+### 10.1 Despliegue en Firebase Hosting
+
+La PWA está alojada en Firebase Hosting de forma pública, en el proyecto `fat-fish-511723` (definido en [`.firebaserc`](.firebaserc)):
+
+| Dirección | Uso |
+|---|---|
+| <https://fat-fish-511723.web.app> | Dirección principal |
+| <https://fat-fish-511723.firebaseapp.com> | Dirección predeterminada alterna (sirve el mismo sitio) |
+
+La configuración del sitio está en [`firebase.json`](firebase.json): sirve `dist/Pwa_FatFish/browser`, reenvía `/api/**` al servicio `fat-fish-api` de Cloud Run (región `us-south1`) y manda el resto de las rutas a `index.html`.
+
+- **Automático:** al fusionar un Pull Request en `main`, el workflow [`deploy.yml`](.github/workflows/deploy.yml) instala dependencias, compila con `npx ng build` y publica en el canal `live`. También se puede lanzar a mano desde *Actions → Deploy → Run workflow*.
+- **Secreto requerido:** `FIREBASE_SERVICE_ACCOUNT` (*Settings → Secrets and variables → Actions*), con el JSON de una cuenta de servicio de Firebase. No se sube al repositorio.
+- **Manual (solo si hace falta):** `npx ng build` y luego `npx firebase-tools deploy --only hosting`, con la sesión iniciada con `npx firebase-tools login`.
 
 ---
 
