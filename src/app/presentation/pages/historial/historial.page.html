@@ -28,14 +28,13 @@
     <span>{{ error }}</span>
   </div>
 }
-
 @if (facade.perfil(); as perfil) {
   @if (!sincronizacion.enLinea() && facade.generadoEn(); as fecha) {
     <div class="notice offline">
       <app-pixel-icon class="warn" name="sin-conexion" [size]="18" />
       <span>
-        <span class="title">Sin conexión</span>
-        Datos guardados el {{ fecha | date: "d 'de' MMM 'a las' HH:mm" }}.
+        <span class="title">Sin conexión</span> Datos guardados el
+        {{ fecha | date: "d 'de' MMM 'a las' HH:mm" }}.
       </span>
     </div>
   }
