@@ -1,12 +1,10 @@
 name: Deploy
 
-# main publica en producción (canal "live").
-# La rama de pruebas de FF-73 publica en un canal de vista previa y NO toca el sitio público.
+# Publica la PWA en Firebase Hosting cada vez que entra un cambio a main.
+# main está protegida, así que esto ocurre al fusionar un Pull Request (por ejemplo, el release de develop).
 on:
   push:
-    branches:
-      - main
-      - feature/FF-73-Publicar-la-PWA-en-Firebase-Hosting
+    branches: [main]
   # Permite lanzarlo a mano desde la pestaña Actions
   workflow_dispatch:
 
@@ -40,22 +38,9 @@ jobs:
       - name: Compilar (producción)
         run: npx ng build
 
-      # main -> live (sitio público). Cualquier otra rama -> canal de vista previa "prueba-ff73" (dura 7 días)
       - name: Publicar en Firebase Hosting
-        id: deploy
         uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
           projectId: fat-fish-511723
-          channelId: ${{ github.ref == 'refs/heads/main' && 'live' || 'prueba-ff73' }}
-
-      - name: Resumen del despliegue
-        if: success()
-        run: |
-          {
-            echo "## Despliegue en Firebase Hosting"
-            echo
-            echo "- Rama: \`${{ github.ref_name }}\`"
-            echo "- URL: ${{ steps.deploy.outputs.details_url }}"
-            echo "- Expira: ${{ steps.deploy.outputs.expire_time_formatted }}"
-          } >> "$GITHUB_STEP_SUMMARY"
+          channelId: live
