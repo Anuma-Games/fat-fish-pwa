@@ -49,8 +49,10 @@ export const puertos: Provider[] = [
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
-
-    provideRouter(routes),
+    provideRouter(
+      routes,
+      withInMemoryScrolling({ anchorScrolling: 'enabled', scrollPositionRestoration: 'enabled' }),
+    ),
     provideHttpClient(withFetch(), withInterceptors([apiKeyInterceptor])),
     { provide: LOCALE_ID, useValue: 'es-MX' },
     ...puertos,
