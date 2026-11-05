@@ -1,0 +1,48 @@
+name: Deploy
+
+# Publica la PWA en Firebase Hosting cada vez que entra un cambio a main.
+# main está protegida, así que esto ocurre al fusionar un Pull Request (por ejemplo, el release de develop).
+on:
+  push:
+    branches: [main]
+  # Permite lanzarlo a mano desde la pestaña Actions
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# Un solo despliegue a la vez; si llega otro, espera a que termine el actual
+concurrency:
+  group: deploy-firebase
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Compilar y publicar en Firebase Hosting
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Configurar Node 24 con caché de npm
+        uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+          cache: npm
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      # Genera dist/Pwa_FatFish/browser, la carpeta "public" de firebase.json
+      - name: Compilar (producción)
+        run: npx ng build
+
+      - name: Publicar en Firebase Hosting
+        # Fijada por SHA y no por etiqueta: recibe el secreto de la cuenta de servicio, y una etiqueta
+        # como v0 la puede mover quien controle ese repositorio. Dependabot propone la nueva versión.
+        uses: FirebaseExtended/action-hosting-deploy@500ac625ca2dd40cbd15f7659af953801858032a # v0.11.0
+        with:
+          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          projectId: fat-fish-511723
+          channelId: live
