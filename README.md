@@ -371,7 +371,8 @@ La PWA se ve como el casino clandestino del juego: fondo oscuro con un patrón d
 
 ### 8.1 Vistas
 
-- **Consulta:** búsqueda por ID y expediente (estadísticas e historial). La propuesta suma el ranking.
+- **Consulta:** búsqueda por alias o ID (`/acceso`) y expediente (estadísticas e historial). La propuesta suma el ranking.
+  - La búsqueda lista a cada jugador con su alias y su ID, porque el alias puede repetirse. Si nadie coincide, muestra **Sin resultados** y el Crupier responde con el texto buscado, por ejemplo: *No tengo a nadie llamado «pezgordo». Revisa el alias o dime tu ID.*
 - **Captura:** retroalimentación. La propuesta suma la encuesta anónima.
 
 ![Vistas en teléfono](docs/img/pantallas-telefono.jpg)

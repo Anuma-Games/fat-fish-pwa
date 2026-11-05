@@ -1,0 +1,125 @@
+<!-- A hanging lamp over the title, as in the hero of the landing page; it switches on when the page opens -->
+<header class="cabecera">
+  <div class="luz" aria-hidden="true">
+    <span class="cable"></span>
+    <span class="pantalla"></span>
+    <span class="foco"></span>
+    <span class="haz"></span>
+  </div>
+  <span class="eyebrow lp-gold">Expediente</span>
+  <h1 class="crt">Lo que el casino sabe de ti</h1>
+  <p class="claim">Busca tu expediente con tu alias o tu ID. No necesitas contraseña.</p>
+</header>
+
+<!-- The felt of the table around the search -->
+<form class="mesa" [class.buscando]="busqueda.cargando()" (ngSubmit)="buscar()" role="search">
+  <label class="label" for="busqueda">Alias o ID</label>
+  <div class="search">
+    <input
+      id="busqueda"
+      name="busqueda"
+      autocomplete="off"
+      enterkeyhint="search"
+      maxlength="25"
+      placeholder="Por ejemplo, pezgordo o 1042"
+      [ngModel]="texto()"
+      (ngModelChange)="escribiendo($event)"
+    />
+    <!-- Never disabled: Enter must submit even while a typed search is on its way (it replaces it) -->
+    <button class="btn buscar" type="submit" appIman aria-label="Buscar">
+      <app-pixel-icon
+        class="icono"
+        [name]="busqueda.cargando() ? 'ruleta' : 'buscar'"
+        [size]="20"
+      />
+      <span class="texto-boton">Buscar</span>
+    </button>
+  </div>
+  <p class="small muted">El alias puede repetirse; el ID es único.</p>
+</form>
+
+<!-- The Crupier answers each search, written as if typed. The live region is always there and holds
+     the whole line, so screen readers announce it once instead of letter by letter -->
+<span class="solo-lector" aria-live="polite">{{ linea() }}</span>
+@if (frase()) {
+  <p class="voz" aria-hidden="true">
+    <span class="quien">
+      @if (busqueda.estado() === 'VACIO') {
+        Sin resultados
+      } @else {
+        Crupier
+      }
+    </span>
+    <span class="dicho">{{ frase() }}<span class="cursor" aria-hidden="true"></span></span>
+  </p>
+}
+
+<!-- Only the notices are announced: the Crupier's line already says how many players there are -->
+<div aria-live="polite">
+  @switch (busqueda.estado()) {
+    @case ('SIN_RED') {
+      <div class="notice offline aparece">
+        <app-pixel-icon class="aviso" name="sin-conexion" [size]="18" />
+        <span>{{ busqueda.error() }}</span>
+      </div>
+    }
+    @case ('ERROR') {
+      <div class="notice error aparece">
+        <span>{{ busqueda.error() }}</span>
+      </div>
+      <button class="btn ghost reintentar" type="button" appIman (click)="buscar()">
+        Reintentar
+      </button>
+    }
+    @case ('INICIAL') {
+      <!-- A text too long for the API: the facade explains it before asking -->
+      @if (busqueda.error(); as error) {
+        <div class="notice error aparece">
+          <span>{{ error }}</span>
+        </div>
+      }
+    }
+  }
+
+  @if (busqueda.estado() === 'DESDE_CACHE' && mostrados().length > 0) {
+    <div class="notice offline aparece">
+      <app-pixel-icon class="aviso" name="sin-conexion" [size]="18" />
+      <span>
+        <span class="title">Sin conexión</span>
+        Resultados guardados en tu dispositivo.
+      </span>
+    </div>
+  }
+</div>
+
+@if (mostrados().length > 0) {
+  <h2 class="titulo-lista">
+    Jugadores <span class="cuenta">{{ mostrados().length }}</span>
+  </h2>
+  <!-- Tracked by ID: while typing, the cards already on the table stay and only new ones are dealt -->
+  <ul class="jugadores" [class.saliendo]="elegido()" [class.actualizando]="busqueda.cargando()">
+    @for (j of mostrados(); track j.jugadorId; let i = $index) {
+      <li [style.--i]="i">
+        <button
+          class="jugador"
+          type="button"
+          [class.elegido]="elegido() === j.jugadorId"
+          [attr.aria-label]="'Ver el expediente de ' + j.alias + ', ID ' + j.jugadorId"
+          (click)="elegir(j)"
+        >
+          <span class="sello" aria-hidden="true">
+            <img src="icons/insignia-96.png" alt="" width="36" height="36" />
+          </span>
+          <span class="nombre">
+            <span class="alias">{{ j.alias }}</span>
+            <span class="chip id">ID #{{ j.jugadorId }}</span>
+          </span>
+          <span class="abrir" aria-hidden="true">
+            <span class="abrir-texto">Ver expediente</span>
+            <app-pixel-icon class="ir" name="flecha" [size]="14" />
+          </span>
+        </button>
+      </li>
+    }
+  </ul>
+}
