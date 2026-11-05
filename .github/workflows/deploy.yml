@@ -39,7 +39,9 @@ jobs:
         run: npx ng build
 
       - name: Publicar en Firebase Hosting
-        uses: FirebaseExtended/action-hosting-deploy@v0
+        # Fijada por SHA y no por etiqueta: recibe el secreto de la cuenta de servicio, y una etiqueta
+        # como v0 la puede mover quien controle ese repositorio. Dependabot propone la nueva versión.
+        uses: FirebaseExtended/action-hosting-deploy@500ac625ca2dd40cbd15f7659af953801858032a # v0.11.0
         with:
           firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
           projectId: fat-fish-511723
