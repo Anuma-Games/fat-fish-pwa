@@ -100,6 +100,10 @@ textarea {
   border-radius: var(--ff-radius-field);
   padding: var(--ff-space-2) var(--ff-space-3);
 }
+textarea {
+  /* Only taller: dragging the corner sideways made the field overflow its card */
+  resize: vertical;
+}
 input:focus,
 textarea:focus,
 button:focus-visible {
