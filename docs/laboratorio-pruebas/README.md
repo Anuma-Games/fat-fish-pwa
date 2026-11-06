@@ -15,7 +15,7 @@ La migración `V1` de la API crea el esquema completo con `id` numérico; el dia
 
 | Tabla | Uso en el laboratorio |
 |---|---|
-| `jugador` | 5 jugadores de prueba (`id` 1 a 5) |
+| `jugador` | 28 jugadores ficticios (`id` 1 a 28), los mismos de producción |
 | `estadistica_jugador` | Totales de cada jugador; de aquí salen las 4 tarjetas del perfil |
 | `partida` | Historial de cada jugador (la PWA solo lo lee) |
 | `partida_comodin` | Comodines comprados y usados en algunas partidas (la PWA todavía no los muestra) |
@@ -23,7 +23,7 @@ La migración `V1` de la API crea el esquema completo con `id` numérico; el dia
 
 **¿Por qué `clave_idempotencia` es un UUID?** La genera el navegador (`crypto.randomUUID()`) en el momento del envío, incluso sin conexión, cuando todavía no puede pedirle un número al servidor. Si cada dispositivo numerara 1, 2, 3…, dos dispositivos tendrían un "envío 1" y la API descartaría uno pensando que es un reintento. El UUID no se repite y viaja en la cabecera `Idempotency-Key`. El `id` de cada fila sigue siendo el número que asigna PostgreSQL; en los datos de prueba la clave la genera `gen_random_uuid()`.
 
-> En el juego, los jugadores se registran con alias y contraseña y envían sus partidas a `/api/juego` (ver el README de la API). En el laboratorio se cargan con `02_carga.sql`: los 5 jugadores tienen la contraseña de prueba `fatfish2026`.
+> En el juego, los jugadores se registran con alias y contraseña y envían sus partidas a `/api/juego` (ver el README de la API). En el laboratorio se cargan con `02_carga.sql`, que es copia de `fat-fish-api/sql/demo/02_cargar.sql` (los datos de demostración de producción). Su contraseña es aleatoria y nadie la conoce: el laboratorio solo lee sus datos desde la PWA.
 
 ## Contenido de esta carpeta
 
@@ -31,7 +31,7 @@ La migración `V1` de la API crea el esquema completo con `id` numérico; el dia
 |---|---|
 | `sql/00_crear_bd.sql` | Crea el usuario `fatfish` y las bases `fatfish` y `fatfish_test` (borra las anteriores) |
 | `sql/01_limpieza.sql` | Vacía las tablas (excepto el catálogo de comodines) y reinicia los `id` |
-| `sql/02_carga.sql` | Datos de prueba: 5 jugadores (los integrantes del equipo, `id` 1 a 5) con sus estadísticas, 18 partidas, 6 registros de comodines y 2 retroalimentaciones |
+| `sql/02_carga.sql` | Datos de prueba (los mismos de producción): 28 jugadores ficticios (`id` 1 a 28) con sus estadísticas, 107 partidas, 45 registros de comodines, 6 retroalimentaciones y 8 encuestas |
 | `sql/03_consultas.sql` | Consultas de verificación para correr antes y después de usar la PWA |
 | `evidencias/` | Salidas de `psql`, logs de Spring Boot, consola del navegador, capturas y volcados de Cache Storage e IndexedDB |
 
@@ -122,7 +122,7 @@ psql -U fatfish -h localhost -d fatfish -f fat-fish-pwa/docs/laboratorio-pruebas
 psql -U fatfish -h localhost -d fatfish -f fat-fish-pwa/docs/laboratorio-pruebas/sql/02_carga.sql
 ```
 
-La salida termina con `select * from jugador`: 1 `jesus` (12 partidas), 2 `emmanuel` (3), 3 `angel` (1), 4 `luis` (2) y 5 `andrik` (sin partidas). Para repetir el laboratorio desde cero, vuelve a ejecutar estos dos scripts.
+La salida termina con un resumen de los 28 jugadores: 1 `ManoDeHierro` (14 partidas), 5 `recien_llegado` (sin partidas) y dos jugadores con el alias `Tiburon` (6 y 20). Para repetir el laboratorio desde cero, vuelve a ejecutar estos dos scripts.
 
 ### 5. Levantar la PWA
 
@@ -146,9 +146,9 @@ psql -U fatfish -h localhost -d fatfish -f fat-fish-pwa/docs/laboratorio-pruebas
 
 | ID | Caso | Pasos | Resultado esperado | Evidencia |
 |---|---|---|---|---|
-| LAB-01 | Consulta y renderizado | Abrir `/perfil` (Expediente; ya trae el ID `1`, del jugador `jesus`) | Alias `jesus` con `ID #1`, 4 tarjetas de estadísticas y las 10 partidas más recientes; la consola muestra los dos GET, su tiempo y el tiempo de renderizado | `ui-01-expediente-en-linea.png`, `consola-navegador.txt`, `backend-spring-boot.log.txt` |
-| LAB-01b | Paginación | Clic en **Ver más partidas** | Se agregan las 2 partidas restantes (`GET …&pagina=1`) y el texto cambia a "12 de 12 partidas" | `ui-01b-ver-mas-partidas.png`, `consola-navegador.txt` |
-| LAB-01c | Jugador sin partidas y jugador inexistente | Buscar `5` y luego `99` | `andrik` muestra "Este jugador todavía no tiene partidas"; `99` muestra "No encontramos a ningún jugador…" (`404`) | — |
+| LAB-01 | Consulta y renderizado | Abrir `/perfil` (Expediente; ya trae el ID `1`, del jugador `ManoDeHierro`) | Alias `ManoDeHierro` con `ID #1`, 4 tarjetas de estadísticas y las 10 partidas más recientes; la consola muestra los dos GET, su tiempo y el tiempo de renderizado | `ui-01-expediente-en-linea.png`, `consola-navegador.txt`, `backend-spring-boot.log.txt` |
+| LAB-01b | Paginación | Clic en **Ver más partidas** | Se agregan las 4 partidas restantes (`GET …&pagina=1`) y el texto cambia a "14 de 14 partidas" | `ui-01b-ver-mas-partidas.png`, `consola-navegador.txt` |
+| LAB-01c | Jugador sin partidas y jugador inexistente | Buscar `5` y luego `99` | `recien_llegado` muestra "Este jugador todavía no tiene partidas"; `99` muestra "No encontramos a ningún jugador…" (`404`) | — |
 | LAB-02 | Envío en línea | En `/opinion/retroalimentacion`, enviar un mensaje de 10 o más caracteres | Aviso "Tu mensaje se guardó en el servidor"; estado `ENVIADO` con su ID; en PostgreSQL aparece la fila nueva | `ui-02-retroalimentacion-en-linea.png`, `bd-02-despues.txt` |
 | LAB-03 | Validación | Enviar un mensaje de menos de 10 caracteres | Se rechaza en la PWA; la API también responde `400` si se le envía directo | — |
 | LAB-04 | Envío sin conexión | DevTools → Network → **Offline**; enviar otro mensaje | Aviso "Guardado en tu dispositivo"; estado `PENDIENTE` en la tabla y en IndexedDB (`fatfish-pwa` → `outbox`); la base no cambia | `ui-03-retroalimentacion-sin-conexion.png`, `almacenamiento-sin-conexion.json` |
