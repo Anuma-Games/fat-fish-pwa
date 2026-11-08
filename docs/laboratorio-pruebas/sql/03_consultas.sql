@@ -5,6 +5,7 @@
 select count(*) as jugadores from jugador;
 select count(*) as partidas from partida;
 select count(*) as retroalimentaciones from retroalimentacion;
+select count(*) as encuestas from encuesta;
 
 -- 2. Historial del jugador 1 (lo mismo que muestra la PWA)
 select id, resultado, ronda_alcanzada, puntaje, dinero_invertido, dinero_perdido, creada_en
