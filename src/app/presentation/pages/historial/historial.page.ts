@@ -1,26 +1,30 @@
 import { DatePipe, DecimalPipe } from '@angular/common';
-import { Component, afterRenderEffect, inject, signal } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { Component, afterRenderEffect, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { HistorialFacade } from '../../../application/facades/historial.facade';
 import { SincronizacionFacade } from '../../../application/facades/sincronizacion.facade';
 import { LOG_PREFIX } from '../../../core/config/api.config';
 import { PixelIcon } from '../../components/pixel-icon/pixel-icon';
 
+/**
+ * Dossier (/perfil): statistics and history of the player consulted last time. It has no search of
+ * its own; "Buscar otro jugador" goes back to /acceso, the only search by alias or ID.
+ */
 @Component({
   selector: 'app-historial-page',
-  imports: [FormsModule, RouterLink, DatePipe, DecimalPipe, PixelIcon],
+  imports: [RouterLink, DatePipe, DecimalPipe, PixelIcon],
   templateUrl: './historial.page.html',
   styleUrl: './historial.page.css',
 })
 export class HistorialPage {
   protected readonly facade = inject(HistorialFacade);
   protected readonly sincronizacion = inject(SincronizacionFacade);
-  protected readonly jugadorId = signal(this.facade.idGuardado());
 
   constructor() {
+    // The route guard only lets in a visitor who already looked up a player in /acceso
+    const jugadorId = this.facade.jugadorGuardado();
     // Coming from /acceso the dossier of the chosen player is already on its way
-    if (!this.facade.consultando(this.jugadorId())) this.consultar();
+    if (jugadorId && !this.facade.consultando(jugadorId)) this.facade.buscar(jugadorId);
     // Logs how long it took from the GET until the rows were painted.
     afterRenderEffect(() => {
       const partidas = this.facade.partidas();
@@ -31,10 +35,6 @@ export class HistorialPage {
         );
       }
     });
-  }
-
-  protected consultar(): void {
-    this.facade.buscar(this.jugadorId().trim().replace(/^#/, ''));
   }
 
   protected horas(segundos: number): string {

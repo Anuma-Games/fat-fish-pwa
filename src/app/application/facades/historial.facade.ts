@@ -1,7 +1,7 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Injectable, inject, signal } from '@angular/core';
 import { Subscription, forkJoin } from 'rxjs';
-import { LAB_PLAYER_ID, LOG_PREFIX } from '../../core/config/api.config';
+import { LOG_PREFIX } from '../../core/config/api.config';
 import { Partida } from '../../domain/models/partida';
 import { Perfil } from '../../domain/models/perfil';
 import { PartidaRepository } from '../../domain/ports/partida.repository';
@@ -34,10 +34,14 @@ export class HistorialFacade {
   /** Requests of the current player (profile, first page and "Ver más"); a new search cancels them. */
   private peticiones = new Subscription();
 
-  /** Player consulted last time; ignores ids saved by older versions of the lab (UUIDs). */
-  idGuardado(): string {
+  /**
+   * Player consulted last time, or null when the visitor has not looked up anyone yet (then the
+   * dossier sends them to the search at /acceso). Ignores ids saved by older versions of the lab
+   * (UUIDs).
+   */
+  jugadorGuardado(): string | null {
     const guardado = this.sesion.jugadorId();
-    return guardado && /^\d+$/.test(guardado) ? guardado : LAB_PLAYER_ID;
+    return guardado && /^\d+$/.test(guardado) ? guardado : null;
   }
 
   /** True while the dossier of `jugadorId` is on its way. */

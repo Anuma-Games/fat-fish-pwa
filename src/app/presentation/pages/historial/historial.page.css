@@ -1,3 +1,17 @@
+.cabecera {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--ff-space-2);
+}
+.otro {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ff-space-2);
+  min-height: 44px;
+  text-decoration: none;
+}
 .perfil {
   margin-top: var(--ff-space-6);
 }

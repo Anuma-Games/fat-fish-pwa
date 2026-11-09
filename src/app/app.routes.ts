@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { AccesoPage } from './presentation/pages/acceso/acceso.page';
 import { LandingPage } from './presentation/pages/landing/landing.page';
+import { expedienteGuard } from './presentation/pages/historial/expediente.guard';
 import { HistorialPage } from './presentation/pages/historial/historial.page';
 import { RetroalimentacionPage } from './presentation/pages/retroalimentacion/retroalimentacion.page';
 
@@ -22,6 +23,7 @@ export const routes: Routes = [
   {
     path: 'perfil',
     component: HistorialPage,
+    canActivate: [expedienteGuard],
     title: 'Expediente - Fat Fish',
     data: { seccion: 'Expediente' },
   },
