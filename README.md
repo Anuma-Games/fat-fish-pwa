@@ -58,7 +58,7 @@ La PWA solo lee datos del juego y solo inserta opiniones. No registra jugadores 
 
 | Función                                                                       | Estado                       |
 |-------------------------------------------------------------------------------|------------------------------|
-| Expediente por ID: estadísticas e historial paginado ("Ver más partidas")     | ✅ Construido                |
+| Expediente: estadísticas e historial paginado ("Ver más partidas")            | ✅ Construido                |
 | Retroalimentación con envío sin conexión (outbox en IndexedDB)                | ✅ Construido                |
 | Service Worker: precaché de la app y caché del expediente, ranking y búsqueda | ✅ Construido                |
 | Manifiesto e instalación                                                      | ✅ Construido                |
@@ -203,7 +203,7 @@ Las pantallas solo usan las fachadas de `src/app/application/facades/`. Todo su 
 | `resultados`                              | Lista de `{ jugadorId, alias }`; el alias puede repetirse, por eso el jugador se elige por su ID            |
 | `estado`, `error`, `cargando`, `consulta` | Estado de la pantalla, mensaje, bandera de carga y texto normalizado de la última búsqueda                  |
 
-Al elegir un jugador, la pantalla llama a `HistorialFacade.buscar(jugadorId)` y navega a `/perfil`.
+Al elegir un jugador, la pantalla llama a `HistorialFacade.buscar(jugadorId)` y navega a `/perfil`. `/acceso` es el único buscador: `/perfil` no tiene buscador propio, abre el último jugador consultado (`HistorialFacade.jugadorGuardado()`) y, si todavía no se ha consultado ninguno, su guarda (`expediente.guard.ts`) manda a `/acceso`.
 
 **`RankingFacade`**: ranking mundial.
 
@@ -371,7 +371,7 @@ La PWA se ve como el casino clandestino del juego: fondo oscuro con un patrón d
 
 ### 8.1 Vistas
 
-- **Consulta:** búsqueda por alias o ID (`/acceso`) y expediente (estadísticas e historial). La propuesta suma el ranking.
+- **Consulta:** búsqueda por alias o ID (`/acceso`), que es el único buscador, y expediente (`/perfil`: estadísticas e historial, con el botón **Buscar otro jugador**). **Expediente** abre el último jugador consultado o, si no hay ninguno, el buscador. La propuesta suma el ranking.
   - La búsqueda lista a cada jugador con su alias y su ID, porque el alias puede repetirse. Si nadie coincide, muestra **Sin resultados** y el Crupier responde con el texto buscado, por ejemplo: *No tengo a nadie llamado «pezgordo». Revisa el alias o dime tu ID.*
 - **Captura:** retroalimentación. La propuesta suma la encuesta anónima.
 
@@ -430,7 +430,7 @@ Los diagramas corresponden a la propuesta completa; su código está en [`docs/d
 | Diagrama                                             | Qué muestra                                                                                 |
 |------------------------------------------------------|---------------------------------------------------------------------------------------------|
 | ![Contexto](docs/diagramas/contexto.png)             | **Contexto:** cómo llegan los datos del juego a la PWA                                      |
-| ![Navegación](docs/diagramas/navegacion.png)         | **Navegación:** rutas de la propuesta; hoy existen `/perfil` y `/opinion/retroalimentacion` |
+| ![Navegación](docs/diagramas/navegacion.png)         | **Navegación:** rutas de la propuesta; hoy existen `/acceso`, `/perfil` y `/opinion/retroalimentacion` |
 | ![Búsqueda](docs/diagramas/busqueda.png)             | **Búsqueda:** buscar por alias, elegir un jugador y ver su expediente                       |
 | ![Estados](docs/diagramas/estados.png)               | **Estados de una pantalla:** cargando, con datos, vacío, sin conexión o con error           |
 | ![Service Worker](docs/diagramas/service-worker.png) | **Service Worker:** instalación, atención sin red y actualización                           |
