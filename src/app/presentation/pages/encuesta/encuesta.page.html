@@ -23,7 +23,9 @@
               role="radio"
               [attr.aria-checked]="respuestas()[p.clave] === n"
               [class.selected]="respuestas()[p.clave] === n"
+              [attr.tabindex]="enfocable(p.clave, n) ? 0 : -1"
               (click)="elegir(p.clave, n)"
+              (keydown)="mover($event, p.clave, n)"
             >
               {{ n }}
             </button>
@@ -84,56 +86,4 @@
       </span>
     </div>
   }
-</section>
-
-<section class="card outbox">
-  <span class="eyebrow">Vista del laboratorio de pruebas</span>
-  <h2>Encuestas desde este dispositivo</h2>
-  <p class="small muted">
-    Bandeja de salida guardada en este navegador (IndexedDB, almacén <code>outbox</code>). Sin
-    conexión, las respuestas esperan aquí y se mandan solas al volver la red.
-  </p>
-  <button
-    class="btn ghost"
-    type="button"
-    (click)="facade.sincronizar()"
-    [disabled]="!sincronizacion.enLinea()"
-  >
-    Reintentar pendientes
-  </button>
-  <div class="table-wrap">
-    <table>
-      <thead>
-        <tr>
-          <th>Fecha</th>
-          <th>Respuestas</th>
-          <th>Comentario</th>
-          <th>Estado</th>
-          <th>Intentos</th>
-          <th>ID en servidor</th>
-        </tr>
-      </thead>
-      <tbody>
-        @for (e of facade.envios(); track e.id) {
-          <tr>
-            <td>{{ e.creadoEn | date: 'd MMM, HH:mm:ss' }}</td>
-            <td class="num">
-              {{ e.contenido.percepcionRiesgo }} · {{ e.contenido.cambioOpinion }} ·
-              {{ e.contenido.claridadMensaje }}
-            </td>
-            <td class="msg">{{ e.contenido.comentario ?? '—' }}</td>
-            <td>
-              <span class="chip" [class]="e.estado.toLowerCase()">{{ e.estado }}</span>
-            </td>
-            <td class="num">{{ e.intentos }}</td>
-            <td class="num">{{ e.idServidor ?? '—' }}</td>
-          </tr>
-        } @empty {
-          <tr>
-            <td colspan="6">Todavía no has respondido la encuesta desde este dispositivo.</td>
-          </tr>
-        }
-      </tbody>
-    </table>
-  </div>
 </section>

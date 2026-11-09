@@ -1,4 +1,3 @@
-import { DatePipe } from '@angular/common';
 import { Component, effect, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { EncuestaFacade } from '../../../application/facades/encuesta.facade';
@@ -25,7 +24,7 @@ interface Pregunta {
  */
 @Component({
   selector: 'app-encuesta-page',
-  imports: [FormsModule, DatePipe, PixelIcon, OpinionTabs],
+  imports: [FormsModule, PixelIcon, OpinionTabs],
   templateUrl: './encuesta.page.html',
   styleUrl: './encuesta.page.css',
 })
@@ -93,6 +92,32 @@ export class EncuestaPage {
 
   protected elegir(clave: Clave, valor: Escala): void {
     this.respuestas.update((r) => ({ ...r, [clave]: valor }));
+  }
+
+  /** Roving tabindex: Tab enters each scale once, on the chosen value or on the first one. */
+  protected enfocable(clave: Clave, valor: Escala): boolean {
+    return (this.respuestas()[clave] ?? 1) === valor;
+  }
+
+  /** Arrow keys move and choose inside a scale, like a native radio group (Home/End: 1 and 5). */
+  protected mover(evento: KeyboardEvent, clave: Clave, actual: Escala): void {
+    const pasos: Record<string, number> = {
+      ArrowRight: 1,
+      ArrowDown: 1,
+      ArrowLeft: -1,
+      ArrowUp: -1,
+    };
+    let siguiente: number;
+    if (evento.key === 'Home') siguiente = 1;
+    else if (evento.key === 'End') siguiente = this.escala.length;
+    else if (evento.key in pasos) {
+      const total = this.escala.length;
+      siguiente = ((actual - 1 + pasos[evento.key] + total) % total) + 1;
+    } else return;
+    evento.preventDefault();
+    this.elegir(clave, siguiente as Escala);
+    const grupo = (evento.currentTarget as HTMLElement).parentElement;
+    (grupo?.children[siguiente - 1] as HTMLElement | undefined)?.focus();
   }
 
   protected faltante(clave: Clave): boolean {

@@ -36,9 +36,6 @@
   color: var(--ff-ruby-300);
   margin: var(--ff-space-1) 0 0;
 }
-.outbox .btn {
-  margin: var(--ff-space-2) 0 var(--ff-space-4);
-}
 .btn.block {
   display: flex;
   align-items: center;
@@ -47,7 +44,7 @@
   margin-top: var(--ff-space-3);
 }
 @media (min-width: 1024px) {
-  .card:first-of-type {
+  .card {
     max-width: 560px;
   }
 }

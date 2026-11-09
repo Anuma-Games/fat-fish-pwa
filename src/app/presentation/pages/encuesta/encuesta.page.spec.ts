@@ -65,6 +65,34 @@ describe('EncuestaPage', () => {
     expect(el.textContent).not.toMatch(/alias/i);
   });
 
+  it('shows only the form, without the outbox table of the test lab', async () => {
+    const { el } = await render();
+    expect(el.querySelector('form')).not.toBeNull();
+    expect(el.querySelector('table')).toBeNull();
+    expect(el.textContent).not.toContain('laboratorio');
+  });
+
+  it('moves and chooses with the arrow keys inside a scale, like a radio group', async () => {
+    const { fixture, el } = await render();
+    const botones = el.querySelectorAll<HTMLButtonElement>('.escala')[0].querySelectorAll('button');
+    expect([...botones].map((b) => b.tabIndex)).toEqual([0, -1, -1, -1, -1]);
+
+    botones[0].focus();
+    botones[0].dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true }));
+    await fixture.whenStable();
+    expect(botones[1].getAttribute('aria-checked')).toBe('true');
+    expect(document.activeElement).toBe(botones[1]);
+    expect([...botones].map((b) => b.tabIndex)).toEqual([-1, 0, -1, -1, -1]);
+
+    botones[1].dispatchEvent(new KeyboardEvent('keydown', { key: 'End', bubbles: true }));
+    await fixture.whenStable();
+    expect(botones[4].getAttribute('aria-checked')).toBe('true');
+
+    botones[4].dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true }));
+    await fixture.whenStable();
+    expect(botones[0].getAttribute('aria-checked')).toBe('true');
+  });
+
   it('does not send while a question is unanswered and marks it', async () => {
     const { fixture, el } = await render();
     responder(el, 4, 3);
