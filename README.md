@@ -203,7 +203,7 @@ Las pantallas solo usan las fachadas de `src/app/application/facades/`. Todo su 
 | `resultados`                              | Lista de `{ jugadorId, alias }`; el alias puede repetirse, por eso el jugador se elige por su ID            |
 | `estado`, `error`, `cargando`, `consulta` | Estado de la pantalla, mensaje, bandera de carga y texto normalizado de la última búsqueda                  |
 
-Al elegir un jugador, la pantalla llama a `HistorialFacade.buscar(jugadorId)` y navega a `/perfil`. `/acceso` es el único buscador: `/perfil` no tiene buscador propio, abre el último jugador consultado (`HistorialFacade.jugadorGuardado()`) y, si todavía no se ha consultado ninguno, su guarda (`expediente.guard.ts`) manda a `/acceso`.
+Al elegir un jugador, la pantalla llama a `HistorialFacade.buscar(jugadorId)` y navega a `/perfil`. `/acceso` es el único buscador: `/perfil` no tiene buscador propio, abre el último jugador consultado (`HistorialFacade.jugadorGuardado()`) y, si todavía no se ha consultado ninguno, su guarda (`expediente.guard.ts`) manda a `/acceso`. Si el servidor ya no conoce al jugador guardado (`404`), la fachada lo olvida (`SesionRepository.olvidarJugadorId()`) y marca `jugadorNoEncontrado()`; la página regresa a `/acceso` sin mostrar un error.
 
 **`RankingFacade`**: ranking mundial.
 
@@ -371,7 +371,7 @@ La PWA se ve como el casino clandestino del juego: fondo oscuro con un patrón d
 
 ### 8.1 Vistas
 
-- **Consulta:** búsqueda por alias o ID (`/acceso`), que es el único buscador, y expediente (`/perfil`: estadísticas e historial, con el botón **Buscar otro jugador**). **Expediente** abre el último jugador consultado o, si no hay ninguno, el buscador. La propuesta suma el ranking.
+- **Consulta:** búsqueda por alias o ID (`/acceso`), que es el único buscador, y expediente (`/perfil`: estadísticas e historial, con el botón **Buscar otro jugador**). Cada página tiene su título: *Busca tu expediente* en `/acceso` y *Lo que el casino sabe de ti* en `/perfil`. **Expediente** abre el último jugador consultado o, si no hay ninguno (o ya no existe), el buscador. La propuesta suma el ranking.
   - La búsqueda lista a cada jugador con su alias y su ID, porque el alias puede repetirse. Si nadie coincide, muestra **Sin resultados** y el Crupier responde con el texto buscado, por ejemplo: *No tengo a nadie llamado «pezgordo». Revisa el alias o dime tu ID.*
 - **Captura:** retroalimentación. La propuesta suma la encuesta anónima.
 

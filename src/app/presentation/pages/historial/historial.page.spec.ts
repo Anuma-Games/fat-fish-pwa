@@ -1,8 +1,9 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { Router, provideRouter } from '@angular/router';
 import { RouterTestingHarness } from '@angular/router/testing';
-import { of } from 'rxjs';
+import { of, throwError } from 'rxjs';
 import { Pagina, Partida } from '../../../domain/models/partida';
 import { Perfil } from '../../../domain/models/perfil';
 import { Conectividad } from '../../../domain/ports/conectividad';
@@ -61,7 +62,10 @@ describe('Expediente (/perfil)', () => {
           useValue: {
             perfil: (id: string) => {
               consultados.push(id);
-              return of(perfil(id));
+              // '77' plays a saved player that was deleted from the server
+              return id === '77'
+                ? throwError(() => new HttpErrorResponse({ status: 404 }))
+                : of(perfil(id));
             },
           },
         },
@@ -91,5 +95,18 @@ describe('Expediente (/perfil)', () => {
     expect(el.querySelector('input')).toBeNull();
     expect(el.querySelector('form')).toBeNull();
     expect(el.querySelector('a.otro')?.getAttribute('href')).toBe('/acceso');
+  });
+
+  it('forgets a saved player that no longer exists and goes back to the search, without an error', async () => {
+    sesion.id = '77';
+    const harness = await RouterTestingHarness.create();
+    await harness.navigateByUrl('/perfil');
+    await harness.fixture.whenStable();
+    expect(consultados).toEqual(['77']);
+    expect(sesion.id).toBeNull();
+    expect(TestBed.inject(Router).url).toBe('/acceso');
+    const el = harness.routeNativeElement as HTMLElement;
+    expect(el.textContent).toContain('Buscador');
+    expect(el.textContent).not.toMatch(/laboratorio|No encontramos/);
   });
 });

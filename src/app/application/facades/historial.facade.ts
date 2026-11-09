@@ -27,6 +27,11 @@ export class HistorialFacade {
   readonly cargando = signal(false);
   readonly cargandoMas = signal(false);
   readonly error = signal<string | null>(null);
+  /**
+   * True when the server no longer knows the player (404/400). The saved ID is already forgotten;
+   * the page sends the visitor to the search at /acceso (the facade does not navigate).
+   */
+  readonly jugadorNoEncontrado = signal(false);
   /** Moment the last GET started; the page uses it to log the render time. */
   inicioConsulta = 0;
   private jugadorId = '';
@@ -59,6 +64,7 @@ export class HistorialFacade {
     this.pagina = 0;
     this.cargando.set(true);
     this.error.set(null);
+    this.jugadorNoEncontrado.set(false);
     this.inicioConsulta = performance.now();
     console.info(`${LOG_PREFIX} GET /api/pwa/perfil?id=${jugadorId}`);
     console.info(
@@ -85,11 +91,15 @@ export class HistorialFacade {
         console.error(`${LOG_PREFIX} GET falló (${err.status})`, err.message);
         this.perfil.set(null);
         this.partidas.set([]);
-        this.error.set(
-          err.status === 404 || err.status === 400
-            ? 'No encontramos a ningún jugador con ese alias o ID. En el laboratorio, los jugadores 1 a 5 se crean con sql/02_carga.sql.'
-            : 'No pudimos consultar tu expediente y no hay una copia guardada sin conexión. Intenta de nuevo cuando vuelva la red.',
-        );
+        if (err.status === 404 || err.status === 400) {
+          // The saved player no longer exists (for example, after the data was cleaned)
+          this.sesion.olvidarJugadorId();
+          this.jugadorNoEncontrado.set(true);
+        } else {
+          this.error.set(
+            'No pudimos consultar tu expediente y no hay una copia guardada sin conexión. Intenta de nuevo cuando vuelva la red.',
+          );
+        }
         this.cargando.set(false);
       },
     });

@@ -1,6 +1,6 @@
 import { DatePipe, DecimalPipe } from '@angular/common';
-import { Component, afterRenderEffect, inject } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Component, afterRenderEffect, effect, inject } from '@angular/core';
+import { Router, RouterLink } from '@angular/router';
 import { HistorialFacade } from '../../../application/facades/historial.facade';
 import { SincronizacionFacade } from '../../../application/facades/sincronizacion.facade';
 import { LOG_PREFIX } from '../../../core/config/api.config';
@@ -19,12 +19,19 @@ import { PixelIcon } from '../../components/pixel-icon/pixel-icon';
 export class HistorialPage {
   protected readonly facade = inject(HistorialFacade);
   protected readonly sincronizacion = inject(SincronizacionFacade);
+  private readonly router = inject(Router);
 
   constructor() {
     // The route guard only lets in a visitor who already looked up a player in /acceso
     const jugadorId = this.facade.jugadorGuardado();
     // Coming from /acceso the dossier of the chosen player is already on its way
     if (jugadorId && !this.facade.consultando(jugadorId)) this.facade.buscar(jugadorId);
+    // A saved player that no longer exists is already forgotten: back to the search, without an error
+    effect(() => {
+      if (this.facade.jugadorNoEncontrado()) {
+        void this.router.navigate(['/acceso'], { replaceUrl: true });
+      }
+    });
     // Logs how long it took from the GET until the rows were painted.
     afterRenderEffect(() => {
       const partidas = this.facade.partidas();
