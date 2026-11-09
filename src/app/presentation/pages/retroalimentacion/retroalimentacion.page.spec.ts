@@ -1,4 +1,5 @@
 import { TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 import { of } from 'rxjs';
 import { Conectividad } from '../../../domain/ports/conectividad';
 import { OutboxRepository } from '../../../domain/ports/outbox.repository';
@@ -19,6 +20,7 @@ describe('RetroalimentacionPage', () => {
     await TestBed.configureTestingModule({
       imports: [RetroalimentacionPage],
       providers: [
+        provideRouter([]),
         {
           provide: RetroalimentacionRepository,
           useValue: {
