@@ -24,7 +24,8 @@ const TAMANO_PAGINA = 10;
  *   - Paint by `estado()`: CARGANDO, CON_DATOS, DESDE_CACHE (no connection, saved copy: show
  *     `generadoEn()`), VACIO, SIN_RED (no connection and nothing saved), ERROR.
  *   - `miPosicion()` is the visitor's own row, only when the visitor consulted a profile before
- *     (the ID comes from the saved session); it can be outside the top 50.
+ *     (the ID comes from the saved session); it can be outside the top 50. When it is null,
+ *     `consultoExpediente()` tells "no profile consulted" apart from "player without victories".
  *   - When the connection returns after SIN_RED or DESDE_CACHE, the facade reloads by itself.
  */
 @Injectable({ providedIn: 'root' })
@@ -35,6 +36,11 @@ export class RankingFacade {
 
   readonly entradas = signal<EntradaRanking[]>([]);
   readonly miPosicion = signal<EntradaRanking | null>(null);
+  /**
+   * True when the visitor consulted a profile before. With `miPosicion()` null it means that
+   * player has no victories yet (the API only ranks won games).
+   */
+  readonly consultoExpediente = signal(false);
   readonly totalElementos = signal(0);
   readonly hayMas = signal(false);
   /** When the API generated the data; with DESDE_CACHE it tells how old the saved copy is. */
@@ -68,6 +74,7 @@ export class RankingFacade {
   /** Loads the first page again from zero (also the "Reintentar" button). */
   cargar(): void {
     const jugadorId = this.jugadorId();
+    this.consultoExpediente.set(jugadorId !== null);
     this.peticiones.unsubscribe();
     this.peticiones = new Subscription();
     this.pagina = 0;

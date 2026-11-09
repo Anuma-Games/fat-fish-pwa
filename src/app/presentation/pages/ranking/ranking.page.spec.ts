@@ -109,6 +109,14 @@ describe('RankingPage', () => {
     expect(el.querySelector('.pista a')?.getAttribute('href')).toBe('/acceso');
   });
 
+  it('tells a consulted player without victories how to enter the ranking', async () => {
+    sesion.id = '1042';
+    const { el } = await render();
+    expect(el.querySelector('.fila.fija')).toBeNull();
+    expect(el.querySelector('.pista')?.textContent).toContain('Todavía no tienes victorias');
+    expect(el.querySelector('.pista a')).toBeNull();
+  });
+
   it('shows the saved copy with its date without connection', async () => {
     conectividad.enLinea.set(false);
     const { el } = await render();

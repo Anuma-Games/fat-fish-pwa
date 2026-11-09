@@ -111,6 +111,10 @@
       </span>
       <span class="puntaje">{{ mia.puntaje | number }}</span>
     </div>
+  } @else if (facade.consultoExpediente()) {
+    <p class="small muted pista">
+      Todavía no tienes victorias: gana una partida para entrar al ranking.
+    </p>
   } @else {
     <p class="small muted pista">
       ¿Quieres ver tu lugar? <a routerLink="/acceso">Busca tu expediente</a> y vuelve aquí.
