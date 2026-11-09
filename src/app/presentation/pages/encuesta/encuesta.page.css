@@ -1,0 +1,53 @@
+.card {
+  margin-top: var(--ff-space-6);
+}
+.pregunta {
+  border: 0;
+  margin: 0;
+  padding: 0;
+  min-width: 0;
+}
+.pregunta legend {
+  padding: 0;
+}
+.pregunta .texto {
+  display: block;
+  margin-bottom: var(--ff-space-2);
+}
+.escala {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: var(--ff-space-2);
+}
+.escala .option {
+  padding: 0;
+  font-family: var(--ff-font-display);
+  font-size: 22px;
+}
+.pregunta.faltante .escala .option:not(.selected) {
+  border-color: var(--ff-ruby-700);
+}
+.extremos {
+  display: flex;
+  justify-content: space-between;
+  margin-top: var(--ff-space-1);
+}
+.falta {
+  color: var(--ff-ruby-300);
+  margin: var(--ff-space-1) 0 0;
+}
+.outbox .btn {
+  margin: var(--ff-space-2) 0 var(--ff-space-4);
+}
+.btn.block {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--ff-space-2);
+  margin-top: var(--ff-space-3);
+}
+@media (min-width: 1024px) {
+  .card:first-of-type {
+    max-width: 560px;
+  }
+}

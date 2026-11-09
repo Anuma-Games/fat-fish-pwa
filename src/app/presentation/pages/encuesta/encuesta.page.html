@@ -1,0 +1,139 @@
+<span class="eyebrow">Opinión</span>
+<h1>Tu opinión cuenta</h1>
+<app-opinion-tabs />
+
+<section class="card">
+  <h2>Encuesta anónima</h2>
+  <p class="muted">
+    Tres preguntas sobre el juego y los juegos de azar. No se guarda quién responde.
+  </p>
+
+  <form (ngSubmit)="enviar()" novalidate>
+    @for (p of preguntas; track p.clave) {
+      <fieldset class="pregunta" [class.faltante]="faltante(p.clave)">
+        <legend>
+          <span class="label">{{ p.etiqueta }}</span>
+          <span class="texto" [id]="p.clave">{{ p.texto }}</span>
+        </legend>
+        <div class="escala" role="radiogroup" [attr.aria-labelledby]="p.clave">
+          @for (n of escala; track n) {
+            <button
+              type="button"
+              class="option"
+              role="radio"
+              [attr.aria-checked]="respuestas()[p.clave] === n"
+              [class.selected]="respuestas()[p.clave] === n"
+              (click)="elegir(p.clave, n)"
+            >
+              {{ n }}
+            </button>
+          }
+        </div>
+        <div class="extremos small muted" aria-hidden="true">
+          <span>{{ p.minimo }}</span>
+          <span>{{ p.maximo }}</span>
+        </div>
+        @if (faltante(p.clave)) {
+          <p class="small falta">Elige un valor del 1 al 5.</p>
+        }
+      </fieldset>
+    }
+
+    <label class="label" for="comentario">Comentario (opcional)</label>
+    <textarea
+      id="comentario"
+      name="comentario"
+      rows="3"
+      placeholder="Escribe aquí"
+      [maxlength]="comentarioMax"
+      [(ngModel)]="comentario"
+    ></textarea>
+    <p class="counter small muted">{{ comentario.length }} / {{ comentarioMax }}</p>
+
+    <button class="btn block" type="submit" [disabled]="facade.enviando()">
+      <app-pixel-icon name="enviar" [size]="14" />
+      {{ sincronizacion.enLinea() ? 'Enviar respuestas' : 'Guardar para enviar después' }}
+    </button>
+  </form>
+
+  @if (aviso(); as a) {
+    <div
+      class="notice"
+      role="status"
+      [class.ok]="a.tipo !== 'RECHAZADO'"
+      [class.error]="a.tipo === 'RECHAZADO'"
+    >
+      <app-pixel-icon
+        class="mark"
+        [name]="a.tipo === 'RECHAZADO' ? 'cerrar' : 'check'"
+        [size]="16"
+      />
+      <span>{{ a.texto }}</span>
+    </div>
+  }
+  @if (facade.pendientes() > 0) {
+    <div class="notice offline">
+      <app-pixel-icon class="mark" name="alerta" [size]="16" />
+      <span>
+        {{
+          facade.pendientes() === 1
+            ? 'Una respuesta espera'
+            : facade.pendientes() + ' respuestas esperan'
+        }}
+        conexión en este dispositivo.
+      </span>
+    </div>
+  }
+</section>
+
+<section class="card outbox">
+  <span class="eyebrow">Vista del laboratorio de pruebas</span>
+  <h2>Encuestas desde este dispositivo</h2>
+  <p class="small muted">
+    Bandeja de salida guardada en este navegador (IndexedDB, almacén <code>outbox</code>). Sin
+    conexión, las respuestas esperan aquí y se mandan solas al volver la red.
+  </p>
+  <button
+    class="btn ghost"
+    type="button"
+    (click)="facade.sincronizar()"
+    [disabled]="!sincronizacion.enLinea()"
+  >
+    Reintentar pendientes
+  </button>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Fecha</th>
+          <th>Respuestas</th>
+          <th>Comentario</th>
+          <th>Estado</th>
+          <th>Intentos</th>
+          <th>ID en servidor</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (e of facade.envios(); track e.id) {
+          <tr>
+            <td>{{ e.creadoEn | date: 'd MMM, HH:mm:ss' }}</td>
+            <td class="num">
+              {{ e.contenido.percepcionRiesgo }} · {{ e.contenido.cambioOpinion }} ·
+              {{ e.contenido.claridadMensaje }}
+            </td>
+            <td class="msg">{{ e.contenido.comentario ?? '—' }}</td>
+            <td>
+              <span class="chip" [class]="e.estado.toLowerCase()">{{ e.estado }}</span>
+            </td>
+            <td class="num">{{ e.intentos }}</td>
+            <td class="num">{{ e.idServidor ?? '—' }}</td>
+          </tr>
+        } @empty {
+          <tr>
+            <td colspan="6">Todavía no has respondido la encuesta desde este dispositivo.</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</section>
