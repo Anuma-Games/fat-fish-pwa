@@ -32,7 +32,11 @@ export class RetroalimentacionFacade {
   constructor() {
     effect(() => {
       if (this.sync.enLinea()) {
-        void this.sincronizar();
+        // Runs at start on every page (App creates this facade): if IndexedDB is not available
+        // (some private modes), log it instead of leaving an unhandled rejection
+        this.sincronizar().catch((err: unknown) =>
+          console.error(`${LOG_PREFIX} No se pudo revisar el outbox de retroalimentación`, err),
+        );
       }
     });
   }

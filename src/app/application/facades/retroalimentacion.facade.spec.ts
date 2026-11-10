@@ -38,6 +38,21 @@ describe('RetroalimentacionFacade with a shared outbox', () => {
 
   const datos = { categoria: 'ERROR', componente: 'PWA', mensaje: 'La bola se atoró' } as const;
 
+  it('logs an outbox that cannot be read when the connection returns, without an unhandled rejection', async () => {
+    const error = vi.spyOn(console, 'error').mockImplementation(() => {});
+    conectividad.enLinea.set(false);
+    TestBed.tick();
+    vi.spyOn(outbox, 'todos').mockRejectedValue(new ReferenceError('indexedDB is not defined'));
+    conectividad.enLinea.set(true);
+    TestBed.tick();
+    await vi.waitFor(() =>
+      expect(error).toHaveBeenCalledWith(
+        expect.stringContaining('No se pudo revisar el outbox'),
+        expect.any(ReferenceError),
+      ),
+    );
+  });
+
   it('queues feedback without connection and sends it when the connection returns', async () => {
     conectividad.enLinea.set(false);
     expect(await facade.enviar(datos)).toBe('EN_COLA');

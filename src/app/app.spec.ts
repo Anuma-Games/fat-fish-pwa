@@ -17,6 +17,8 @@ describe('App', () => {
         provideRouter([]),
         provideServiceWorker('ngsw-worker.js', { enabled: false }),
         ...puertos,
+        // App creates the feedback and survey facades at start, and they read the outbox
+        { provide: OutboxRepository, useValue: new OutboxEnMemoria() },
       ],
     }).compileComponents();
   });

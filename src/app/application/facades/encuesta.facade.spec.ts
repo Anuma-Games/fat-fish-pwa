@@ -47,6 +47,20 @@ describe('EncuestaFacade', () => {
     facade = TestBed.inject(EncuestaFacade);
   });
 
+  it('logs an outbox that cannot be read when the connection returns, without an unhandled rejection', async () => {
+    const error = vi.spyOn(console, 'error').mockImplementation(() => {});
+    conectividad.enLinea.set(false);
+    TestBed.tick();
+    vi.spyOn(outbox, 'todos').mockRejectedValue(new ReferenceError('indexedDB is not defined'));
+    conectividad.enLinea.set(true);
+    TestBed.tick();
+    await vi.waitFor(() =>
+      expect(error).toHaveBeenCalledWith(
+        expect.stringContaining('No se pudo revisar el outbox'),
+        expect.any(ReferenceError),
+      ),
+    );
+  });
   it('sends the survey with the outbox id as Idempotency-Key and trims the comment', async () => {
     expect(await facade.enviar(datos)).toBe('ENVIADO');
     expect(enviadas).toHaveLength(1);
