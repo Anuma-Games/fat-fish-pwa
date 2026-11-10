@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 import { AccesoPage } from './presentation/pages/acceso/acceso.page';
 import { LandingPage } from './presentation/pages/landing/landing.page';
 import { HistorialPage } from './presentation/pages/historial/historial.page';
+import { EncuestaPage } from './presentation/pages/encuesta/encuesta.page';
 import { RankingPage } from './presentation/pages/ranking/ranking.page';
 import { RetroalimentacionPage } from './presentation/pages/retroalimentacion/retroalimentacion.page';
 
@@ -36,6 +37,12 @@ export const routes: Routes = [
     path: 'opinion/retroalimentacion',
     component: RetroalimentacionPage,
     title: 'Opinión - Fat Fish',
+    data: { seccion: 'Opinión' },
+  },
+  {
+    path: 'opinion/encuesta',
+    component: EncuestaPage,
+    title: 'Encuesta - Fat Fish',
     data: { seccion: 'Opinión' },
   },
   { path: '**', redirectTo: '' },
