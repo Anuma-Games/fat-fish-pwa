@@ -3,6 +3,7 @@ import { AccesoPage } from './presentation/pages/acceso/acceso.page';
 import { LandingPage } from './presentation/pages/landing/landing.page';
 import { HistorialPage } from './presentation/pages/historial/historial.page';
 import { EncuestaPage } from './presentation/pages/encuesta/encuesta.page';
+import { RankingPage } from './presentation/pages/ranking/ranking.page';
 import { RetroalimentacionPage } from './presentation/pages/retroalimentacion/retroalimentacion.page';
 
 // Routes as in the PWA design (README 2.3); `seccion` is the title of the phone top bar.
@@ -25,6 +26,12 @@ export const routes: Routes = [
     component: HistorialPage,
     title: 'Expediente - Fat Fish',
     data: { seccion: 'Expediente' },
+  },
+  {
+    path: 'ranking',
+    component: RankingPage,
+    title: 'Ranking - Fat Fish',
+    data: { seccion: 'Ranking' },
   },
   {
     path: 'opinion/retroalimentacion',

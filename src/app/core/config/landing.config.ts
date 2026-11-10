@@ -39,6 +39,7 @@ export const MENU = {
     titulo: 'Tu expediente y tu opinión',
     enlaces: [
       { ruta: '/perfil', texto: 'Expediente', icono: 'expediente' },
+      { ruta: '/ranking', texto: 'Ranking', icono: 'trofeo' },
       { ruta: '/opinion/retroalimentacion', texto: 'Opinión', icono: 'opinion' },
     ] as (EnlaceMenu & { ruta: string })[],
   },
