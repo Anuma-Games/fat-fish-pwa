@@ -1,0 +1,123 @@
+<span class="eyebrow">Ranking mundial</span>
+<h1>Mejores puntajes</h1>
+<p class="small muted">
+  Mejor puntaje de cada jugador en partidas ganadas. Empate: gana quien lo logró primero.
+</p>
+
+@if (facade.estado() === 'DESDE_CACHE' && facade.generadoEn(); as fecha) {
+  <div class="notice offline" role="status">
+    <app-pixel-icon class="warn" name="sin-conexion" [size]="18" />
+    <span>
+      <span class="title">Sin conexión</span> Datos guardados el
+      {{ fecha | date: "d 'de' MMM 'a las' HH:mm" }}.
+    </span>
+  </div>
+}
+
+@switch (facade.estado()) {
+  @case ('CARGANDO') {
+    <p class="muted" role="status">Cargando el ranking…</p>
+  }
+  @case ('VACIO') {
+    <div class="notice">
+      <span>Todavía nadie ha ganado una partida. El primer lugar está libre.</span>
+    </div>
+  }
+  @case ('SIN_RED') {
+    <div class="notice offline" role="alert">
+      <app-pixel-icon class="warn" name="sin-conexion" [size]="18" />
+      <span>
+        <span class="title">Sin conexión</span>
+        {{ facade.error() }} Se cargará solo cuando vuelva la conexión.
+      </span>
+    </div>
+  }
+  @case ('ERROR') {
+    <div class="notice error" role="alert">
+      <span>{{ facade.error() }}</span>
+    </div>
+    <button class="btn ghost" type="button" (click)="facade.cargar()">Reintentar</button>
+  }
+}
+
+@if (facade.entradas().length > 0) {
+  <ol class="ranking" [attr.aria-busy]="facade.cargandoMas()">
+    @for (e of facade.entradas(); track e.posicion) {
+      <li
+        class="fila"
+        [class.mia]="e.jugadorId === facade.miPosicion()?.jugadorId"
+        [class.podio]="e.posicion <= 3"
+      >
+        <span class="posicion">{{ e.posicion }}</span>
+        <span class="jugador">
+          <span class="alias">{{ e.alias }}</span>
+          <span class="id">ID #{{ e.jugadorId }}</span>
+        </span>
+        <span class="puntaje">{{ e.puntaje | number }}</span>
+      </li>
+    }
+  </ol>
+
+  @if (facade.estado() !== 'CARGANDO' && facade.error(); as error) {
+    <div class="notice error" role="alert">
+      <span>{{ error }}</span>
+    </div>
+  }
+
+  @if (paginas().length > 1) {
+    <nav class="paginador" aria-label="Páginas del ranking">
+      <button
+        class="btn ghost icon"
+        type="button"
+        aria-label="Página anterior"
+        [disabled]="facade.paginaActual() === 0 || facade.cargandoMas()"
+        (click)="facade.irAPagina(facade.paginaActual() - 1)"
+      >
+        <app-pixel-icon class="anterior" name="flecha" [size]="14" />
+      </button>
+      <div class="numeros">
+        @for (n of paginas(); track n) {
+          <button
+            type="button"
+            class="numero"
+            [class.actual]="n === facade.paginaActual()"
+            [attr.aria-current]="n === facade.paginaActual() ? 'page' : null"
+            [attr.aria-label]="'Página ' + (n + 1)"
+            [disabled]="facade.cargandoMas()"
+            (click)="facade.irAPagina(n)"
+          >
+            {{ n + 1 }}
+          </button>
+        }
+      </div>
+      <button
+        class="btn ghost icon"
+        type="button"
+        aria-label="Página siguiente"
+        [disabled]="facade.paginaActual() >= paginas().length - 1 || facade.cargandoMas()"
+        (click)="facade.irAPagina(facade.paginaActual() + 1)"
+      >
+        <app-pixel-icon class="siguiente" name="flecha" [size]="14" />
+      </button>
+    </nav>
+  }
+
+  @if (facade.miPosicion(); as mia) {
+    <div class="fila mia fija" aria-label="Tu posición">
+      <span class="posicion">{{ mia.posicion }}</span>
+      <span class="jugador">
+        <span class="alias">Tú: {{ mia.alias }}</span>
+        <span class="id">ID #{{ mia.jugadorId }}</span>
+      </span>
+      <span class="puntaje">{{ mia.puntaje | number }}</span>
+    </div>
+  } @else if (facade.consultoExpediente()) {
+    <p class="small muted pista">
+      Todavía no tienes victorias: gana una partida para entrar al ranking.
+    </p>
+  } @else {
+    <p class="small muted pista">
+      ¿Quieres ver tu lugar? <a routerLink="/acceso">Busca tu expediente</a> y vuelve aquí.
+    </p>
+  }
+}

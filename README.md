@@ -58,7 +58,7 @@ La PWA solo lee datos del juego y solo inserta opiniones. No registra jugadores 
 
 | Función                                                                       | Estado                       |
 |-------------------------------------------------------------------------------|------------------------------|
-| Expediente por ID: estadísticas e historial paginado ("Ver más partidas")     | ✅ Construido                |
+| Expediente: estadísticas e historial paginado ("Ver más partidas")            | ✅ Construido                |
 | Retroalimentación con envío sin conexión (outbox en IndexedDB)                | ✅ Construido                |
 | Service Worker: precaché de la app y caché del expediente, ranking y búsqueda | ✅ Construido                |
 | Manifiesto e instalación                                                      | ✅ Construido                |
@@ -68,12 +68,13 @@ La PWA solo lee datos del juego y solo inserta opiniones. No registra jugadores 
 | Ranking mundial: capa de datos (repositorio, fachada y caché sin conexión)    | ✅ Construido                |
 | Encuesta anónima: capa de datos (repositorio, fachada y outbox sin conexión)  | ✅ Construido                |
 | Conexión con la API en Google Cloud Run (proxy que agrega la llave)           | ✅ Construido                |
-| Pantallas de búsqueda, ranking y encuesta                                     | ⏳ Pendiente (tickets de UI) |
+| Pantalla de la encuesta anónima (`/opinion/encuesta`)                         | ✅ Construido                |
+| Pantalla del ranking mundial (`/ranking`)                                     | ✅ Construido                |
 | Aviso de versión nueva y Background Sync                                      | ⏳ Pendiente para el MVP     |
 | Wiki                                                                          | ⏳ Deseable                  |
 | Publicación de la PWA en Firebase Hosting (despliegue automático desde `main`) | ✅ Construido                |
 
-Las fachadas de búsqueda, ranking y encuesta ya están listas para la UI ([4.3](#43-fachadas-contrato-con-la-ui)); las pantallas se construyen en los tickets de interfaz.
+Las fachadas de búsqueda, ranking y encuesta ya tienen su pantalla ([4.3](#43-fachadas-contrato-con-la-ui)).
 
 ---
 
@@ -203,17 +204,20 @@ Las pantallas solo usan las fachadas de `src/app/application/facades/`. Todo su 
 | `resultados`                              | Lista de `{ jugadorId, alias }`; el alias puede repetirse, por eso el jugador se elige por su ID            |
 | `estado`, `error`, `cargando`, `consulta` | Estado de la pantalla, mensaje, bandera de carga y texto normalizado de la última búsqueda                  |
 
-Al elegir un jugador, la pantalla llama a `HistorialFacade.buscar(jugadorId)` y navega a `/perfil`.
+Al elegir un jugador, la pantalla llama a `HistorialFacade.buscar(jugadorId)` y navega a `/perfil`. `/acceso` es el único buscador: `/perfil` no tiene buscador propio, abre el último jugador consultado (`HistorialFacade.jugadorGuardado()`) y, si todavía no se ha consultado ninguno, su guarda (`expediente.guard.ts`) manda a `/acceso`. Si el servidor ya no conoce al jugador guardado (`404`), la fachada lo olvida (`SesionRepository.olvidarJugadorId()`) y marca `jugadorNoEncontrado()`; la página regresa a `/acceso` sin mostrar un error.
 
 **`RankingFacade`**: ranking mundial.
 
 | Miembro                                   | Uso                                                                                                                    |
 |-------------------------------------------|------------------------------------------------------------------------------------------------------------------------|
-| `cargar()`                                | Primera página; también es el botón "Reintentar". Si vuelve la conexión después de `SIN_RED`, se recarga sola          |
+| `cargar()`                                | Primera página; también es el botón "Reintentar". Al volver la conexión se recarga sola: tras `SIN_RED` desde la primera página y tras `DESDE_CACHE` la página que se muestra |
+| `irAPagina(n)`                            | Muestra solo la página `n` (de 0 a 4) en lugar de la actual; es el paginador numerado de la pantalla. Si falla, conserva la página que se muestra |
 | `verMas()`                                | Agrega las siguientes 10 posiciones; si falla, conserva las que ya se muestran                                         |
 | `entradas`                                | Lista de `{ posicion, jugadorId, alias, puntaje, logradoEn }`                                                          |
 | `miPosicion`                              | La fila del visitante, solo si ya consultó un perfil (el ID sale de la sesión guardada); puede quedar fuera del top 50 |
+| `consultoExpediente`                      | `true` si ya consultó un perfil; con `miPosicion` en `null` significa que ese jugador todavía no tiene victorias      |
 | `hayMas`, `cargandoMas`, `totalElementos` | Paginación                                                                                                             |
+| `paginaActual`, `totalPaginas`            | Página que se muestra (desde 0) y cuántas hay (máximo 5)                                                               |
 | `generadoEn`                              | Cuándo generó la API los datos; con `DESDE_CACHE` indica la antigüedad de la copia                                     |
 | `estado`, `error`, `enLinea`              | Estado de la pantalla, mensaje y conexión                                                                              |
 
@@ -257,8 +261,8 @@ El `id` del jugador lo genera la API y es único; el alias se puede repetir. Tod
 | `GET /api/pwa/partidas?id=&pagina=&tamano=` | Historial paginado, de la partida más reciente a la más antigua                          | ✅ En uso       |
 | `POST /api/pwa/retroalimentacion`           | Envía categoría, componente y mensaje (mínimo 10 caracteres)                             | ✅ En uso       |
 | `GET /api/pwa/jugadores?busqueda=`          | Busca por alias o ID (hasta 24 caracteres); devuelve una lista porque el alias se repite | ✅ Sin pantalla |
-| `GET /api/pwa/ranking?pagina=&jugadorId=`   | Top 50 en páginas de 10 y la posición propia (`jugadorId` es opcional)                   | ✅ Sin pantalla |
-| `POST /api/pwa/encuesta`                    | Encuesta anónima con tres escalas del 1 al 5 y un comentario opcional                    | ✅ Sin pantalla |
+| `GET /api/pwa/ranking?pagina=&jugadorId=`   | Top 50 en páginas de 10 y la posición propia (`jugadorId` es opcional)                   | ✅ En uso       |
+| `POST /api/pwa/encuesta`                    | Encuesta anónima con tres escalas del 1 al 5 y un comentario opcional                    | ✅ En uso       |
 
 Reglas comunes:
 
@@ -351,7 +355,7 @@ El Service Worker solo guarda lo que ya se pidió, así que al cargar la primera
 |-------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Abrir la app      | Abre desde la precaché                                                                                                                                         |
 | Expediente        | Muestra los últimos datos consultados con el aviso "Sin conexión" y su fecha; si nunca se consultaron, avisa que se necesita red                               |
-| Ranking           | Muestra la última copia guardada con el aviso "Sin conexión" y su fecha; si nunca se abrió con red, avisa que se necesita conexión y se recarga solo al volver |
+| Ranking           | Muestra la última copia guardada con el aviso "Sin conexión" y su fecha; si nunca se abrió con red, avisa que se necesita conexión. Al volver la red se recarga solo |
 | Búsqueda          | Solo repite búsquedas hechas en el último día; si no hay copia, avisa que no hay conexión                                                                      |
 | Retroalimentación | Guarda el envío en el **outbox** (IndexedDB) y lo envía solo al volver la conexión                                                                             |
 | Encuesta          | Igual que la retroalimentación: la respuesta queda en el outbox y se envía sola al volver la conexión                                                          |
@@ -371,9 +375,9 @@ La PWA se ve como el casino clandestino del juego: fondo oscuro con un patrón d
 
 ### 8.1 Vistas
 
-- **Consulta:** búsqueda por alias o ID (`/acceso`) y expediente (estadísticas e historial). La propuesta suma el ranking.
+- **Consulta:** búsqueda por alias o ID (`/acceso`), que es el único buscador, y expediente (`/perfil`: estadísticas e historial, con el botón **Buscar otro jugador**). Cada página tiene su título: *Busca tu expediente* en `/acceso` y *Lo que el casino sabe de ti* en `/perfil`. **Expediente** abre el último jugador consultado o, si no hay ninguno (o ya no existe), el buscador. El ranking mundial (`/ranking`) muestra 10 jugadores por página, hasta 5 páginas, con la posición propia fija abajo si ya consultaste un expediente.
   - La búsqueda lista a cada jugador con su alias y su ID, porque el alias puede repetirse. Si nadie coincide, muestra **Sin resultados** y el Crupier responde con el texto buscado, por ejemplo: *No tengo a nadie llamado «pezgordo». Revisa el alias o dime tu ID.*
-- **Captura:** retroalimentación. La propuesta suma la encuesta anónima.
+- **Captura:** retroalimentación y encuesta anónima, en dos pestañas de la sección Opinión (`/opinion/retroalimentacion` y `/opinion/encuesta`).
 
 ![Vistas en teléfono](docs/img/pantallas-telefono.jpg)
 
@@ -430,7 +434,7 @@ Los diagramas corresponden a la propuesta completa; su código está en [`docs/d
 | Diagrama                                             | Qué muestra                                                                                 |
 |------------------------------------------------------|---------------------------------------------------------------------------------------------|
 | ![Contexto](docs/diagramas/contexto.png)             | **Contexto:** cómo llegan los datos del juego a la PWA                                      |
-| ![Navegación](docs/diagramas/navegacion.png)         | **Navegación:** rutas de la propuesta; hoy existen `/perfil` y `/opinion/retroalimentacion` |
+| ![Navegación](docs/diagramas/navegacion.png)         | **Navegación:** rutas de la propuesta; hoy existen `/acceso`, `/perfil`, `/ranking`, `/opinion/retroalimentacion` y `/opinion/encuesta` |
 | ![Búsqueda](docs/diagramas/busqueda.png)             | **Búsqueda:** buscar por alias, elegir un jugador y ver su expediente                       |
 | ![Estados](docs/diagramas/estados.png)               | **Estados de una pantalla:** cargando, con datos, vacío, sin conexión o con error           |
 | ![Service Worker](docs/diagramas/service-worker.png) | **Service Worker:** instalación, atención sin red y actualización                           |

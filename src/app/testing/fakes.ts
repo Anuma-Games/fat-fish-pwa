@@ -30,6 +30,9 @@ export class SesionFalsa implements SesionRepository {
   guardarJugadorId(id: string): void {
     this.id = id;
   }
+  olvidarJugadorId(): void {
+    this.id = null;
+  }
   ultimaSincronizacion(): Date | null {
     return this.sync;
   }

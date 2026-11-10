@@ -80,6 +80,14 @@ describe('AccesoPage', () => {
 
   afterEach(() => vi.useRealTimers());
 
+  it('has its own title, apart from the dossier', async () => {
+    const fixture = TestBed.createComponent(AccesoPage);
+    await fixture.whenStable();
+    const el = fixture.nativeElement as HTMLElement;
+    expect(el.querySelector('h1')?.textContent).toContain('Busca tu expediente');
+    expect(el.querySelector('h1')?.textContent).not.toContain('Lo que el casino sabe de ti');
+  });
+
   it('shows the players while the visitor types, once they stop for a moment', async () => {
     const { el } = await teclear('p', 'pe', 'pez', 'pezg');
     // One search for the last text only, not one per key

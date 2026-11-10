@@ -1,0 +1,121 @@
+:host {
+  display: block;
+}
+.warn {
+  color: var(--ff-gold-400);
+}
+.ranking {
+  list-style: none;
+  margin: var(--ff-space-4) 0 0;
+  padding: 0;
+  display: grid;
+  gap: var(--ff-space-2);
+}
+.fila {
+  display: flex;
+  align-items: center;
+  gap: var(--ff-space-3);
+  min-height: 52px;
+  padding: var(--ff-space-2) var(--ff-space-4);
+  background: var(--ff-bg-700);
+  border: 1px solid var(--ff-line);
+  border-radius: var(--ff-radius-card);
+}
+.posicion {
+  min-width: 2ch;
+  text-align: center;
+  font-family: var(--ff-font-display);
+  font-size: 26px;
+  line-height: 1;
+  color: var(--ff-fog-400);
+}
+.podio .posicion {
+  color: var(--ff-gold-400);
+}
+.jugador {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+}
+.alias {
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.id {
+  font-family: var(--ff-font-label);
+  font-size: 7px;
+  color: var(--ff-fog-400);
+  margin-top: 2px;
+}
+.puntaje {
+  font-family: var(--ff-font-display);
+  font-size: 24px;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+.fila.mia {
+  background: var(--ff-felt-700);
+  border: 2px solid var(--ff-gold-400);
+}
+.fila.mia .posicion {
+  color: var(--ff-cream-100);
+}
+
+/* Pager: ‹ 1 2 3 4 5 › */
+.paginador {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ff-space-2);
+  margin-top: var(--ff-space-4);
+}
+.numeros {
+  display: flex;
+  gap: var(--ff-space-2);
+}
+.numero {
+  min-width: 44px;
+  min-height: 44px;
+  font-family: var(--ff-font-label);
+  font-size: 10px;
+  color: var(--ff-fog-400);
+  background: var(--ff-bg-800);
+  border: 2px solid var(--ff-line);
+  border-radius: var(--ff-radius-field);
+  cursor: pointer;
+}
+.numero.actual {
+  color: var(--ff-cream-100);
+  background: var(--ff-felt-700);
+  border-color: var(--ff-gold-400);
+}
+.numero:disabled {
+  cursor: default;
+}
+.anterior {
+  transform: rotate(90deg);
+}
+.siguiente {
+  transform: rotate(-90deg);
+}
+
+/* Own position, fixed at the bottom of the screen while the list scrolls */
+.fila.fija {
+  position: sticky;
+  bottom: var(--ff-space-3);
+  margin-top: var(--ff-space-4);
+  box-shadow: var(--ff-shadow-hard);
+  z-index: 1;
+}
+.pista {
+  margin-top: var(--ff-space-4);
+}
+
+@media (min-width: 1024px) {
+  .fila {
+    min-height: 44px;
+  }
+}
