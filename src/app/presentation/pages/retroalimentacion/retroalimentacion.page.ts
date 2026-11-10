@@ -7,11 +7,12 @@ import {
 } from '../../../application/facades/retroalimentacion.facade';
 import { SincronizacionFacade } from '../../../application/facades/sincronizacion.facade';
 import { Categoria, Componente } from '../../../domain/models/retroalimentacion';
+import { OpinionTabs } from '../../components/opinion-tabs/opinion-tabs';
 import { PixelIcon } from '../../components/pixel-icon/pixel-icon';
 
 @Component({
   selector: 'app-retroalimentacion-page',
-  imports: [FormsModule, DatePipe, PixelIcon],
+  imports: [FormsModule, DatePipe, PixelIcon, OpinionTabs],
   templateUrl: './retroalimentacion.page.html',
   styleUrl: './retroalimentacion.page.css',
 })
