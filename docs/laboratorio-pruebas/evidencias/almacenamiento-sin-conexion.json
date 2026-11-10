@@ -1,0 +1,57 @@
+{
+  "cacheStorage": {
+    "ngsw:/:04f9844d7b5fcb8b8d93ee4e83470e1ae646725b:assets:app:cache": "(app)",
+    "ngsw:/:04f9844d7b5fcb8b8d93ee4e83470e1ae646725b:assets:assets:cache": "(app)",
+    "ngsw:/:1:data:api-busqueda:cache": [
+      "http://localhost:4200/api/pwa/jugadores?busqueda=5",
+      "http://localhost:4200/api/pwa/jugadores?busqueda=999",
+      "http://localhost:4200/api/pwa/jugadores?busqueda=1"
+    ],
+    "ngsw:/:1:data:api-expediente:cache": [
+      "http://localhost:4200/api/pwa/partidas?id=1&pagina=1&tamano=10",
+      "http://localhost:4200/api/pwa/perfil?id=5",
+      "http://localhost:4200/api/pwa/partidas?id=5&pagina=0&tamano=10",
+      "http://localhost:4200/api/pwa/perfil?id=1",
+      "http://localhost:4200/api/pwa/partidas?id=1&pagina=0&tamano=10"
+    ],
+    "ngsw:/:1:data:api-ranking:cache": [],
+    "ngsw:/:db:04f9844d7b5fcb8b8d93ee4e83470e1ae646725b:assets:app:meta": "(app)",
+    "ngsw:/:db:04f9844d7b5fcb8b8d93ee4e83470e1ae646725b:assets:assets:meta": "(app)",
+    "ngsw:/:db:1:data:api-busqueda:age": "(app)",
+    "ngsw:/:db:1:data:api-busqueda:lru": "(app)",
+    "ngsw:/:db:1:data:api-expediente:age": "(app)",
+    "ngsw:/:db:1:data:api-expediente:lru": "(app)",
+    "ngsw:/:db:1:data:api-ranking:age": "(app)",
+    "ngsw:/:db:1:data:api-ranking:lru": "(app)",
+    "ngsw:/:db:control": "(app)"
+  },
+  "indexedDB": [
+    {
+      "id": "bf7ab21a-b8da-4b70-8650-f2e84d59adaf",
+      "tipo": "retroalimentacion",
+      "contenido": {
+        "categoria": "ERROR",
+        "componente": "PWA",
+        "mensaje": "Sin señal en el camión, el ranking no cargó pero el expediente sí"
+      },
+      "creadoEn": "2026-11-10T04:37:27.349Z",
+      "intentos": 0,
+      "estado": "PENDIENTE"
+    },
+    {
+      "id": "ea1397a6-cddd-40f2-8e65-d013bc55b7ce",
+      "tipo": "retroalimentacion",
+      "contenido": {
+        "categoria": "SUGERENCIA",
+        "componente": "PWA",
+        "mensaje": "Me gustaría ver en el expediente cuántas veces usé cada comodín"
+      },
+      "creadoEn": "2026-11-10T04:28:56.861Z",
+      "intentos": 1,
+      "estado": "ENVIADO",
+      "idServidor": "7"
+    }
+  ],
+  "serviceWorker": "activated",
+  "onLine": false
+}

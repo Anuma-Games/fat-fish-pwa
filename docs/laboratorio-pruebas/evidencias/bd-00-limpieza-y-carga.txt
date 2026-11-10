@@ -1,0 +1,90 @@
+$ psql -U fatfish -h localhost -d fatfish -f docs/laboratorio-pruebas/sql/01_limpieza.sql
+TRUNCATE TABLE
+ jugadores 
+-----------
+         0
+(1 row)
+
+ partidas 
+----------
+        0
+(1 row)
+
+ retroalimentaciones 
+---------------------
+                   0
+(1 row)
+
+
+$ psql -U fatfish -h localhost -d fatfish -f docs/laboratorio-pruebas/sql/02_carga.sql
+BEGIN
+INSERT 0 28
+INSERT 0 107
+INSERT 0 45
+INSERT 0 28
+INSERT 0 6
+INSERT 0 8
+ setval 
+--------
+     28
+(1 row)
+
+ setval 
+--------
+    107
+(1 row)
+
+ setval 
+--------
+      6
+(1 row)
+
+ setval 
+--------
+      8
+(1 row)
+
+COMMIT
+ jugadores 
+-----------
+        28
+(1 row)
+
+ partidas 
+----------
+      107
+(1 row)
+
+ id |      alias       | partidas_totales | partidas_ganadas | puntaje_maximo 
+----+------------------+------------------+------------------+----------------
+  1 | ManoDeHierro     |               14 |                3 |           1301
+  2 | la_tiburona      |                9 |                4 |           2564
+  3 | PezGordo_MX      |                7 |                2 |           1358
+  4 | Capitan_Anzuelo  |                6 |                1 |           1215
+  5 | recien_llegado   |                0 |                0 |              0
+  6 | Tiburon          |                5 |                1 |           1151
+  7 | NeonCarpa        |                5 |                1 |           1301
+  8 | doña_suerte      |                4 |                1 |           1206
+  9 | ElBarracuda      |                6 |                2 |           1769
+ 10 | xX_Mojarra_Xx    |                3 |                0 |              0
+ 11 | SirenaDelNorte   |                4 |                1 |           1133
+ 12 | RedDeOro         |                4 |                1 |           1275
+ 13 | BagreVeloz       |                3 |                0 |              0
+ 14 | marea_alta       |                5 |                1 |           1493
+ 15 | Pulpo404         |                3 |                0 |              0
+ 16 | CoralRojo        |                3 |                1 |           1230
+ 17 | Anguila_Zen      |                2 |                0 |              0
+ 18 | TodoONada99      |                4 |                1 |           1237
+ 19 | Charal_Pro       |                2 |                0 |              0
+ 20 | Tiburon          |                3 |                0 |              0
+ 21 | ojo_de_pez       |                2 |                0 |              0
+ 22 | Mantarraya       |                3 |                1 |           1309
+ 23 | PescadorNocturno |                2 |                0 |              0
+ 24 | Robalo_GDL       |                2 |                0 |              0
+ 25 | GatoPescador     |                1 |                0 |              0
+ 26 | FichaAzul        |                1 |                0 |              0
+ 27 | BallenaFeliz     |                1 |                1 |           1152
+ 28 | Bucanero         |                3 |                0 |              0
+(28 rows)
+
+
