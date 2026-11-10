@@ -38,6 +38,21 @@ describe('RetroalimentacionFacade with a shared outbox', () => {
 
   const datos = { categoria: 'ERROR', componente: 'PWA', mensaje: 'La bola se atoró' } as const;
 
+  it('logs an outbox that cannot be read when the connection returns, without an unhandled rejection', async () => {
+    const error = vi.spyOn(console, 'error').mockImplementation(() => {});
+    conectividad.enLinea.set(false);
+    TestBed.tick();
+    vi.spyOn(outbox, 'todos').mockRejectedValue(new ReferenceError('indexedDB is not defined'));
+    conectividad.enLinea.set(true);
+    TestBed.tick();
+    await vi.waitFor(() =>
+      expect(error).toHaveBeenCalledWith(
+        expect.stringContaining('No se pudo revisar el outbox'),
+        expect.any(ReferenceError),
+      ),
+    );
+  });
+
   it('queues feedback without connection and sends it when the connection returns', async () => {
     conectividad.enLinea.set(false);
     expect(await facade.enviar(datos)).toBe('EN_COLA');
@@ -45,7 +60,8 @@ describe('RetroalimentacionFacade with a shared outbox', () => {
     conectividad.enLinea.set(true);
     await facade.sincronizar();
     expect(enviadas).toHaveLength(1);
-    expect(facade.envios()[0].estado).toBe('ENVIADO');
+    // The record stays in the IndexedDB outbox (what DevTools shows), marked as sent
+    expect(outbox.filas.get(enviadas[0])).toMatchObject({ estado: 'ENVIADO', idServidor: '5' });
   });
 
   it('ignores the surveys that share the outbox', async () => {
@@ -59,7 +75,6 @@ describe('RetroalimentacionFacade with a shared outbox', () => {
     });
     await facade.sincronizar();
     expect(enviadas).toHaveLength(0);
-    expect(facade.envios()).toHaveLength(0);
     expect(outbox.filas.get('encuesta-1')?.estado).toBe('PENDIENTE');
   });
 });

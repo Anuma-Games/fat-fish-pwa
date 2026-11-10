@@ -100,6 +100,10 @@ textarea {
   border-radius: var(--ff-radius-field);
   padding: var(--ff-space-2) var(--ff-space-3);
 }
+textarea {
+  /* Only taller: dragging the corner sideways made the field overflow its card */
+  resize: vertical;
+}
 input:focus,
 textarea:focus,
 button:focus-visible {
@@ -181,8 +185,7 @@ button:focus-visible {
   border: 1px solid var(--ff-line);
   color: var(--ff-fog-400);
 }
-.chip.victoria,
-.chip.enviado {
+.chip.victoria {
   color: var(--ff-win-300);
   border-color: var(--ff-win-300);
 }
@@ -191,11 +194,6 @@ button:focus-visible {
   color: var(--ff-cream-100);
   background: var(--ff-ruby-700);
   border-color: var(--ff-ruby-700);
-}
-.chip.pendiente,
-.chip.enviando {
-  color: var(--ff-gold-400);
-  border-color: var(--ff-gold-600);
 }
 .chip.id {
   font-size: 8px;

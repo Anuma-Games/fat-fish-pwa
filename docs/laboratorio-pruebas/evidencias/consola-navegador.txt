@@ -1,30 +1,43 @@
 [info] [FatFish] PWA iniciada · service worker activo · en línea
+[info] [FatFish] GET /api/pwa/jugadores?busqueda=1
 [info] [FatFish] GET /api/pwa/perfil?id=1
 [info] [FatFish] GET /api/pwa/partidas?id=1&pagina=0&tamano=10
-[info] [FatFish] Perfil y partidas respondieron en 203.5 ms: jesus (ID #1), 10 de 12 partidas
-[table] Array(10)
-[info] [FatFish] Expediente renderizado: 10 partidas en pantalla, 209.4 ms desde el GET
-[info] [FatFish] PWA iniciada · service worker activo · en línea
-[info] [FatFish] GET /api/pwa/perfil?id=1
-[info] [FatFish] GET /api/pwa/partidas?id=1&pagina=0&tamano=10
-[info] [FatFish] Perfil y partidas respondieron en 20.4 ms: jesus (ID #1), 10 de 12 partidas
-[table] Array(10)
-[info] [FatFish] Expediente renderizado: 10 partidas en pantalla, 22.0 ms desde el GET
+[info] [FatFish] Perfil y partidas respondieron en 20.4 ms: ManoDeHierro (ID #1), 10 de 14 partidas
+[info] [FatFish] Expediente renderizado: 10 partidas en pantalla, 23.5 ms desde el GET
 [info] [FatFish] GET /api/pwa/partidas?id=1&pagina=1&tamano=10
-[info] [FatFish] Página 1 respondió en 9.7 ms: 2 partidas más
-[table] Array(2)
-[info] [FatFish] Expediente renderizado: 12 partidas en pantalla, 10.5 ms desde el GET
+[info] [FatFish] Página 1 respondió en 29.2 ms: 4 partidas más
+[info] [FatFish] Expediente renderizado: 14 partidas en pantalla, 30.8 ms desde el GET
 [info] [FatFish] PWA iniciada · service worker activo · en línea
-[info] [FatFish] POST /api/pwa/retroalimentacion OK en 59.0 ms: id 3 (Idempotency-Key b3b5c4e7-e4e8-43d3-8631-9236fb94f01a)
+[info] [FatFish] GET /api/pwa/jugadores?busqueda=5
+[info] [FatFish] GET /api/pwa/perfil?id=5
+[info] [FatFish] GET /api/pwa/partidas?id=5&pagina=0&tamano=10
+[info] [FatFish] Perfil y partidas respondieron en 34.2 ms: recien_llegado (ID #5), 0 de 0 partidas
+[info] [FatFish] Expediente renderizado: 0 partidas en pantalla, 34.7 ms desde el GET
+[info] [FatFish] PWA iniciada · service worker activo · en línea
+[info] [FatFish] GET /api/pwa/jugadores?busqueda=999
+[info] [FatFish] GET /api/pwa/jugadores?busqueda=1
+[info] [FatFish] GET /api/pwa/perfil?id=1
+[info] [FatFish] GET /api/pwa/partidas?id=1&pagina=0&tamano=10
+[info] [FatFish] Perfil y partidas respondieron en 37.5 ms: ManoDeHierro (ID #1), 10 de 14 partidas
+[info] [FatFish] Expediente renderizado: 10 partidas en pantalla, 39.4 ms desde el GET
+[info] [FatFish] PWA iniciada · service worker activo · en línea
+[info] [FatFish] POST /api/pwa/retroalimentacion OK en 86.2 ms: id 7 (Idempotency-Key ea1397a6-cddd-40f2-8e65-d013bc55b7ce)
 [warning] [FatFish] Sin conexión: los envíos se guardarán en IndexedDB
-[warning] [FatFish] Sin conexión: retroalimentación 73a32db0-9a25-4018-bd3a-814ac7c5cc95 guardada en IndexedDB (outbox)
+[info] [FatFish] GET /api/pwa/perfil?id=1
+[info] [FatFish] GET /api/pwa/partidas?id=1&pagina=0&tamano=10
+[info] [FatFish] Perfil y partidas respondieron en 22.6 ms: ManoDeHierro (ID #1), 10 de 14 partidas
+[info] [FatFish] Expediente renderizado: 10 partidas en pantalla, 25.3 ms desde el GET
+[info] [FatFish] GET /api/pwa/partidas?id=1&pagina=1&tamano=10
+[info] [FatFish] Página 1 respondió en 10.0 ms: 4 partidas más
+[info] [FatFish] Expediente renderizado: 14 partidas en pantalla, 12.3 ms desde el GET
+[warning] [FatFish] Sin conexión: retroalimentación bf7ab21a-b8da-4b70-8650-f2e84d59adaf guardada en IndexedDB (outbox)
 [info] [FatFish] PWA iniciada · service worker activo · sin conexión
 [info] [FatFish] GET /api/pwa/perfil?id=1
 [info] [FatFish] GET /api/pwa/partidas?id=1&pagina=0&tamano=10
-[info] [FatFish] Perfil y partidas respondieron en 14.4 ms: jesus (ID #1), 10 de 12 partidas
-[table] Array(10)
-[info] [FatFish] Expediente renderizado: 10 partidas en pantalla, 15.9 ms desde el GET
-[info] [FatFish] PWA iniciada · service worker activo · sin conexión
-[info] [FatFish] Conexión recuperada
-[info] [FatFish] Sincronizando outbox: 1 envío(s) pendiente(s)
-[info] [FatFish] POST /api/pwa/retroalimentacion OK en 23.1 ms: id 4 (Idempotency-Key 73a32db0-9a25-4018-bd3a-814ac7c5cc95)
+[info] [FatFish] Perfil y partidas respondieron en 57.5 ms: ManoDeHierro (ID #1), 10 de 14 partidas
+[info] [FatFish] Expediente renderizado: 10 partidas en pantalla, 60.2 ms desde el GET
+[info] [FatFish] PWA iniciada · service worker activo · en línea
+[info] [FatFish] GET /api/pwa/perfil?id=1
+[info] [FatFish] GET /api/pwa/partidas?id=1&pagina=0&tamano=10
+[info] [FatFish] Perfil y partidas respondieron en 48.8 ms: ManoDeHierro (ID #1), 10 de 14 partidas
+[info] [FatFish] Expediente renderizado: 10 partidas en pantalla, 51.8 ms desde el GET

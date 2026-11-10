@@ -1,4 +1,4 @@
-import { Injectable, effect, inject, signal } from '@angular/core';
+import { Injectable, effect, inject } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 import { LOG_PREFIX } from '../../core/config/api.config';
 import {
@@ -27,13 +27,16 @@ export class RetroalimentacionFacade {
   private readonly outbox = inject(OutboxRepository);
   private readonly sync = inject(SincronizacionFacade);
 
-  readonly envios = signal<EnvioRetroalimentacion[]>([]);
   private sincronizando = false;
 
   constructor() {
     effect(() => {
       if (this.sync.enLinea()) {
-        void this.sincronizar();
+        // Runs at start on every page (App creates this facade): if IndexedDB is not available
+        // (some private modes), log it instead of leaving an unhandled rejection
+        this.sincronizar().catch((err: unknown) =>
+          console.error(`${LOG_PREFIX} No se pudo revisar el outbox de retroalimentación`, err),
+        );
       }
     });
   }
@@ -52,11 +55,9 @@ export class RetroalimentacionFacade {
       console.warn(
         `${LOG_PREFIX} Sin conexión: retroalimentación ${envio.id} guardada en IndexedDB (outbox)`,
       );
-      await this.refrescar();
       return 'EN_COLA';
     }
     const estado = await this.intentar(envio);
-    await this.refrescar();
     if (estado === 'ENVIADO') return 'ENVIADO';
     return estado === 'FALLIDO' ? 'RECHAZADO' : 'EN_COLA';
   }
@@ -79,12 +80,7 @@ export class RetroalimentacionFacade {
       }
     } finally {
       this.sincronizando = false;
-      await this.refrescar();
     }
-  }
-
-  async refrescar(): Promise<void> {
-    this.envios.set((await this.outbox.todos()).filter(esRetroalimentacion));
   }
 
   private async intentar(envio: EnvioRetroalimentacion): Promise<EnvioRetroalimentacion['estado']> {

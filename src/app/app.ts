@@ -11,6 +11,8 @@ import {
 } from '@angular/router';
 import { SwUpdate } from '@angular/service-worker';
 import { filter, map } from 'rxjs';
+import { EncuestaFacade } from './application/facades/encuesta.facade';
+import { RetroalimentacionFacade } from './application/facades/retroalimentacion.facade';
 import { SincronizacionFacade } from './application/facades/sincronizacion.facade';
 import { LOG_PREFIX } from './core/config/api.config';
 import { MENU } from './core/config/landing.config';
@@ -55,6 +57,10 @@ export class App {
   constructor() {
     // Links to a section of the landing page (/#comodines) leave it below the sticky nav
     inject(ViewportScroller).setOffset([0, 64]);
+    // The facades send what was saved offline when the connection returns. Angular only creates them when
+    // a page injects them, so without this a message waited until the visitor opened Opinión again.
+    inject(RetroalimentacionFacade);
+    inject(EncuestaFacade);
     console.info(
       `${LOG_PREFIX} PWA iniciada · service worker ${this.swActivo() ? 'activo' : 'inactivo (modo desarrollo)'} · ${navigator.onLine ? 'en línea' : 'sin conexión'}`,
     );
