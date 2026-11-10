@@ -68,12 +68,13 @@ La PWA solo lee datos del juego y solo inserta opiniones. No registra jugadores 
 | Ranking mundial: capa de datos (repositorio, fachada y caché sin conexión)    | ✅ Construido                |
 | Encuesta anónima: capa de datos (repositorio, fachada y outbox sin conexión)  | ✅ Construido                |
 | Conexión con la API en Google Cloud Run (proxy que agrega la llave)           | ✅ Construido                |
-| Pantallas de búsqueda, ranking y encuesta                                     | ⏳ Pendiente (tickets de UI) |
+| Pantalla de la encuesta anónima (`/opinion/encuesta`)                         | ✅ Construido                |
+| Pantalla del ranking                                                          | ⏳ Pendiente (ticket de UI)  |
 | Aviso de versión nueva y Background Sync                                      | ⏳ Pendiente para el MVP     |
 | Wiki                                                                          | ⏳ Deseable                  |
 | Publicación de la PWA en Firebase Hosting (despliegue automático desde `main`) | ✅ Construido                |
 
-Las fachadas de búsqueda, ranking y encuesta ya están listas para la UI ([4.3](#43-fachadas-contrato-con-la-ui)); las pantallas se construyen en los tickets de interfaz.
+Las fachadas de búsqueda, ranking y encuesta están listas para la UI ([4.3](#43-fachadas-contrato-con-la-ui)); falta la pantalla del ranking.
 
 ---
 
@@ -258,7 +259,7 @@ El `id` del jugador lo genera la API y es único; el alias se puede repetir. Tod
 | `POST /api/pwa/retroalimentacion`           | Envía categoría, componente y mensaje (mínimo 10 caracteres)                             | ✅ En uso       |
 | `GET /api/pwa/jugadores?busqueda=`          | Busca por alias o ID (hasta 24 caracteres); devuelve una lista porque el alias se repite | ✅ Sin pantalla |
 | `GET /api/pwa/ranking?pagina=&jugadorId=`   | Top 50 en páginas de 10 y la posición propia (`jugadorId` es opcional)                   | ✅ Sin pantalla |
-| `POST /api/pwa/encuesta`                    | Encuesta anónima con tres escalas del 1 al 5 y un comentario opcional                    | ✅ Sin pantalla |
+| `POST /api/pwa/encuesta`                    | Encuesta anónima con tres escalas del 1 al 5 y un comentario opcional                    | ✅ En uso       |
 
 Reglas comunes:
 
@@ -373,7 +374,7 @@ La PWA se ve como el casino clandestino del juego: fondo oscuro con un patrón d
 
 - **Consulta:** búsqueda por alias o ID (`/acceso`) y expediente (estadísticas e historial). La propuesta suma el ranking.
   - La búsqueda lista a cada jugador con su alias y su ID, porque el alias puede repetirse. Si nadie coincide, muestra **Sin resultados** y el Crupier responde con el texto buscado, por ejemplo: *No tengo a nadie llamado «pezgordo». Revisa el alias o dime tu ID.*
-- **Captura:** retroalimentación. La propuesta suma la encuesta anónima.
+- **Captura:** retroalimentación y encuesta anónima, en dos pestañas de la sección Opinión (`/opinion/retroalimentacion` y `/opinion/encuesta`).
 
 ![Vistas en teléfono](docs/img/pantallas-telefono.jpg)
 
@@ -430,7 +431,7 @@ Los diagramas corresponden a la propuesta completa; su código está en [`docs/d
 | Diagrama                                             | Qué muestra                                                                                 |
 |------------------------------------------------------|---------------------------------------------------------------------------------------------|
 | ![Contexto](docs/diagramas/contexto.png)             | **Contexto:** cómo llegan los datos del juego a la PWA                                      |
-| ![Navegación](docs/diagramas/navegacion.png)         | **Navegación:** rutas de la propuesta; hoy existen `/perfil` y `/opinion/retroalimentacion` |
+| ![Navegación](docs/diagramas/navegacion.png)         | **Navegación:** rutas de la propuesta; hoy existen `/acceso`, `/perfil`, `/opinion/retroalimentacion` y `/opinion/encuesta` |
 | ![Búsqueda](docs/diagramas/busqueda.png)             | **Búsqueda:** buscar por alias, elegir un jugador y ver su expediente                       |
 | ![Estados](docs/diagramas/estados.png)               | **Estados de una pantalla:** cargando, con datos, vacío, sin conexión o con error           |
 | ![Service Worker](docs/diagramas/service-worker.png) | **Service Worker:** instalación, atención sin red y actualización                           |
