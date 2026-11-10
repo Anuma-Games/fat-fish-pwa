@@ -15,6 +15,14 @@ export class SesionStorage implements SesionRepository {
     this.escribir(JUGADOR_KEY, id);
   }
 
+  olvidarJugadorId(): void {
+    try {
+      localStorage.removeItem(JUGADOR_KEY);
+    } catch {
+      // Private mode: nothing was saved
+    }
+  }
+
   ultimaSincronizacion(): Date | null {
     const valor = this.leer(SYNC_KEY);
     return valor ? new Date(valor) : null;
