@@ -152,7 +152,7 @@ psql -U fatfish -h localhost -d fatfish -f fat-fish-pwa/docs/laboratorio-pruebas
 | LAB-02 | Envío en línea | En `/opinion/retroalimentacion`, enviar un mensaje de 10 o más caracteres | Aviso "Tu mensaje se guardó en el servidor"; en PostgreSQL aparece la fila nueva | `ui-02-retroalimentacion-en-linea.png`, `bd-02-despues.txt` |
 | LAB-03 | Validación | Enviar un mensaje de menos de 10 caracteres | Se rechaza en la PWA; la API también responde `400` si se le envía directo | — |
 | LAB-04 | Envío sin conexión | DevTools → Network → **Offline**; enviar otro mensaje | Aviso "Guardado en tu dispositivo"; en DevTools → Application → IndexedDB → `fatfish-pwa` → `outbox` el registro tiene `estado: "PENDIENTE"` e `intentos: 0`; la base no cambia | `ui-03-retroalimentacion-sin-conexion.png`, `devtools-04a-indexeddb-pendiente.png`, `almacenamiento-sin-conexion.json` |
-| LAB-05 | Historial sin conexión | Con Offline activo, abrir `/perfil` y recargar | La app abre y muestra el perfil y las partidas desde Cache Storage, con el aviso "Sin conexión" y la fecha de los datos | `ui-04-expediente-sin-conexion.png` |
+| LAB-05 | Historial sin conexión | Después de LAB-01 (la app ya recuerda al jugador `1`), con Offline activo abrir **Expediente** (`/perfil`) y recargar | La app abre y muestra el perfil y las partidas desde Cache Storage, con el aviso "Sin conexión" y la fecha de los datos | `ui-04-expediente-sin-conexion.png` |
 | LAB-06 | Sincronización | Quitar Offline y volver a abrir DevTools → Application → IndexedDB → `fatfish-pwa` → `outbox` | La consola muestra "Sincronizando outbox"; en IndexedDB el mismo registro pasa a `estado: "ENVIADO"` con su `idServidor`; en PostgreSQL aparece **una sola vez** | `devtools-04b-indexeddb-enviado.png`, `almacenamiento-tras-reconectar.json`, `bd-02-despues.txt` |
 | LAB-07 | Integridad | Correr `03_consultas.sql` | La consulta 5 sale vacía (sin claves repetidas); las restricciones `check` y `unique` de la tabla impiden datos inválidos o duplicados | `bd-02-despues.txt` |
 
@@ -164,13 +164,15 @@ psql -U fatfish -h localhost -d fatfish -f fat-fish-pwa/docs/laboratorio-pruebas
 
 ## Evidencias
 
+> Las evidencias de la entrega del 17 de octubre de 2026 están en `evidencias/2026-10/`, con la interfaz y los datos de entonces (bandeja de envíos en la PWA, jugadores con los nombres del equipo y el expediente abierto con el ID 1). Las de `evidencias/` son de la corrida actual.
+
 ### Incluidas en `evidencias/` (generadas en macOS con Chrome)
 
 | Archivo | Qué demuestra |
 |---|---|
 | `bd-00-limpieza-y-carga.txt` | Ejecución de los scripts de limpieza y carga |
-| `bd-01-antes.txt` | Estado de la base **antes** de usar la PWA (2 retroalimentaciones) |
-| `bd-02-despues.txt` | Estado **después**: 4 retroalimentaciones (la `3`, enviada en línea, y la `4`, que se sincronizó al reconectar), cada una con su clave y sin duplicados |
+| `bd-01-antes.txt` | Estado de la base **antes** de usar la PWA (6 retroalimentaciones) |
+| `bd-02-despues.txt` | Estado **después**: 8 retroalimentaciones (la `7`, enviada en línea, y la `8`, que se sincronizó al reconectar), cada una con su clave y sin duplicados |
 | `backend-spring-boot.log.txt` | Logs de Spring Boot: `GET` y `POST` con código, tiempo, tamaño de petición y respuesta, memoria (heap), SQL con parámetros y métricas JDBC de cada transacción |
 | `consola-navegador.txt` | Consola del navegador durante la consulta, el renderizado, el envío sin conexión y la sincronización |
 | `ui-01-*.png` a `ui-04-*.png` | Capturas de la interfaz en cada caso (ver tabla de casos) |
@@ -178,17 +180,17 @@ psql -U fatfish -h localhost -d fatfish -f fat-fish-pwa/docs/laboratorio-pruebas
 
 ### Capturas de DevTools (Chrome, tomadas a mano)
 
-Se tomaron en una corrida aparte de las evidencias automáticas, con el esquema anterior; por eso las retroalimentaciones llegan hasta el `id` 6. Lo que muestran (Network, service worker, Cache Storage, IndexedDB y consola) no cambió con el esquema actual.
+Se toman en Chrome durante la misma corrida que las demás evidencias.
 
 | Archivo | Pestaña | Qué muestra |
 |---|---|---|
 | `devtools-01a-network.png` | **Network** (`Fetch/XHR`) | `perfil`, `partidas` (página 0 y 1) y `retroalimentacion` con código (`200`/`201`), tamaño y tiempo; cada petición aparece dos veces: la de la página y la del service worker (⚙) |
-| `devtools-01b-network-headers.png` | **Network → Headers** | El `POST` con `201 Created`, `Location: /api/pwa/retroalimentacion/3` y la cabecera `Idempotency-Key` |
+| `devtools-01b-network-headers.png` | **Network → Headers** | El `POST` con `201 Created`, `Location: /api/pwa/retroalimentacion/7` y la cabecera `Idempotency-Key` |
 | `devtools-01c-network-timing.png` | **Network → Timing** | Tiempo del `POST`: arranque del service worker, espera del servidor y total (~20 ms) |
 | `devtools-02-service-worker.png` | **Application → Service workers** | `ngsw-worker.js` *activated and is running* |
 | `devtools-03-cache-storage.png` | **Application → Cache storage** | Caché `ngsw:/:1:data:api-expediente:cache` con las respuestas de `perfil` y `partidas` |
 | `devtools-04a-indexeddb-pendiente.png` | **Application → IndexedDB → fatfish-pwa → outbox** | Envío sin conexión con `estado: "PENDIENTE"` e `intentos: 0` |
-| `devtools-04b-indexeddb-enviado.png` | **Application → IndexedDB → outbox** | El mismo envío tras reconectar: `estado: "ENVIADO"`, `intentos: 1`, `idServidor: "5"` |
+| `devtools-04b-indexeddb-enviado.png` | **Application → IndexedDB → outbox** | El mismo envío tras reconectar: `estado: "ENVIADO"`, `intentos: 1`, `idServidor: "8"` |
 | `devtools-05-console.png` | **Console** (filtro `[FatFish]`) | GET con tiempos, renderizado, paginación, envío guardado en IndexedDB, sincronización y `POST … OK` |
 
 > En DevTools, la vista de IndexedDB no siempre se actualiza con ⟳: si un registro sigue en `PENDIENTE` aunque la consola ya muestre `POST … OK`, cierra y vuelve a abrir DevTools.
@@ -200,7 +202,7 @@ Se tomaron en una corrida aparte de las evidencias automáticas, con el esquema 
 | `relation "retroalimentacion" does not exist` al cargar datos | La API no ha arrancado todavía: Flyway crea las tablas al iniciar (paso 3) |
 | La API no arranca: `Validate failed: Migrations have failed validation` | La base se creó con el esquema anterior. Vuelve a ejecutar `00_crear_bd.sql` (borra y crea las bases) y arranca la API |
 | La PWA muestra "No pudimos consultar tu expediente" | La API no está corriendo en el puerto 8080; revisa la terminal del paso 3 |
-| La PWA muestra "No encontramos a ningún jugador…" con el ID 1 | Faltan los datos de prueba: ejecuta el paso 4 |
+| Buscar `1` o `ManoDeHierro` en `/acceso` da **Sin resultados** | Faltan los datos de prueba: ejecuta el paso 4 |
 | `Port 8080 was already in use` | Otro proceso usa el puerto; ciérralo o usa `SERVER_PORT=8081` y `API_URL=http://localhost:8081 npm run lab` |
 | El menú dice "Service worker: inactivo" | Se abrió con `ng serve`; usa `npm run lab` |
 | Se ve una versión vieja de la PWA | DevTools → Application → Service workers → **Update** (o *Unregister* y recargar) |
