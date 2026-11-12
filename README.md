@@ -229,7 +229,7 @@ Al elegir un jugador, la pantalla llama a `HistorialFacade.buscar(jugadorId)` y 
 | `enviar(datos)`                | `datos`: `percepcionRiesgo`, `cambioOpinion` y `claridadMensaje` (de 1 a 5) y `comentario` opcional (máximo 500 caracteres). Devuelve `ENVIADO`, `EN_COLA` (guardada en el dispositivo, se envía al volver la red) o `RECHAZADO` (mensaje en `error()`) |
 | `enviando`                     | Deshabilita el botón mientras se envía                                                                                                                                                                                                                  |
 | `pendientes`, `envios`         | Cuántas respuestas esperan conexión y su detalle                                                                                                                                                                                                        |
-| `sincronizar()`, `refrescar()` | Se ejecutan solos al volver la conexión; `refrescar()` actualiza la lista al abrir la pantalla                                                                                                                                                          |
+| `sincronizar()`, `refrescar()` | Se ejecutan solos al abrir la app y al volver la conexión; `refrescar()` actualiza la lista al abrir la pantalla                                                                                                                                        |
 
 ---
 
@@ -361,7 +361,7 @@ El Service Worker solo guarda lo que ya se pidió, así que al cargar la primera
 | Encuesta          | Igual que la retroalimentación: la respuesta queda en el outbox y se envía sola al volver la conexión                                                          |
 | Menú              | Indica si hay conexión y la fecha de la última sincronización                                                                                                  |
 
-El outbox guarda cada envío con su UUID, su tipo (`retroalimentacion` o `encuesta`), el contenido, el número de intentos y su estado (`PENDIENTE`, `ENVIANDO`, `ENVIADO` o `FALLIDO`). Es el mismo almacén para los dos tipos y cada fachada solo procesa los suyos. Se vacía al recuperar la conexión y al abrir la sección de Opinión, con hasta 5 intentos: se reintentan los fallos temporales (sin red, `408`, `429` y errores `5xx`) y un rechazo del servidor, como un `400`, marca el envío como `FALLIDO` sin reintentar. Como el UUID viaja en `Idempotency-Key`, un reintento nunca crea un duplicado.
+El outbox guarda cada envío con su UUID, su tipo (`retroalimentacion` o `encuesta`), el contenido, el número de intentos y su estado (`PENDIENTE`, `ENVIANDO`, `ENVIADO` o `FALLIDO`). Es el mismo almacén para los dos tipos y cada fachada solo procesa los suyos. Se vacía al abrir la app, en cualquier página, y al recuperar la conexión, con hasta 5 intentos: se reintentan los fallos temporales (sin red, `408`, `429` y errores `5xx`) y un rechazo del servidor, como un `400`, marca el envío como `FALLIDO` sin reintentar. Como el UUID viaja en `Idempotency-Key`, un reintento nunca crea un duplicado.
 
 ### 7.4 Segundo plano y actualizaciones
 
