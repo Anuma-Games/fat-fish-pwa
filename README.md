@@ -70,6 +70,7 @@ La PWA solo lee datos del juego y solo inserta opiniones. No registra jugadores 
 | Conexión con la API en Google Cloud Run (proxy que agrega la llave)           | ✅ Construido                |
 | Pantalla de la encuesta anónima (`/opinion/encuesta`)                         | ✅ Construido                |
 | Pantalla del ranking mundial (`/ranking`)                                     | ✅ Construido                |
+| Pantalla de búsqueda por alias o ID (`/acceso`)                               | ✅ Construido                |
 | Aviso de versión nueva y Background Sync                                      | ⏳ Pendiente para el MVP     |
 | Wiki                                                                          | ⏳ Deseable                  |
 | Publicación de la PWA en Firebase Hosting (despliegue automático desde `main`) | ✅ Construido                |
@@ -157,7 +158,7 @@ El código se organiza en capas; cada una tiene una sola responsabilidad y solo 
 
 ```
 src/app/
-├── presentation/      # páginas (Expediente y Opinión) y componentes reutilizables
+├── presentation/      # páginas (landing, búsqueda, expediente, ranking y opinión) y componentes reutilizables
 ├── application/       # fachadas (casos de uso y estado con signals) y lógica compartida del outbox
 ├── domain/            # modelos y puertos (interfaces de los repositorios)
 ├── infrastructure/    # implementación de los puertos: API (repositorios y DTOs), IndexedDB, localStorage, conectividad
@@ -260,7 +261,7 @@ El `id` del jugador lo genera la API y es único; el alias se puede repetir. Tod
 | `GET /api/pwa/perfil?id=`                   | Datos del jugador y sus estadísticas                                                     | ✅ En uso       |
 | `GET /api/pwa/partidas?id=&pagina=&tamano=` | Historial paginado, de la partida más reciente a la más antigua                          | ✅ En uso       |
 | `POST /api/pwa/retroalimentacion`           | Envía categoría, componente y mensaje (mínimo 10 caracteres)                             | ✅ En uso       |
-| `GET /api/pwa/jugadores?busqueda=`          | Busca por alias o ID (hasta 24 caracteres); devuelve una lista porque el alias se repite | ✅ Sin pantalla |
+| `GET /api/pwa/jugadores?busqueda=`          | Busca por alias o ID (hasta 24 caracteres); devuelve una lista porque el alias se repite | ✅ En uso       |
 | `GET /api/pwa/ranking?pagina=&jugadorId=`   | Top 50 en páginas de 10 y la posición propia (`jugadorId` es opcional)                   | ✅ En uso       |
 | `POST /api/pwa/encuesta`                    | Encuesta anónima con tres escalas del 1 al 5 y un comentario opcional                    | ✅ En uso       |
 
@@ -271,7 +272,6 @@ Reglas comunes:
 - Los `POST` llevan la cabecera `Idempotency-Key` con un UUID generado en el dispositivo; si el envío se repite, la API devuelve el registro existente en lugar de duplicarlo.
 - Las listas paginadas indican si hay más páginas (`ultima`) y cuándo se generaron (`generadoEn`), para mostrar la antigüedad de los datos sin conexión.
 - La API exige la cabecera `X-Api-Key` en todo `/api/**`. La llave es pública: identifica al cliente, no protege datos. En Firebase Hosting la agrega el interceptor de Angular (`api-key.interceptor.ts`), porque el rewrite hacia Cloud Run no puede agregar cabeceras; en local y en Docker también la agrega el proxy. Las escrituras de un jugador (partidas, contraseña) se protegen con su token, y los envíos sin token se protegen con límites de peticiones en la API ([10.1](#101-despliegue-en-firebase-hosting)).
-- "✅ Sin pantalla" significa que el repositorio y la fachada ya consumen el endpoint, pero la interfaz todavía no existe.
 
 ### 6.2 De la respuesta a la lista en pantalla
 
@@ -434,7 +434,7 @@ Los diagramas corresponden a la propuesta completa; su código está en [`docs/d
 | Diagrama                                             | Qué muestra                                                                                 |
 |------------------------------------------------------|---------------------------------------------------------------------------------------------|
 | ![Contexto](docs/diagramas/contexto.png)             | **Contexto:** cómo llegan los datos del juego a la PWA                                      |
-| ![Navegación](docs/diagramas/navegacion.png)         | **Navegación:** rutas de la propuesta; hoy existen `/acceso`, `/perfil`, `/ranking`, `/opinion/retroalimentacion` y `/opinion/encuesta` |
+| ![Navegación](docs/diagramas/navegacion.png)         | **Navegación:** rutas de la propuesta; hoy existen `/` (landing), `/acceso`, `/perfil`, `/ranking`, `/opinion/retroalimentacion` y `/opinion/encuesta` |
 | ![Búsqueda](docs/diagramas/busqueda.png)             | **Búsqueda:** buscar por alias, elegir un jugador y ver su expediente                       |
 | ![Estados](docs/diagramas/estados.png)               | **Estados de una pantalla:** cargando, con datos, vacío, sin conexión o con error           |
 | ![Service Worker](docs/diagramas/service-worker.png) | **Service Worker:** instalación, atención sin red y actualización                           |
