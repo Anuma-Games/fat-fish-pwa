@@ -1,14 +1,7 @@
 import { DatePipe, ViewportScroller } from '@angular/common';
 import { Component, computed, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import {
-  ActivatedRoute,
-  NavigationEnd,
-  Router,
-  RouterLink,
-  RouterLinkActive,
-  RouterOutlet,
-} from '@angular/router';
+import { ActivatedRoute, NavigationEnd, Router, RouterLink, RouterOutlet } from '@angular/router';
 import { SwUpdate } from '@angular/service-worker';
 import { filter, map } from 'rxjs';
 import { EncuestaFacade } from './application/facades/encuesta.facade';
@@ -19,7 +12,7 @@ import { MENU } from './core/config/landing.config';
 import { PixelIcon } from './presentation/components/pixel-icon/pixel-icon';
 
 @Component({
-  imports: [RouterOutlet, RouterLink, RouterLinkActive, DatePipe, PixelIcon],
+  imports: [RouterOutlet, RouterLink, DatePipe, PixelIcon],
   selector: 'app-root',
   styleUrl: './app.css',
   templateUrl: './app.html',
@@ -47,6 +40,17 @@ export class App {
       map(() => this.datos()['seccion'] ?? 'Fat Fish'),
     ),
     { initialValue: 'Fat Fish' },
+  );
+
+  private readonly rutaActual = toSignal(
+    inject(Router).events.pipe(
+      filter((e) => e instanceof NavigationEnd),
+      map((e) => e.urlAfterRedirects.split(/[?#]/)[0]),
+    ),
+    { initialValue: '' },
+  );
+  protected readonly enlacesApp = computed(() =>
+    this.menu.app.enlaces.map((e) => ({ ...e, activo: e.seccion.includes(this.rutaActual()) })),
   );
 
   protected readonly esHoy = computed(() => {
