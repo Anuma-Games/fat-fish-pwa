@@ -5,6 +5,7 @@ import { provideServiceWorker } from '@angular/service-worker';
 import { of } from 'rxjs';
 import { App } from './app';
 import { puertos } from './app.config';
+import { routes } from './app.routes';
 import { MENU } from './core/config/landing.config';
 import { Conectividad } from './domain/ports/conectividad';
 import { OutboxRepository } from './domain/ports/outbox.repository';
@@ -90,11 +91,11 @@ class PaginaVacia {}
 describe('App side menu', () => {
   const rutas = [
     { path: '', component: PaginaVacia, data: { layout: 'landing' } },
-    { path: 'acceso', component: PaginaVacia },
-    { path: 'perfil', component: PaginaVacia },
-    { path: 'ranking', component: PaginaVacia },
-    { path: 'opinion/retroalimentacion', component: PaginaVacia },
-    { path: 'opinion/encuesta', component: PaginaVacia },
+    { path: 'acceso', component: PaginaVacia, data: { seccion: 'Expediente' } },
+    { path: 'perfil', component: PaginaVacia, data: { seccion: 'Expediente' } },
+    { path: 'ranking', component: PaginaVacia, data: { seccion: 'Ranking' } },
+    { path: 'opinion/retroalimentacion', component: PaginaVacia, data: { seccion: 'Opinión' } },
+    { path: 'opinion/encuesta', component: PaginaVacia, data: { seccion: 'Opinión' } },
   ];
 
   beforeEach(async () => {
@@ -134,6 +135,19 @@ describe('App side menu', () => {
 
   it('keeps the highlight when the URL has a query or a fragment', async () => {
     expect(resaltados(await abrir('/acceso?busqueda=pez#resultados'))).toEqual(['Expediente']);
+  });
+
+  it('marks the highlighted link as the current page', async () => {
+    const pagina = await abrir('/perfil');
+    const actuales = pagina.querySelectorAll(
+      `nav[aria-label="${MENU.app.titulo}"] a[aria-current="page"]`,
+    );
+    expect(Array.from(actuales, (e) => e.textContent?.trim())).toEqual(['Expediente']);
+  });
+
+  it('gives every side menu link a route with its section', () => {
+    const secciones = new Set(routes.map((r) => r.data?.['seccion']));
+    for (const e of MENU.app.enlaces) expect(secciones).toContain(e.texto);
   });
 
   it('does not show the side menu on the landing page', async () => {

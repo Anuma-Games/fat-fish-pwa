@@ -38,20 +38,10 @@ export const MENU = {
   app: {
     titulo: 'Tu expediente y tu opinión',
     enlaces: [
-      {
-        ruta: '/perfil',
-        texto: 'Expediente',
-        icono: 'expediente',
-        seccion: ['/acceso', '/perfil'],
-      },
-      { ruta: '/ranking', texto: 'Ranking', icono: 'trofeo', seccion: ['/ranking'] },
-      {
-        ruta: '/opinion/retroalimentacion',
-        texto: 'Opinión',
-        icono: 'opinion',
-        seccion: ['/opinion/retroalimentacion', '/opinion/encuesta'],
-      },
-    ] as (EnlaceMenu & { ruta: string; seccion: string[] })[],
+      { ruta: '/perfil', texto: 'Expediente', icono: 'expediente' },
+      { ruta: '/ranking', texto: 'Ranking', icono: 'trofeo' },
+      { ruta: '/opinion/retroalimentacion', texto: 'Opinión', icono: 'opinion' },
+    ] as (EnlaceMenu & { ruta: string })[],
   },
 };
 

@@ -40,7 +40,11 @@
       <span class="nav-grupo">{{ menu.app.titulo }}</span>
       <nav class="nav" [attr.aria-label]="menu.app.titulo" (click)="menuAbierto.set(false)">
         @for (e of enlacesApp(); track e.ruta) {
-          <a [routerLink]="e.ruta" [class.active]="e.activo">
+          <a
+            [routerLink]="e.ruta"
+            [class.active]="e.activo"
+            [attr.aria-current]="e.activo ? 'page' : null"
+          >
             <app-pixel-icon [name]="e.icono" [size]="16" /> {{ e.texto }}
           </a>
         }

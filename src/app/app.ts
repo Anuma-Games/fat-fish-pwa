@@ -42,15 +42,9 @@ export class App {
     { initialValue: 'Fat Fish' },
   );
 
-  private readonly rutaActual = toSignal(
-    inject(Router).events.pipe(
-      filter((e) => e instanceof NavigationEnd),
-      map((e) => e.urlAfterRedirects.split(/[?#]/)[0]),
-    ),
-    { initialValue: '' },
-  );
+  /** Side menu links; the active one is the link named like the section of the current route. */
   protected readonly enlacesApp = computed(() =>
-    this.menu.app.enlaces.map((e) => ({ ...e, activo: e.seccion.includes(this.rutaActual()) })),
+    this.menu.app.enlaces.map((e) => ({ ...e, activo: e.texto === this.seccion() })),
   );
 
   protected readonly esHoy = computed(() => {
