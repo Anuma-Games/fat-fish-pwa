@@ -49,6 +49,12 @@ export class RankingFacade {
    * games). It turns false when the server says the saved player no longer exists.
    */
   readonly consultoExpediente = signal(false);
+  /**
+   * True while the profile settles whether a saved player without `miPosicion` still exists. The
+   * page shows no hint meanwhile, so "Todavía no tienes victorias" never flashes for a player that
+   * turns out not to exist.
+   */
+  readonly confirmandoJugador = signal(false);
   readonly totalElementos = signal(0);
   readonly hayMas = signal(false);
   /** When the API generated the data; with DESDE_CACHE it tells how old the saved copy is. */
@@ -83,6 +89,7 @@ export class RankingFacade {
   cargar(): void {
     const jugadorId = this.jugadorId();
     this.consultoExpediente.set(jugadorId !== null);
+    this.confirmandoJugador.set(false);
     this.peticiones.unsubscribe();
     this.peticiones = new Subscription();
     this.pagina = 0;
@@ -221,8 +228,11 @@ export class RankingFacade {
   private confirmarJugador(jugadorId: string | null, miPosicion: EntradaRanking | null): void {
     if (jugadorId === null || miPosicion !== null) return;
     console.info(`${LOG_PREFIX} GET /api/pwa/perfil?id=${jugadorId} (el ranking no lo ubicó)`);
+    this.confirmandoJugador.set(true);
     const consulta = this.perfilRepo.perfil(jugadorId).subscribe({
+      complete: () => this.confirmandoJugador.set(false),
       error: (err: HttpErrorResponse) => {
+        this.confirmandoJugador.set(false);
         console.error(`${LOG_PREFIX} GET perfil desde el ranking falló (${err.status})`);
         if (err.status !== 404 && err.status !== 400) return;
         // The visitor may have looked up another player while this answer was on its way

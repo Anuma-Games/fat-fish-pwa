@@ -1,7 +1,7 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
-import { Observable, of, throwError } from 'rxjs';
+import { Observable, Subject, of, throwError } from 'rxjs';
 import { Perfil } from '../../../domain/models/perfil';
 import { EntradaRanking, PaginaRanking } from '../../../domain/models/ranking';
 import { Conectividad } from '../../../domain/ports/conectividad';
@@ -131,6 +131,18 @@ describe('RankingPage', () => {
     expect(el.querySelector('.pista a')?.getAttribute('href')).toBe('/acceso');
     expect(el.querySelector('.notice.error')).toBeNull();
     expect(posiciones(el)).toHaveLength(10);
+  });
+
+  it('shows no hint while it confirms that the saved player still exists', async () => {
+    sesion.id = '1042';
+    const enCamino = new Subject<Perfil>();
+    responderPerfil = () => enCamino;
+    const { el, fixture } = await render();
+    // Neither "no victories" nor "look it up" flashes before the profile answers
+    expect(el.querySelector('.pista')).toBeNull();
+    enCamino.error(new HttpErrorResponse({ status: 404 }));
+    await fixture.whenStable();
+    expect(el.querySelector('.pista a')?.getAttribute('href')).toBe('/acceso');
   });
 
   it('keeps the saved player when there is no connection to confirm it', async () => {
