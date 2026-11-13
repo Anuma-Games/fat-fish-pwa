@@ -216,7 +216,7 @@ Al elegir un jugador, la pantalla llama a `HistorialFacade.buscar(jugadorId)` y 
 | `verMas()`                                | Agrega las siguientes 10 posiciones; si falla, conserva las que ya se muestran                                         |
 | `entradas`                                | Lista de `{ posicion, jugadorId, alias, puntaje, logradoEn }`                                                          |
 | `miPosicion`                              | La fila del visitante, solo si ya consultó un perfil (el ID sale de la sesión guardada); puede quedar fuera del top 50 |
-| `consultoExpediente`                      | `true` si ya consultó un perfil; con `miPosicion` en `null` significa que ese jugador todavía no tiene victorias      |
+| `consultoExpediente`                      | `true` si ya consultó un perfil y ese jugador todavía existe; con `miPosicion` en `null` significa que no tiene victorias. Si la API dice que el jugador guardado ya no existe (404/400), olvida el ID y pasa a `false` |
 | `hayMas`, `cargandoMas`, `totalElementos` | Paginación                                                                                                             |
 | `paginaActual`, `totalPaginas`            | Página que se muestra (desde 0) y cuántas hay (máximo 5)                                                               |
 | `generadoEn`                              | Cuándo generó la API los datos; con `DESDE_CACHE` indica la antigüedad de la copia                                     |
