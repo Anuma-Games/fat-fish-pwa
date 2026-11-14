@@ -1,12 +1,14 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
-import { Observable, of, throwError } from 'rxjs';
+import { Observable, Subject, of, throwError } from 'rxjs';
+import { Perfil } from '../../../domain/models/perfil';
 import { EntradaRanking, PaginaRanking } from '../../../domain/models/ranking';
 import { Conectividad } from '../../../domain/ports/conectividad';
+import { PerfilRepository } from '../../../domain/ports/perfil.repository';
 import { RankingRepository } from '../../../domain/ports/ranking.repository';
 import { SesionRepository } from '../../../domain/ports/sesion.repository';
-import { ConectividadFalsa, SesionFalsa } from '../../../testing/fakes';
+import { ConectividadFalsa, SesionFalsa, perfilDeJugador } from '../../../testing/fakes';
 import { RankingPage } from './ranking.page';
 
 const fila = (posicion: number): EntradaRanking => ({
@@ -32,12 +34,14 @@ function pagina(numero: number, miPosicion: EntradaRanking | null = null): Pagin
 describe('RankingPage', () => {
   let pedidas: number[];
   let responder: (n: number) => Observable<PaginaRanking>;
+  let responderPerfil: (id: string) => Observable<Perfil>;
   let conectividad: ConectividadFalsa;
   let sesion: SesionFalsa;
 
   beforeEach(async () => {
     pedidas = [];
     responder = (n) => of(pagina(n));
+    responderPerfil = (id) => of(perfilDeJugador(id));
     conectividad = new ConectividadFalsa();
     sesion = new SesionFalsa();
     await TestBed.configureTestingModule({
@@ -53,6 +57,7 @@ describe('RankingPage', () => {
             },
           },
         },
+        { provide: PerfilRepository, useValue: { perfil: (id: string) => responderPerfil(id) } },
         { provide: Conectividad, useValue: conectividad },
         { provide: SesionRepository, useValue: sesion },
       ],
@@ -113,6 +118,39 @@ describe('RankingPage', () => {
     sesion.id = '1042';
     const { el } = await render();
     expect(el.querySelector('.fila.fija')).toBeNull();
+    expect(el.querySelector('.pista')?.textContent).toContain('Todavía no tienes victorias');
+    expect(el.querySelector('.pista a')).toBeNull();
+  });
+
+  it('forgets a saved player that no longer exists and invites to look the profile up', async () => {
+    sesion.id = '1042';
+    responderPerfil = () => throwError(() => new HttpErrorResponse({ status: 404 }));
+    const { el } = await render();
+    expect(sesion.id).toBeNull();
+    expect(el.querySelector('.pista')?.textContent).not.toContain('Todavía no tienes victorias');
+    expect(el.querySelector('.pista a')?.getAttribute('href')).toBe('/acceso');
+    expect(el.querySelector('.notice.error')).toBeNull();
+    expect(posiciones(el)).toHaveLength(10);
+  });
+
+  it('shows no hint while it confirms that the saved player still exists', async () => {
+    sesion.id = '1042';
+    const enCamino = new Subject<Perfil>();
+    responderPerfil = () => enCamino;
+    const { el, fixture } = await render();
+    // Neither "no victories" nor "look it up" flashes before the profile answers
+    expect(el.querySelector('.pista')).toBeNull();
+    enCamino.error(new HttpErrorResponse({ status: 404 }));
+    await fixture.whenStable();
+    expect(el.querySelector('.pista a')?.getAttribute('href')).toBe('/acceso');
+  });
+
+  it('keeps the saved player when there is no connection to confirm it', async () => {
+    sesion.id = '1042';
+    conectividad.enLinea.set(false);
+    responderPerfil = () => throwError(() => new HttpErrorResponse({ status: 504 }));
+    const { el } = await render();
+    expect(sesion.id).toBe('1042');
     expect(el.querySelector('.pista')?.textContent).toContain('Todavía no tienes victorias');
     expect(el.querySelector('.pista a')).toBeNull();
   });

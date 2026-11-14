@@ -111,6 +111,8 @@
       </span>
       <span class="puntaje">{{ mia.puntaje | number }}</span>
     </div>
+  } @else if (facade.confirmandoJugador()) {
+    <!-- The profile is still saying whether the saved player exists: no hint yet, so it does not flash -->
   } @else if (facade.consultoExpediente()) {
     <p class="small muted pista">
       Todavía no tienes victorias: gana una partida para entrar al ranking.

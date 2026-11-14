@@ -5,6 +5,7 @@ import { LOG_PREFIX } from '../../core/config/api.config';
 import { esSinConexion } from '../../core/http/errores-http';
 import { EstadoPantalla } from '../../domain/models/estado-pantalla';
 import { EntradaRanking, PaginaRanking } from '../../domain/models/ranking';
+import { PerfilRepository } from '../../domain/ports/perfil.repository';
 import { RankingRepository } from '../../domain/ports/ranking.repository';
 import { SesionRepository } from '../../domain/ports/sesion.repository';
 import { SincronizacionFacade } from './sincronizacion.facade';
@@ -27,20 +28,33 @@ const TAMANO_PAGINA = 10;
  *     (the ID comes from the saved session); it can be outside the top 50. When it is null,
  *     `consultoExpediente()` tells "no profile consulted" apart from "player without victories".
  *   - When the connection returns after SIN_RED or DESDE_CACHE, the facade reloads by itself.
+ *   - When the API sends no `miPosicion` for a saved player, the facade asks the profile (the
+ *     Service Worker also keeps that answer) to tell a player without victories apart from one
+ *     that no longer exists. If the server answers 404/400, the saved ID is forgotten and
+ *     `consultoExpediente()` turns false, so the page invites to look the profile up again.
+ *     Without connection (or on a server failure) the ID is kept.
  */
 @Injectable({ providedIn: 'root' })
 export class RankingFacade {
   private readonly repo = inject(RankingRepository);
+  private readonly perfilRepo = inject(PerfilRepository);
   private readonly sesion = inject(SesionRepository);
   private readonly sync = inject(SincronizacionFacade);
 
   readonly entradas = signal<EntradaRanking[]>([]);
   readonly miPosicion = signal<EntradaRanking | null>(null);
   /**
-   * True when the visitor consulted a profile before. With `miPosicion()` null it means that
-   * player has no victories yet (the API only ranks won games).
+   * True when the visitor consulted a profile before and that player still exists. With
+   * `miPosicion()` null it means that player has no victories yet (the API only ranks won
+   * games). It turns false when the server says the saved player no longer exists.
    */
   readonly consultoExpediente = signal(false);
+  /**
+   * True while the profile settles whether a saved player without `miPosicion` still exists. The
+   * page shows no hint meanwhile, so "Todavía no tienes victorias" never flashes for a player that
+   * turns out not to exist.
+   */
+  readonly confirmandoJugador = signal(false);
   readonly totalElementos = signal(0);
   readonly hayMas = signal(false);
   /** When the API generated the data; with DESDE_CACHE it tells how old the saved copy is. */
@@ -75,6 +89,7 @@ export class RankingFacade {
   cargar(): void {
     const jugadorId = this.jugadorId();
     this.consultoExpediente.set(jugadorId !== null);
+    this.confirmandoJugador.set(false);
     this.peticiones.unsubscribe();
     this.peticiones = new Subscription();
     this.pagina = 0;
@@ -90,6 +105,7 @@ export class RankingFacade {
         this.estado.set(this.estadoConDatos(pagina));
         this.sync.registrar();
         this.precargarRestantes(jugadorId);
+        this.confirmarJugador(jugadorId, pagina.miPosicion);
       },
       error: (err: HttpErrorResponse) => {
         console.error(`${LOG_PREFIX} GET ranking falló (${err.status})`, err.message);
@@ -202,6 +218,30 @@ export class RankingFacade {
       )
       .subscribe();
     this.peticiones.add(precarga);
+  }
+
+  /**
+   * The ranking answers `miPosicion` null both for a player without victories and for one that
+   * does not exist, so the profile settles it. Only a 404/400 from the server forgets the ID:
+   * without connection (0/504) or on a server failure the player may still exist.
+   */
+  private confirmarJugador(jugadorId: string | null, miPosicion: EntradaRanking | null): void {
+    if (jugadorId === null || miPosicion !== null) return;
+    console.info(`${LOG_PREFIX} GET /api/pwa/perfil?id=${jugadorId} (el ranking no lo ubicó)`);
+    this.confirmandoJugador.set(true);
+    const consulta = this.perfilRepo.perfil(jugadorId).subscribe({
+      complete: () => this.confirmandoJugador.set(false),
+      error: (err: HttpErrorResponse) => {
+        this.confirmandoJugador.set(false);
+        console.error(`${LOG_PREFIX} GET perfil desde el ranking falló (${err.status})`);
+        if (err.status !== 404 && err.status !== 400) return;
+        // The visitor may have looked up another player while this answer was on its way
+        if (this.sesion.jugadorId() !== jugadorId) return;
+        this.sesion.olvidarJugadorId();
+        this.consultoExpediente.set(false);
+      },
+    });
+    this.peticiones.add(consulta);
   }
 
   /** Numeric ID saved by the last profile consult, or null when the visitor has not consulted one. */
