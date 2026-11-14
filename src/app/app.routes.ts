@@ -47,5 +47,12 @@ export const routes: Routes = [
     title: 'Encuesta - Fat Fish',
     data: { seccion: 'Opinión' },
   },
+  {
+    path: 'privacidad',
+    loadComponent: () =>
+      import('./presentation/pages/privacidad/privacidad.page').then((m) => m.PrivacidadPage),
+    title: 'Aviso de privacidad - Fat Fish',
+    data: { seccion: 'Privacidad' },
+  },
   { path: '**', redirectTo: '' },
 ];
