@@ -1,199 +1,196 @@
 /* Top bar, side menu, margins and breakpoints (README 6.6) */
 
 .topbar {
-    position: sticky;
-    top: 0;
-    z-index: 10;
-    display: flex;
-    align-items: center;
-    gap: var(--ff-space-3);
-    padding: var(--ff-space-2) var(--ff-space-4);
-    background: var(--ff-felt-800);
-    border-bottom: 2px solid var(--ff-gold-600);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: var(--ff-space-3);
+  padding: var(--ff-space-2) var(--ff-space-4);
+  background: var(--ff-felt-800);
+  border-bottom: 2px solid var(--ff-gold-600);
 }
 
 .topbar-title {
-    font-family: var(--ff-font-display);
-    font-size: 26px;
-    text-transform: uppercase;
+  font-family: var(--ff-font-display);
+  font-size: 26px;
+  text-transform: uppercase;
 }
 
 .icon-btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-width: 44px;
-    min-height: 44px;
-    color: var(--ff-cream-100);
-    background: transparent;
-    border: 0;
-    cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 44px;
+  color: var(--ff-cream-100);
+  background: transparent;
+  border: 0;
+  cursor: pointer;
 }
 
 .logo {
-    border-radius: 50%;
-    flex-shrink: 0;
+  border-radius: 50%;
+  flex-shrink: 0;
 }
-
 
 /* Phone: the menu is a drawer that opens with ☰ */
 
 .scrim {
-    position: fixed;
-    inset: 0;
-    z-index: 20;
-    background: rgb(0 0 0 / 55%);
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  background: rgb(0 0 0 / 55%);
 }
 
 .sidebar {
-    position: fixed;
-    inset: 0 auto 0 0;
-    z-index: 30;
-    width: min(280px, 85vw);
-    display: flex;
-    flex-direction: column;
-    padding: var(--ff-space-4);
-    background: var(--ff-felt-800);
-    border-right: 2px solid var(--ff-gold-600);
-    overflow-y: auto;
-    transform: translateX(-105%);
-    transition: transform 0.2s ease;
+  position: fixed;
+  inset: 0 auto 0 0;
+  z-index: 30;
+  width: min(280px, 85vw);
+  display: flex;
+  flex-direction: column;
+  padding: var(--ff-space-4);
+  background: var(--ff-felt-800);
+  border-right: 2px solid var(--ff-gold-600);
+  overflow-y: auto;
+  transform: translateX(-105%);
+  transition: transform 0.2s ease;
 }
 
 .sidebar.open {
-    transform: none;
+  transform: none;
 }
 
 .brand-row {
-    display: flex;
-    align-items: center;
-    gap: var(--ff-space-3);
+  display: flex;
+  align-items: center;
+  gap: var(--ff-space-3);
 }
 
 .brand {
-    font-family: var(--ff-font-display);
-    font-size: 28px;
-    color: var(--ff-cream-100);
-    text-decoration: none;
-    text-transform: uppercase;
+  font-family: var(--ff-font-display);
+  font-size: 28px;
+  color: var(--ff-cream-100);
+  text-decoration: none;
+  text-transform: uppercase;
 }
 
 .brand-row .close {
-    margin-left: auto;
+  margin-left: auto;
 }
 
 .nav {
-    display: flex;
-    flex-direction: column;
-    gap: var(--ff-space-1);
-    margin-top: var(--ff-space-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--ff-space-1);
+  margin-top: var(--ff-space-6);
 }
 
 .nav-grupo {
-    margin: var(--ff-space-6) var(--ff-space-3) var(--ff-space-1);
-    font-family: var(--ff-font-label);
-    font-size: 8px;
-    text-transform: uppercase;
-    color: var(--ff-gold-600);
+  margin: var(--ff-space-6) var(--ff-space-3) var(--ff-space-1);
+  font-family: var(--ff-font-label);
+  font-size: 8px;
+  text-transform: uppercase;
+  color: var(--ff-gold-600);
 }
 
-.nav-grupo+.nav {
-    margin-top: 0;
+.nav-grupo + .nav {
+  margin-top: 0;
 }
 
 .nav a {
-    display: flex;
-    align-items: center;
-    gap: var(--ff-space-3);
-    min-height: 44px;
-    padding: 0 var(--ff-space-3);
-    font-family: var(--ff-font-label);
-    font-size: 10px;
-    text-transform: uppercase;
-    color: var(--ff-fog-400);
-    text-decoration: none;
-    border-radius: var(--ff-radius-field);
+  display: flex;
+  align-items: center;
+  gap: var(--ff-space-3);
+  min-height: 44px;
+  padding: 0 var(--ff-space-3);
+  font-family: var(--ff-font-label);
+  font-size: 10px;
+  text-transform: uppercase;
+  color: var(--ff-fog-400);
+  text-decoration: none;
+  border-radius: var(--ff-radius-field);
 }
 
 .nav a.active {
-    color: var(--ff-cream-100);
-    background: var(--ff-felt-700);
+  color: var(--ff-cream-100);
+  background: var(--ff-felt-700);
 }
 
 .nav a.active app-pixel-icon {
-    color: var(--ff-gold-400);
+  color: var(--ff-gold-400);
 }
 
 .sync {
-    margin-top: auto;
+  margin-top: auto;
 }
 
 .sync p {
-    margin: var(--ff-space-2) 0 0;
+  margin: var(--ff-space-2) 0 0;
 }
 
 .tiny {
-    font-size: 11px;
+  font-size: 11px;
 }
 
 .content {
-    max-width: var(--ff-content-max);
-    margin: 0 auto;
-    padding: var(--ff-space-6) var(--ff-space-4) var(--ff-space-8);
+  max-width: var(--ff-content-max);
+  margin: 0 auto;
+  padding: var(--ff-space-6) var(--ff-space-4) var(--ff-space-8);
 }
-
 
 /* Landing page: it takes the whole window, without the side menu or the margins of the app */
 
 .shell.landing {
-    display: block;
+  display: block;
 }
 
 .content.landing-content {
-    max-width: none;
-    margin: 0;
-    padding: 0;
+  max-width: none;
+  margin: 0;
+  padding: 0;
 }
 
 .desktop-only {
-    display: none;
+  display: none;
 }
 
 @media (min-width: 768px) {
-    .desktop-only {
-        display: block;
-    }
-    .phone-only {
-        display: none;
-    }
+  .desktop-only {
+    display: block;
+  }
+  .phone-only {
+    display: none;
+  }
 }
-
 
 /* Desktop: side menu always visible */
 
 @media (min-width: 1024px) {
-    .topbar,
-    .scrim,
-    .brand-row .close {
-        display: none;
-    }
-    .shell {
-        display: grid;
-        grid-template-columns: 220px 1fr;
-    }
-    .sidebar {
-        position: sticky;
-        top: 0;
-        height: 100vh;
-        width: auto;
-        transform: none;
-        transition: none;
-    }
-    .content {
-        padding: var(--ff-space-8);
-        margin: 0;
-    }
-    .content.landing-content {
-        padding: 0;
-    }
+  .topbar,
+  .scrim,
+  .brand-row .close {
+    display: none;
+  }
+  .shell {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+  }
+  .sidebar {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    width: auto;
+    transform: none;
+    transition: none;
+  }
+  .content {
+    padding: var(--ff-space-8);
+    margin: 0;
+  }
+  .content.landing-content {
+    padding: 0;
+  }
 }

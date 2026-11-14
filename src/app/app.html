@@ -1,61 +1,93 @@
 @if (!esLanding()) {
-<header class="topbar">
-    <button class="icon-btn" type="button" aria-label="Abrir el menú" (click)="menuAbierto.set(true)">
+  <header class="topbar">
+    <button
+      class="icon-btn"
+      type="button"
+      aria-label="Abrir el menú"
+      (click)="menuAbierto.set(true)"
+    >
       <app-pixel-icon name="menu" [size]="20" />
     </button>
     <img class="logo" src="icons/insignia-96.png" alt="" width="32" height="32" />
     <span class="topbar-title">{{ seccion() }}</span>
-</header>
+  </header>
 }
 
 <div class="shell" [class.landing]="esLanding()">
-    @if (!esLanding() && menuAbierto()) {
+  @if (!esLanding() && menuAbierto()) {
     <div class="scrim" (click)="menuAbierto.set(false)"></div>
-    } @if (!esLanding()) {
+  }
+  @if (!esLanding()) {
     <aside class="sidebar" [class.open]="menuAbierto()">
-        <div class="brand-row">
-            <img class="logo" src="icons/insignia-96.png" alt="Logo de Fat Fish" width="36" height="36" />
-            <a class="brand" routerLink="/" (click)="menuAbierto.set(false)">Fat Fish</a>
-            <button class="icon-btn close" type="button" aria-label="Cerrar el menú" (click)="menuAbierto.set(false)">
+      <div class="brand-row">
+        <img
+          class="logo"
+          src="icons/insignia-96.png"
+          alt="Logo de Fat Fish"
+          width="36"
+          height="36"
+        />
+        <a class="brand" routerLink="/" (click)="menuAbierto.set(false)">Fat Fish</a>
+        <button
+          class="icon-btn close"
+          type="button"
+          aria-label="Cerrar el menú"
+          (click)="menuAbierto.set(false)"
+        >
           <app-pixel-icon name="cerrar" [size]="18" />
         </button>
-        </div>
-        <span class="nav-grupo">{{ menu.app.titulo }}</span>
-        <nav class="nav" [attr.aria-label]="menu.app.titulo" (click)="menuAbierto.set(false)">
-            @for (e of enlacesApp(); track e.ruta) {
-            <a [routerLink]="e.ruta" [class.active]="e.activo" [attr.aria-current]="e.activo ? 'page' : null">
-                <app-pixel-icon [name]="e.icono" [size]="16" /> {{ e.texto }}
-            </a>
-            }
-        </nav>
-        <span class="nav-grupo">{{ menu.mesa.titulo }}</span>
-        <nav class="nav" [attr.aria-label]="menu.mesa.titulo" (click)="menuAbierto.set(false)">
-            @for (e of menu.mesa.enlaces; track e.id) {
-            <a routerLink="/" [fragment]="e.id === 'inicio' ? undefined : e.id">
-                <app-pixel-icon [name]="e.icono" [size]="16" /> {{ e.id === 'inicio' ? 'Volver al inicio' : e.texto }}
-            </a>
-            }
-        </nav>
-        <span class="nav-grupo">Legal</span>
-        <nav class="nav" aria-label="Legal" (click)="menuAbierto.set(false)">
-            <a routerLink="/privacidad" [class.active]="seccion() === 'Privacidad'" [attr.aria-current]="seccion() === 'Privacidad' ? 'page' : null">
-                <app-pixel-icon name="expediente" [size]="16" /> Aviso de privacidad
-            </a>
-        </nav>
-        <div class="sync small">
-            @if (!sincronizacion.enLinea()) {
-            <span class="chip fallido">Sin conexión</span> }
-            <p class="muted">
-                Última sincronización: @if (sincronizacion.ultimaSincronizacion(); as fecha) { {{ esHoy() ? 'hoy, ' + (fecha | date: 'HH:mm') : (fecha | date: 'd MMM, HH:mm') }} } @else { todavía no }
-            </p>
-            <p class="muted tiny">
-                Service worker: {{ swActivo() ? 'activo' : 'inactivo (modo desarrollo)' }}
-            </p>
-        </div>
+      </div>
+      <span class="nav-grupo">{{ menu.app.titulo }}</span>
+      <nav class="nav" [attr.aria-label]="menu.app.titulo" (click)="menuAbierto.set(false)">
+        @for (e of enlacesApp(); track e.ruta) {
+          <a
+            [routerLink]="e.ruta"
+            [class.active]="e.activo"
+            [attr.aria-current]="e.activo ? 'page' : null"
+          >
+            <app-pixel-icon [name]="e.icono" [size]="16" /> {{ e.texto }}
+          </a>
+        }
+      </nav>
+      <span class="nav-grupo">{{ menu.mesa.titulo }}</span>
+      <nav class="nav" [attr.aria-label]="menu.mesa.titulo" (click)="menuAbierto.set(false)">
+        @for (e of menu.mesa.enlaces; track e.id) {
+          <a routerLink="/" [fragment]="e.id === 'inicio' ? undefined : e.id">
+            <app-pixel-icon [name]="e.icono" [size]="16" />
+            {{ e.id === 'inicio' ? 'Volver al inicio' : e.texto }}
+          </a>
+        }
+      </nav>
+      <span class="nav-grupo">Legal</span>
+      <nav class="nav" aria-label="Legal" (click)="menuAbierto.set(false)">
+        <a
+          routerLink="/privacidad"
+          [class.active]="seccion() === 'Privacidad'"
+          [attr.aria-current]="seccion() === 'Privacidad' ? 'page' : null"
+        >
+          <app-pixel-icon name="expediente" [size]="16" /> Aviso de privacidad
+        </a>
+      </nav>
+      <div class="sync small">
+        @if (!sincronizacion.enLinea()) {
+          <span class="chip fallido">Sin conexión</span>
+        }
+        <p class="muted">
+          Última sincronización:
+          @if (sincronizacion.ultimaSincronizacion(); as fecha) {
+            {{ esHoy() ? 'hoy, ' + (fecha | date: 'HH:mm') : (fecha | date: 'd MMM, HH:mm') }}
+          } @else {
+            todavía no
+          }
+        </p>
+        <p class="muted tiny">
+          Service worker: {{ swActivo() ? 'activo' : 'inactivo (modo desarrollo)' }}
+        </p>
+      </div>
     </aside>
-    }
+  }
 
-    <main class="content" [class.landing-content]="esLanding()">
-        <router-outlet />
-    </main>
+  <main class="content" [class.landing-content]="esLanding()">
+    <router-outlet />
+  </main>
 </div>

@@ -1,124 +1,152 @@
 <article class="aviso">
-    <span class="eyebrow">Legal</span>
-    <h1>Aviso de privacidad de Fat Fish</h1>
-    <p class="muted small fecha">Última actualización: {{ actualizacion }}</p>
+  <span class="eyebrow">Legal</span>
+  <h1>Aviso de privacidad de Fat Fish</h1>
+  <p class="muted small fecha">Última actualización: {{ actualizacion }}</p>
 
-    <section class="card">
-        <h2>1. Quién es el responsable</h2>
-        <p>
-            Fat Fish es un proyecto escolar de <strong>Anuma Games</strong>, equipo de estudiantes del grupo IDGS101N de la Universidad Tecnológica de Chihuahua (UTCH), en Chihuahua, México. Somos responsables del tratamiento de los datos personales que
-            se describen aquí.
-        </p>
-        <p>
-            Contacto: <a [href]="'mailto:' + correo">{{ correo }}</a>
-        </p>
-    </section>
+  <section class="card">
+    <h2>1. Quién es el responsable</h2>
+    <p>
+      Fat Fish es un proyecto escolar de <strong>Anuma Games</strong>, equipo de estudiantes del
+      grupo IDGS101N de la Universidad Tecnológica de Chihuahua (UTCH), en Chihuahua, México. Somos
+      responsables del tratamiento de los datos personales que se describen aquí.
+    </p>
+    <p>
+      Contacto: <a [href]="'mailto:' + correo">{{ correo }}</a>
+    </p>
+  </section>
 
-    <section class="card">
-        <h2>2. Qué datos tratamos</h2>
-        <p>Solo tratamos datos si creas una cuenta en el juego:</p>
-        <ul>
-            <li><strong>Alias</strong> que tú eliges (hasta 24 caracteres).</li>
-            <li>
-                <strong>Contraseña</strong>: se guarda cifrada con BCrypt, por lo que nadie del equipo puede leerla.
-            </li>
-            <li><strong>Token de sesión</strong>: guardamos únicamente su huella (hash), no el token.</li>
-            <li>
-                <strong>Número de jugador (ID)</strong> y las fechas de creación de la cuenta y de tu última actividad.
-            </li>
-            <li>
-                <strong>Datos de tus partidas</strong>: resultado, ronda alcanzada, puntaje, dinero ficticio invertido, ganado y perdido, empeños, préstamos, comodines comprados y usados, duración y fecha. Con ellos se calculan tus estadísticas.
-            </li>
-        </ul>
-        <p>
-            <strong>No</strong> te pedimos nombre real, correo, teléfono, ubicación ni datos sensibles. Todo el dinero del juego es ficticio.
-        </p>
-        <p>
-            <strong>Si juegas como invitado, no se envía nada a nuestro servidor:</strong> tus partidas se quedan en tu dispositivo.
-        </p>
-        <h3>Datos en tu dispositivo</h3>
-        <p>
-            La PWA guarda en tu navegador el ID del jugador que consultaste, la fecha de la última sincronización, los envíos pendientes de retroalimentación o encuesta (se mandan al volver la conexión) y una copia de algunas consultas para funcionar sin red. No
-            usamos cookies, analítica ni publicidad. Puedes borrar estos datos desde la configuración de tu navegador.
-        </p>
-    </section>
+  <section class="card">
+    <h2>2. Qué datos tratamos</h2>
+    <p>Solo tratamos datos si creas una cuenta en el juego:</p>
+    <ul>
+      <li><strong>Alias</strong> que tú eliges (hasta 24 caracteres).</li>
+      <li>
+        <strong>Contraseña</strong>: se guarda cifrada con BCrypt, por lo que nadie del equipo puede
+        leerla.
+      </li>
+      <li><strong>Token de sesión</strong>: guardamos únicamente su huella (hash), no el token.</li>
+      <li>
+        <strong>Número de jugador (ID)</strong> y las fechas de creación de la cuenta y de tu última
+        actividad.
+      </li>
+      <li>
+        <strong>Datos de tus partidas</strong>: resultado, ronda alcanzada, puntaje, dinero ficticio
+        invertido, ganado y perdido, empeños, préstamos, comodines comprados y usados, duración y
+        fecha. Con ellos se calculan tus estadísticas.
+      </li>
+    </ul>
+    <p>
+      <strong>No</strong> te pedimos nombre real, correo, teléfono, ubicación ni datos sensibles.
+      Todo el dinero del juego es ficticio.
+    </p>
+    <p>
+      <strong>Si juegas como invitado, no se envía nada a nuestro servidor:</strong> tus partidas se
+      quedan en tu dispositivo.
+    </p>
+    <h3>Datos en tu dispositivo</h3>
+    <p>
+      La PWA guarda en tu navegador el ID del jugador que consultaste, la fecha de la última
+      sincronización, los envíos pendientes de retroalimentación o encuesta (se mandan al volver la
+      conexión) y una copia de algunas consultas para funcionar sin red. No usamos cookies,
+      analítica ni publicidad. Puedes borrar estos datos desde la configuración de tu navegador.
+    </p>
+  </section>
 
-    <section class="card">
-        <h2>3. Para qué los usamos</h2>
-        <p>Únicamente para:</p>
-        <ul>
-            <li>guardar tu progreso,</li>
-            <li>mostrar tu expediente y el ranking en la PWA y en la app.</li>
-        </ul>
-        <p>
-            No los usamos para publicidad, perfiles comerciales ni ninguna otra finalidad, y no los vendemos.
-        </p>
-    </section>
+  <section class="card">
+    <h2>3. Para qué los usamos</h2>
+    <p>Únicamente para:</p>
+    <ul>
+      <li>guardar tu progreso,</li>
+      <li>mostrar tu expediente y el ranking en la PWA y en la app.</li>
+    </ul>
+    <p>
+      No los usamos para publicidad, perfiles comerciales ni ninguna otra finalidad, y no los
+      vendemos.
+    </p>
+  </section>
 
-    <section class="card">
-        <h2>4. Qué pueden ver otras personas</h2>
-        <ul>
-            <li>
-                El <strong>ranking</strong> muestra el alias, el ID, el mejor puntaje y su fecha de los 50 mejores jugadores.
-            </li>
-            <li>
-                Cualquier persona puede <strong>buscar por alias o por ID</strong> y ver el expediente de un jugador: sus estadísticas y su historial de partidas.
-            </li>
-        </ul>
-        <p>Por eso te recomendamos elegir un alias que no sea tu nombre real ni te identifique.</p>
-    </section>
+  <section class="card">
+    <h2>4. Qué pueden ver otras personas</h2>
+    <ul>
+      <li>
+        El <strong>ranking</strong> muestra el alias, el ID, el mejor puntaje y su fecha de los 50
+        mejores jugadores.
+      </li>
+      <li>
+        Cualquier persona puede <strong>buscar por alias o por ID</strong> y ver el expediente de un
+        jugador: sus estadísticas y su historial de partidas.
+      </li>
+    </ul>
+    <p>Por eso te recomendamos elegir un alias que no sea tu nombre real ni te identifique.</p>
+  </section>
 
-    <section class="card">
-        <h2>5. Retroalimentación y encuesta</h2>
-        <p>
-            La retroalimentación y la encuesta de la PWA son <strong>anónimas</strong>: no se envía ni se guarda tu ID, tu alias ni ningún dato que te identifique. Solo se guarda lo que eliges o escribes y la fecha. Te pedimos no escribir datos personales
-            en los comentarios. Como no podemos asociarlas contigo, no es posible buscarlas, corregirlas ni borrarlas por solicitud de derechos ARCO.
-        </p>
-    </section>
+  <section class="card">
+    <h2>5. Retroalimentación y encuesta</h2>
+    <p>
+      La retroalimentación y la encuesta de la PWA son <strong>anónimas</strong>: no se envía ni se
+      guarda tu ID, tu alias ni ningún dato que te identifique. Solo se guarda lo que eliges o
+      escribes y la fecha. Te pedimos no escribir datos personales en los comentarios. Como no
+      podemos asociarlas contigo, no es posible buscarlas, corregirlas ni borrarlas por solicitud de
+      derechos ARCO.
+    </p>
+  </section>
 
-    <section class="card">
-        <h2>6. Dónde se guardan y con quién se comparten</h2>
-        <p>
-            El servicio funciona en servidores de <strong>Google</strong> (Firebase Hosting, Google Cloud Run y Cloud SQL), que pueden estar fuera de México. Google actúa como proveedor de alojamiento. No compartimos tus datos con nadie más.
-        </p>
-        <p>
-            Como en cualquier sitio web, al conectarte el proveedor de alojamiento puede recibir datos técnicos de conexión, como la dirección IP y la fecha. Anuma Games no los usa ni los almacena para ningún proceso.
-        </p>
-        <p>
-            Conservamos tus datos mientras tu cuenta exista. Al borrarla, se eliminan de nuestra base de datos.
-        </p>
-    </section>
+  <section class="card">
+    <h2>6. Dónde se guardan y con quién se comparten</h2>
+    <p>
+      El servicio funciona en servidores de <strong>Google</strong> (Firebase Hosting, Google Cloud
+      Run y Cloud SQL), que pueden estar fuera de México. Google actúa como proveedor de
+      alojamiento. No compartimos tus datos con nadie más.
+    </p>
+    <p>
+      Como en cualquier sitio web, al conectarte el proveedor de alojamiento puede recibir datos
+      técnicos de conexión, como la dirección IP y la fecha. Anuma Games no los usa ni los almacena
+      para ningún proceso.
+    </p>
+    <p>
+      Conservamos tus datos mientras tu cuenta exista. Al borrarla, se eliminan de nuestra base de
+      datos.
+    </p>
+  </section>
 
-    <section class="card">
-        <h2>7. Tus derechos y cómo limitar el uso de tus datos</h2>
-        <p>
-            Puedes <strong>acceder</strong> a tus datos, <strong>corregirlos</strong>, pedir que los
-            <strong>borremos</strong> (cancelación) u <strong>oponerte</strong> a su uso. También puedes pedir que <strong>limitemos su uso</strong> o retirar tu consentimiento. Para ejercer estos derechos, escribe a <a [href]="'mailto:' + correo">{{ correo }}</a>            con el asunto “Derechos ARCO” e indica:
-        </p>
-        <ol>
-            <li>tu alias y tu ID de jugador,</li>
-            <li>qué derecho quieres ejercer y, si es corrección, el dato correcto,</li>
-            <li>
-                la fecha y el puntaje de una de tus partidas recientes, para comprobar que la cuenta es tuya.
-            </li>
-        </ol>
-        <p>
-            Te responderemos en un máximo de <strong>20 días hábiles</strong> y, si procede, lo aplicaremos dentro de los 15 días hábiles siguientes. Sin pedir nada, también puedes limitar el uso de tus datos jugando como invitado, o dejando de usar tu
-            cuenta.
-        </p>
-    </section>
+  <section class="card">
+    <h2>7. Tus derechos y cómo limitar el uso de tus datos</h2>
+    <p>
+      Puedes <strong>acceder</strong> a tus datos, <strong>corregirlos</strong>, pedir que los
+      <strong>borremos</strong> (cancelación) u <strong>oponerte</strong> a su uso. También puedes
+      pedir que <strong>limitemos su uso</strong> o retirar tu consentimiento. Para ejercer estos
+      derechos, escribe a <a [href]="'mailto:' + correo">{{ correo }}</a> con el asunto “Derechos
+      ARCO” e indica:
+    </p>
+    <ol>
+      <li>tu alias y tu ID de jugador,</li>
+      <li>qué derecho quieres ejercer y, si es corrección, el dato correcto,</li>
+      <li>
+        la fecha y el puntaje de una de tus partidas recientes, para comprobar que la cuenta es
+        tuya.
+      </li>
+    </ol>
+    <p>
+      Te responderemos en un máximo de <strong>20 días hábiles</strong> y, si procede, lo
+      aplicaremos dentro de los 15 días hábiles siguientes. Sin pedir nada, también puedes limitar
+      el uso de tus datos jugando como invitado, o dejando de usar tu cuenta.
+    </p>
+  </section>
 
-    <section class="card">
-        <h2>8. Menores de edad</h2>
-        <p>
-            Fat Fish está pensado para personas de <strong>15 años o más</strong>. No recopilamos datos de menores de 15 años a propósito. Si crees que una cuenta es de una persona menor de esa edad, escríbenos y la eliminaremos.
-        </p>
-    </section>
+  <section class="card">
+    <h2>8. Menores de edad</h2>
+    <p>
+      Fat Fish está pensado para personas de <strong>15 años o más</strong>. No recopilamos datos de
+      menores de 15 años a propósito. Si crees que una cuenta es de una persona menor de esa edad,
+      escríbenos y la eliminaremos.
+    </p>
+  </section>
 
-    <section class="card">
-        <h2>9. Cambios a este aviso</h2>
-        <p>
-            Publicaremos cualquier cambio en esta misma página y actualizaremos la fecha de arriba. Si el cambio es importante, también lo anunciaremos en la página de inicio de Fat Fish.
-        </p>
-    </section>
+  <section class="card">
+    <h2>9. Cambios a este aviso</h2>
+    <p>
+      Publicaremos cualquier cambio en esta misma página y actualizaremos la fecha de arriba. Si el
+      cambio es importante, también lo anunciaremos en la página de inicio de Fat Fish.
+    </p>
+  </section>
 </article>
