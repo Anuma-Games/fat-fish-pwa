@@ -19,7 +19,7 @@ export interface EnlaceMenu {
 
 /**
  * Menu shared by the whole site: the side panel of the landing page and the side menu of
- * Expediente and Opinión show the same two groups, so both feel like one site.
+ * Expediente and Opinión show the same groups, so both feel like one site.
  */
 export const MENU = {
   /** Sections of the landing page (anchors of `/`). */
@@ -41,6 +41,13 @@ export const MENU = {
       { ruta: '/perfil', texto: 'Expediente', icono: 'expediente' },
       { ruta: '/ranking', texto: 'Ranking', icono: 'trofeo' },
       { ruta: '/opinion/retroalimentacion', texto: 'Opinión', icono: 'opinion' },
+    ] as (EnlaceMenu & { ruta: string })[],
+  },
+  /** Legal pages, always at the end of the menu (README 8.5). */
+  legal: {
+    titulo: 'Legal',
+    enlaces: [
+      { ruta: '/privacidad', texto: 'Aviso de privacidad', icono: 'expediente' },
     ] as (EnlaceMenu & { ruta: string })[],
   },
 };

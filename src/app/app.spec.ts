@@ -96,6 +96,7 @@ describe('App top bar and side menu', () => {
     { path: 'ranking', component: PaginaVacia, data: { seccion: 'Ranking' } },
     { path: 'opinion/retroalimentacion', component: PaginaVacia, data: { seccion: 'Opinión' } },
     { path: 'opinion/encuesta', component: PaginaVacia, data: { seccion: 'Opinión' } },
+    { path: 'privacidad', component: PaginaVacia, data: { seccion: 'Aviso de privacidad' } },
   ];
 
   beforeEach(async () => {
@@ -148,6 +149,14 @@ describe('App top bar and side menu', () => {
   it('gives every side menu link a route with its section', () => {
     const secciones = new Set(routes.map((r) => r.data?.['seccion']));
     for (const e of MENU.app.enlaces) expect(secciones).toContain(e.texto);
+    for (const e of MENU.legal.enlaces) expect(secciones).toContain(e.texto);
+  });
+
+  it('highlights the privacy notice in the Legal group and nothing in the app group', async () => {
+    const pagina = await abrir('/privacidad');
+    const legal = pagina.querySelectorAll(`nav[aria-label="${MENU.legal.titulo}"] a.active`);
+    expect(Array.from(legal, (e) => e.textContent?.trim())).toEqual(['Aviso de privacidad']);
+    expect(resaltados(pagina)).toEqual([]);
   });
 
   it('highlights the same section in the links of the top bar', async () => {
