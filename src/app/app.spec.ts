@@ -32,11 +32,11 @@ describe('App', () => {
     expect(app).toBeTruthy();
   });
 
-  it('should render the brand', async () => {
+  it('should render the brand in the top bar', async () => {
     const fixture = TestBed.createComponent(App);
     await fixture.whenStable();
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('.brand')?.textContent).toContain('Fat Fish');
+    expect(compiled.querySelector('header .marca')?.textContent).toContain('Fat Fish');
   });
 });
 
@@ -88,7 +88,7 @@ describe('App with feedback saved offline', () => {
 @Component({ template: '' })
 class PaginaVacia {}
 
-describe('App side menu', () => {
+describe('App top bar and side menu', () => {
   const rutas = [
     { path: '', component: PaginaVacia, data: { layout: 'landing' } },
     { path: 'acceso', component: PaginaVacia, data: { seccion: 'Expediente' } },
@@ -150,9 +150,42 @@ describe('App side menu', () => {
     for (const e of MENU.app.enlaces) expect(secciones).toContain(e.texto);
   });
 
-  it('does not show the side menu on the landing page', async () => {
+  it('highlights the same section in the links of the top bar', async () => {
+    const pagina = await abrir('/opinion/encuesta');
+    const enBarra = pagina.querySelectorAll('nav[aria-label="Secciones"] a.activo');
+    expect(Array.from(enBarra, (e) => e.textContent?.trim())).toEqual(['Opinión']);
+  });
+
+  it('uses the side menu of the landing page, which opens with the ☰ button', async () => {
+    const fixture = TestBed.createComponent(App);
+    await TestBed.inject(Router).navigateByUrl('/ranking');
+    await fixture.whenStable();
+    const pagina = fixture.nativeElement as HTMLElement;
+    const panel = pagina.querySelector('#lp-menu') as HTMLElement;
+    expect(panel.classList).not.toContain('abierto');
+    (pagina.querySelector('.hamburguesa') as HTMLButtonElement).click();
+    fixture.detectChanges();
+    expect(panel.classList).toContain('abierto');
+  });
+
+  it('takes the visitor back to the sections of the landing page from the menu', async () => {
+    const pagina = await abrir('/ranking');
+    const destinos = Array.from(
+      pagina.querySelectorAll(`#lp-menu nav[aria-label="${MENU.mesa.titulo}"] a`),
+      (a) => a.getAttribute('href'),
+    );
+    expect(destinos).toContain('/');
+    expect(destinos).toContain('/#comodines');
+  });
+
+  it('tells in the menu when the data was last synchronized', async () => {
+    const pagina = await abrir('/perfil');
+    expect(pagina.querySelector('#lp-menu .sync')?.textContent).toContain('Última sincronización');
+  });
+
+  it('leaves the top bar to the landing page itself', async () => {
     const pagina = await abrir('/');
-    expect(pagina.querySelector('aside')).toBeNull();
+    expect(pagina.querySelector('app-barra-nav')).toBeNull();
     expect(resaltados(pagina)).toEqual([]);
   });
 });

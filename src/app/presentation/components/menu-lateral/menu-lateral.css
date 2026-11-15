@@ -1,4 +1,4 @@
-/* The same drawer as the side menu of the PWA (felt panel, gold edge, dark veil), at every width */
+/* Side menu of the whole site: felt panel with a gold edge over a dark veil, at every width */
 :host {
   display: contents;
 }
@@ -102,6 +102,12 @@
 .enlaces app-pixel-icon {
   color: var(--ff-gold-400);
 }
+/* Current section: lit felt and a gold mark on its edge */
+.enlaces a.active {
+  color: var(--ff-cream-100);
+  background: var(--ff-felt-700);
+  box-shadow: inset 3px 0 0 var(--ff-gold-400);
+}
 .grupo {
   margin: var(--ff-space-2) var(--ff-space-3) 0;
   font-family: var(--ff-font-label);
@@ -132,6 +138,9 @@
 }
 .pie .btn {
   min-height: 48px;
+}
+.sync p {
+  margin: var(--ff-space-2) 0 0;
 }
 
 @media (prefers-reduced-motion: reduce) {
