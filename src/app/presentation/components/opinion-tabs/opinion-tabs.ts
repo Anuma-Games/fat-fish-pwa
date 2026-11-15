@@ -20,18 +20,19 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
     </nav>
   `,
   styles: `
+    /* Like the links of the top bar: pixel labels, gold when lit */
     .tabs {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: var(--ff-space-2);
-      margin-top: var(--ff-space-4);
-      max-width: 560px;
+      margin-top: var(--ff-space-6);
+      border-bottom: 2px solid var(--ff-line);
     }
     a {
+      position: relative;
       display: flex;
       align-items: center;
       justify-content: center;
-      min-height: 44px;
+      min-height: 48px;
       font-family: var(--ff-font-label);
       font-size: 9px;
       text-transform: uppercase;
@@ -39,15 +40,33 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
       text-align: center;
       color: var(--ff-fog-400);
       text-decoration: none;
-      border-bottom: 2px solid var(--ff-line);
+      transition:
+        color 0.2s ease,
+        background-color 0.2s ease;
     }
-    a.active {
-      color: var(--ff-cream-100);
-      border-bottom-color: var(--ff-gold-400);
-    }
+    a:hover,
     a:focus-visible {
       outline: none;
       color: var(--ff-gold-400);
+    }
+    /* Current tab: lit by the lamp, with a gold edge over the line of the table */
+    a.active {
+      color: var(--ff-cream-100);
+      background: linear-gradient(transparent, rgb(232 184 80 / 10%));
+    }
+    a.active::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: -2px;
+      height: 3px;
+      background: var(--ff-gold-400);
+    }
+    @media (prefers-reduced-motion: reduce) {
+      a {
+        transition: none;
+      }
     }
   `,
 })

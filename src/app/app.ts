@@ -1,31 +1,25 @@
-import { DatePipe, ViewportScroller } from '@angular/common';
-import { Component, computed, inject, signal } from '@angular/core';
+import { ViewportScroller } from '@angular/common';
+import { Component, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { ActivatedRoute, NavigationEnd, Router, RouterLink, RouterOutlet } from '@angular/router';
+import { ActivatedRoute, NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { SwUpdate } from '@angular/service-worker';
 import { filter, map } from 'rxjs';
 import { EncuestaFacade } from './application/facades/encuesta.facade';
 import { RetroalimentacionFacade } from './application/facades/retroalimentacion.facade';
-import { SincronizacionFacade } from './application/facades/sincronizacion.facade';
 import { LOG_PREFIX } from './core/config/api.config';
-import { MENU } from './core/config/landing.config';
-import { PixelIcon } from './presentation/components/pixel-icon/pixel-icon';
+import { BarraNav } from './presentation/components/barra-nav/barra-nav';
 
 @Component({
-  imports: [RouterOutlet, RouterLink, DatePipe, PixelIcon],
+  imports: [RouterOutlet, BarraNav],
   selector: 'app-root',
   styleUrl: './app.css',
   templateUrl: './app.html',
 })
 export class App {
-  /** Same groups as the side panel of the landing page. */
-  protected readonly menu = MENU;
-  protected readonly sincronizacion = inject(SincronizacionFacade);
-  protected readonly swActivo = signal(inject(SwUpdate).isEnabled);
-  protected readonly menuAbierto = signal(false);
+  private readonly swActivo = inject(SwUpdate).isEnabled;
 
   private readonly route = inject(ActivatedRoute);
-  /** Layout of the current route: the landing page takes the whole window, without the app shell. */
+  /** Layout of the current route: the landing page takes the whole window and brings its own bar. */
   protected readonly esLanding = toSignal(
     inject(Router).events.pipe(
       filter((e) => e instanceof NavigationEnd),
@@ -33,24 +27,14 @@ export class App {
     ),
     { initialValue: this.datos()['layout'] === 'landing' },
   );
-  /** Title of the current section for the phone top bar (route data `seccion`). */
+  /** Section of the current page (route data `seccion`), highlighted in the top bar and the menu. */
   protected readonly seccion = toSignal(
     inject(Router).events.pipe(
       filter((e) => e instanceof NavigationEnd),
-      map(() => this.datos()['seccion'] ?? 'Fat Fish'),
+      map(() => (this.datos()['seccion'] as string | undefined) ?? null),
     ),
-    { initialValue: 'Fat Fish' },
+    { initialValue: null },
   );
-
-  /** Side menu links; the active one is the link named like the section of the current route. */
-  protected readonly enlacesApp = computed(() =>
-    this.menu.app.enlaces.map((e) => ({ ...e, activo: e.texto === this.seccion() })),
-  );
-
-  protected readonly esHoy = computed(() => {
-    const fecha = this.sincronizacion.ultimaSincronizacion();
-    return !!fecha && fecha.toDateString() === new Date().toDateString();
-  });
 
   constructor() {
     // Links to a section of the landing page (/#comodines) leave it below the sticky nav
@@ -60,7 +44,7 @@ export class App {
     inject(RetroalimentacionFacade);
     inject(EncuestaFacade);
     console.info(
-      `${LOG_PREFIX} PWA iniciada · service worker ${this.swActivo() ? 'activo' : 'inactivo (modo desarrollo)'} · ${navigator.onLine ? 'en línea' : 'sin conexión'}`,
+      `${LOG_PREFIX} PWA iniciada · service worker ${this.swActivo ? 'activo' : 'inactivo (modo desarrollo)'} · ${navigator.onLine ? 'en línea' : 'sin conexión'}`,
     );
   }
 

@@ -4,6 +4,7 @@ import { EncuestaFacade } from '../../../application/facades/encuesta.facade';
 import { SincronizacionFacade } from '../../../application/facades/sincronizacion.facade';
 import { COMENTARIO_MAX, Encuesta, Escala } from '../../../domain/models/encuesta';
 import { ResultadoEnvio } from '../../../domain/models/envio-outbox';
+import { CabeceraPagina } from '../../components/cabecera-pagina/cabecera-pagina';
 import { OpinionTabs } from '../../components/opinion-tabs/opinion-tabs';
 import { PixelIcon } from '../../components/pixel-icon/pixel-icon';
 
@@ -24,7 +25,7 @@ interface Pregunta {
  */
 @Component({
   selector: 'app-encuesta-page',
-  imports: [FormsModule, PixelIcon, OpinionTabs],
+  imports: [FormsModule, PixelIcon, OpinionTabs, CabeceraPagina],
   templateUrl: './encuesta.page.html',
   styleUrl: './encuesta.page.css',
 })

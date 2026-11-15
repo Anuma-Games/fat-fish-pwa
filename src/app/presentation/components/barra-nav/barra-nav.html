@@ -1,0 +1,42 @@
+<header class="barra">
+  <div class="fila">
+    <app-menu-lateral [enLanding]="enLanding()" [seccion]="seccion()" />
+    @if (enLanding()) {
+      <a class="marca" href="#inicio">
+        <img src="icons/insignia-96.png" alt="" width="32" height="32" />
+        <span>Fat Fish</span>
+      </a>
+    } @else {
+      <a class="marca" routerLink="/" aria-label="Fat Fish, volver al inicio">
+        <img src="icons/insignia-96.png" alt="" width="32" height="32" />
+        <span>Fat Fish</span>
+      </a>
+    }
+    <nav class="enlaces" aria-label="Secciones">
+      @for (e of secciones; track e.id) {
+        @if (enLanding()) {
+          <a [href]="'#' + e.id">{{ e.texto }}</a>
+        } @else {
+          <a routerLink="/" [fragment]="e.id">{{ e.texto }}</a>
+        }
+      }
+      <span class="separador" aria-hidden="true"></span>
+      @for (p of paginas(); track p.ruta) {
+        <a
+          [routerLink]="p.ruta"
+          [class.activo]="p.activo"
+          [attr.aria-current]="p.activo ? 'page' : null"
+          >{{ p.texto }}</a
+        >
+      }
+    </nav>
+    @if (sincronizacion(); as sincronizacion) {
+      @if (!sincronizacion.enLinea()) {
+        <span class="chip fallido sin-red" role="status">Sin conexión</span>
+      }
+    }
+    <ng-content select=".sonido" />
+    <a class="btn cta" [href]="cta.demo">Jugar la demo</a>
+  </div>
+  <ng-content select=".progreso" />
+</header>
