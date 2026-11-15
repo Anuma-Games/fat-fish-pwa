@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { BusquedaFacade } from '../../../application/facades/busqueda.facade';
 import { HistorialFacade } from '../../../application/facades/historial.facade';
 import { JugadorResumen } from '../../../domain/models/jugador-resumen';
+import { CabeceraPagina } from '../../components/cabecera-pagina/cabecera-pagina';
 import { PixelIcon } from '../../components/pixel-icon/pixel-icon';
 import { Iman } from '../landing/iman.directive';
 import { escribir, prefiereMenosMovimiento } from '../landing/motion';
@@ -29,7 +30,7 @@ function buscable(texto: string): boolean {
  */
 @Component({
   selector: 'app-acceso-page',
-  imports: [FormsModule, PixelIcon, Iman],
+  imports: [FormsModule, PixelIcon, Iman, CabeceraPagina],
   templateUrl: './acceso.page.html',
   styleUrl: './acceso.page.css',
 })

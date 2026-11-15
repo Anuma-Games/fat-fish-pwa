@@ -31,61 +31,6 @@
   border-radius: var(--ff-radius-field);
 }
 
-/* Nav */
-.lp-nav {
-  position: sticky;
-  top: 0;
-  z-index: 30;
-  background: color-mix(in srgb, var(--ff-felt-800) 97%, transparent);
-  border-bottom: 2px solid var(--ff-gold-600);
-}
-.nav-row {
-  display: flex;
-  align-items: center;
-  gap: var(--ff-space-4);
-  padding-block: var(--ff-space-2);
-}
-.lp-brand {
-  display: flex;
-  align-items: center;
-  gap: var(--ff-space-2);
-  font-family: var(--ff-font-display);
-  font-size: 24px;
-  color: var(--ff-cream-100);
-  text-decoration: none;
-  text-transform: uppercase;
-}
-.lp-brand span {
-  white-space: nowrap;
-}
-.lp-brand img {
-  border-radius: 50%;
-}
-.lp-links {
-  display: none;
-  gap: var(--ff-space-4);
-  margin-left: auto;
-  font-family: var(--ff-font-label);
-  font-size: 9px;
-  text-transform: uppercase;
-}
-.lp-links a,
-.foot-links a {
-  color: var(--ff-fog-400);
-  text-decoration: none;
-  white-space: nowrap;
-}
-/* Between the sections of the page and the pages of the app */
-.separador {
-  align-self: center;
-  width: 1px;
-  height: 14px;
-  background: var(--ff-line);
-}
-.lp-links a:hover,
-.foot-links a:hover {
-  color: var(--ff-gold-400);
-}
 /* Optional room sound */
 .sonido {
   display: none;
@@ -127,12 +72,7 @@
 }
 .sonido-texto {
   display: none;
-}
-.nav-cta {
-  margin-left: auto;
-  min-height: 40px;
-  font-size: 18px;
-  padding-inline: var(--ff-space-3);
+  white-space: nowrap;
 }
 
 /* Reading progress: scroll-driven animation, or --avance from motion.ts where it is missing */
@@ -258,30 +198,19 @@ details[open]::details-content {
   font-size: 9px;
   text-transform: uppercase;
 }
-
-/* Very narrow phones: the nav keeps the brand on one line */
-@media (max-width: 380px) {
-  .nav-row {
-    gap: var(--ff-space-2);
-  }
-  .lp-brand {
-    font-size: 20px;
-  }
-  .nav-cta {
-    font-size: 16px;
-    padding-inline: var(--ff-space-2);
-  }
+.foot-links a {
+  color: var(--ff-fog-400);
+  text-decoration: none;
+  white-space: nowrap;
 }
-/* Desktop (same breakpoint as the PWA sidebar): section links in the bar, no side menu */
+.foot-links a:hover {
+  color: var(--ff-gold-400);
+}
+
+/* Desktop (same breakpoint as the links of the top bar): the sound with its label */
 @media (min-width: 1024px) {
-  .lp-links {
-    display: flex;
-  }
   .sonido {
     display: inline-flex;
-    margin-left: 0;
-  }
-  .nav-cta {
     margin-left: 0;
   }
   .sonido-texto {

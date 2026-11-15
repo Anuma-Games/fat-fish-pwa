@@ -1,5 +1,6 @@
-/* Global styles: only imports the files in styles/ (README 6.5) */
+/* Global styles: only imports the files in styles/ (README 8.4) */
 @import './styles/tokens.css';
 @import './styles/base.css';
 @import './styles/layout.css';
 @import './styles/landing.css';
+@import './styles/paginas.css';

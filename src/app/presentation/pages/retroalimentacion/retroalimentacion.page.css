@@ -1,5 +1,13 @@
-.card {
-  margin-top: var(--ff-space-6);
+:host {
+  display: block;
+  max-width: 720px;
+  /* Centered in the content area, like the column of the landing page */
+  margin-inline: auto;
+}
+/* The form on the felt of the table (.tapete, styles/paginas.css) */
+.formulario {
+  margin-top: var(--ff-space-4);
+  animation: ff-aparecer 0.4s ease both;
 }
 .btn.block {
   display: flex;
@@ -8,8 +16,8 @@
   gap: var(--ff-space-2);
   margin-top: var(--ff-space-3);
 }
-@media (min-width: 1024px) {
-  .card:first-of-type {
-    max-width: 560px;
+@media (prefers-reduced-motion: reduce) {
+  .formulario {
+    animation: none;
   }
 }

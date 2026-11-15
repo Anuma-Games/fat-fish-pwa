@@ -405,6 +405,17 @@ Los textos tienen buen contraste y el resultado de una partida siempre se escrib
 
 La guía define botones, campos, fichas de estado, tarjetas de estadística, historial, menú lateral y avisos de conexión. Los íconos son pixel art de 12 × 12 hecho para la PWA (componente `pixel-icon`) y los controles miden al menos 44 px para tocarse con el dedo.
 
+Las páginas de la app comparten las piezas del landing, para que todo el sitio se sienta como la misma mesa:
+
+| Componente o clase              | Qué es                                                                                                   |
+|---------------------------------|----------------------------------------------------------------------------------------------------------|
+| `barra-nav`                     | Barra superior de todo el sitio: ☰, logo, enlaces a las secciones del landing y a la app (en escritorio) y "Jugar la demo" |
+| `menu-lateral`                  | Panel que abre ☰ en cualquier ancho. En la app resalta la sección actual y muestra la última sincronización |
+| `cabecera-pagina`               | Lámpara que se enciende, título con líneas de monitor viejo, frase dorada y una línea del Crupier         |
+| `.tapete` (`styles/paginas.css`) | Paño verde con el enrejado del casino y borde dorado: buscador, formularios de Opinión e historial        |
+
+El expediente (`/perfil`) es una hoja de papel como la del landing, y en el ranking los tres primeros lugares llevan las fichas del juego.
+
 ![Componentes base e íconos](docs/img/guia-componentes.jpg)
 
 ### 8.4 Estructura modular y diseño adaptativo
@@ -413,7 +424,9 @@ La guía define botones, campos, fichas de estado, tarjetas de estadística, his
 src/styles/
 ├── tokens.css    # colores, fuentes y espacios (variables --ff-*)
 ├── base.css      # estilos generales y fondo
-└── layout.css    # menú, márgenes y puntos de quiebre
+├── layout.css    # márgenes y puntos de quiebre de las páginas de la app
+├── landing.css   # clases y animaciones compartidas por las secciones del landing
+└── paginas.css   # tapete y animaciones de las páginas de la app
 ```
 
 Los valores de diseño solo se escriben en `tokens.css`; cada componente tiene sus propios estilos y usa esas variables. El diseño parte del teléfono y se amplía; las tarjetas de estadísticas ocupan tantas columnas como quepan en cada ancho:
@@ -422,7 +435,7 @@ Los valores de diseño solo se escriben en `tokens.css`; cada componente tiene s
 |------------------------|-----------------------------------------------------------------|
 | Teléfono (< 768 px)    | Menú con el botón ☰ e historial en tarjetas                    |
 | Tableta (≥ 768 px)     | Historial en tabla                                              |
-| Escritorio (≥ 1024 px) | Menú lateral siempre visible y contenido de 1040 px como máximo |
+| Escritorio (≥ 1024 px) | Enlaces también en la barra superior y contenido de 1040 px como máximo |
 
 ![Vistas en escritorio](docs/img/pantallas-escritorio.jpg)
 

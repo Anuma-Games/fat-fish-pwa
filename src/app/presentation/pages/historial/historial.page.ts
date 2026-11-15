@@ -4,15 +4,19 @@ import { Router, RouterLink } from '@angular/router';
 import { HistorialFacade } from '../../../application/facades/historial.facade';
 import { SincronizacionFacade } from '../../../application/facades/sincronizacion.facade';
 import { LOG_PREFIX } from '../../../core/config/api.config';
+import { CabeceraPagina } from '../../components/cabecera-pagina/cabecera-pagina';
 import { PixelIcon } from '../../components/pixel-icon/pixel-icon';
 
 /**
  * Dossier (/perfil): statistics and history of the player consulted last time. It has no search of
  * its own; "Buscar otro jugador" goes back to /acceso, the only search by alias or ID.
+ *
+ * The statistics are a dossier sheet like the sample on the landing page, and the history lies on
+ * the felt of the table.
  */
 @Component({
   selector: 'app-historial-page',
-  imports: [RouterLink, DatePipe, DecimalPipe, PixelIcon],
+  imports: [RouterLink, DatePipe, DecimalPipe, PixelIcon, CabeceraPagina],
   templateUrl: './historial.page.html',
   styleUrl: './historial.page.css',
 })

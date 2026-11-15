@@ -1,8 +1,13 @@
-<span class="eyebrow">Ranking mundial</span>
-<h1>Mejores puntajes</h1>
-<p class="small muted">
-  Mejor puntaje de cada jugador en partidas ganadas. Empate: gana quien lo logró primero.
-</p>
+<app-cabecera-pagina
+  eyebrow="Ranking mundial"
+  titulo="Mejores puntajes"
+  claim="Solo cuentan las partidas ganadas."
+  crupier="Pocos le ganan a la casa. Aquí están todos."
+>
+  <p class="small muted regla">
+    Mejor puntaje de cada jugador en partidas ganadas. Empate: gana quien lo logró primero.
+  </p>
+</app-cabecera-pagina>
 
 @if (facade.estado() === 'DESDE_CACHE' && facade.generadoEn(); as fecha) {
   <div class="notice offline" role="status">
@@ -42,13 +47,18 @@
 
 @if (facade.entradas().length > 0) {
   <ol class="ranking" [attr.aria-busy]="facade.cargandoMas()">
-    @for (e of facade.entradas(); track e.posicion) {
+    @for (e of facade.entradas(); track e.posicion; let i = $index) {
       <li
         class="fila"
+        [style.--i]="i % 10"
         [class.mia]="e.jugadorId === facade.miPosicion()?.jugadorId"
         [class.podio]="e.posicion <= 3"
       >
-        <span class="posicion">{{ e.posicion }}</span>
+        @if (e.posicion <= 3) {
+          <span class="posicion ficha" [style.--ficha]="ficha(e.posicion)">{{ e.posicion }}</span>
+        } @else {
+          <span class="posicion">{{ e.posicion }}</span>
+        }
         <span class="jugador">
           <span class="alias">{{ e.alias }}</span>
           <span class="id">ID #{{ e.jugadorId }}</span>

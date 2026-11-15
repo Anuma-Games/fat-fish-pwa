@@ -1,29 +1,204 @@
-.cabecera {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: var(--ff-space-2);
+:host {
+  /* Paper and ink of the dossier sheet, as on the landing page */
+  --papel: var(--ff-paper-200);
+  --papel-linea: rgb(34 30 22 / 9%);
+  --tinta: var(--ff-ink-900);
+  --tinta-suave: #5b5444;
+  --maquina: 'Courier New', Courier, ui-monospace, monospace;
+  display: block;
 }
 .otro {
   display: inline-flex;
   align-items: center;
   gap: var(--ff-space-2);
   min-height: 44px;
+  margin-top: var(--ff-space-2);
   text-decoration: none;
-}
-.perfil {
-  margin-top: var(--ff-space-6);
-}
-.alias {
-  font-size: 40px;
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: var(--ff-space-3);
 }
 .warn {
   color: var(--ff-gold-400);
+}
+
+/* The sheet */
+.archivo {
+  position: relative;
+  display: grid;
+  gap: var(--ff-space-4);
+  margin-top: var(--ff-space-8);
+  padding: var(--ff-space-6);
+  color: var(--tinta);
+  background-color: var(--papel);
+  background-image: repeating-linear-gradient(transparent 0 27px, var(--papel-linea) 27px 28px);
+  box-shadow: 8px 8px 0 #000;
+  rotate: -0.6deg;
+  animation: ff-aparecer 0.5s ease both;
+}
+.archivo .eyebrow {
+  color: var(--tinta-suave);
+}
+.ficha {
+  display: grid;
+  grid-template-columns: 92px minmax(0, 1fr);
+  gap: var(--ff-space-4);
+  align-items: center;
+  padding-bottom: var(--ff-space-4);
+  border-bottom: 2px solid var(--tinta);
+}
+/* Mugshot with a height chart */
+.foto {
+  position: relative;
+  aspect-ratio: 9 / 11;
+  overflow: hidden;
+  background-color: #cfc6ae;
+  background-image: repeating-linear-gradient(transparent 0 9px, rgb(34 30 22 / 35%) 9px 10px);
+  border: 2px solid var(--tinta);
+}
+.foto svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  fill: #2b2620;
+}
+.placa {
+  position: absolute;
+  left: 50%;
+  bottom: 6px;
+  translate: -50% 0;
+  padding: 1px 6px;
+  font-family: var(--maquina);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--papel);
+  background: var(--tinta);
+}
+.ident {
+  display: grid;
+  justify-items: start;
+  gap: var(--ff-space-1);
+  min-width: 0;
+}
+.alias {
+  max-width: 100%;
+  margin: 0;
+  overflow: hidden;
+  font-family: var(--maquina);
+  font-weight: 700;
+  font-size: clamp(26px, 5vw, 36px);
+  line-height: 1;
+  letter-spacing: 0;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.archivo .chip.id {
+  color: var(--tinta);
+  border-color: var(--tinta);
+}
+.nota {
+  margin: 0;
+  font-family: var(--maquina);
+  font-size: 13px;
+  color: var(--tinta-suave);
+}
+.datos {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: var(--ff-space-4) var(--ff-space-6);
+  margin: 0;
+}
+.datos div {
+  display: grid;
+  align-content: start;
+  gap: var(--ff-space-1);
+  min-width: 0;
+  padding-top: var(--ff-space-2);
+  border-top: 1px solid rgb(34 30 22 / 20%);
+}
+.datos dd {
+  margin: 0;
+  font-family: var(--maquina);
+  font-weight: 700;
+  font-size: 30px;
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+}
+.datos dd.perdida {
+  color: var(--ff-ruby-700);
+}
+.datos dd.detalle {
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--tinta-suave);
+}
+
+/* Black bars that slide away when the sheet opens */
+.tachado {
+  position: relative;
+  display: inline-block;
+}
+.tachado::after {
+  content: '';
+  position: absolute;
+  inset: -2px -4px;
+  background: var(--tinta);
+  transform: scaleX(0);
+  transform-origin: right;
+  animation: destapar 0.9s calc(0.4s + var(--retraso, 0s)) both cubic-bezier(0.7, 0, 0.3, 1);
+}
+@keyframes destapar {
+  from {
+    transform: scaleX(1);
+  }
+  to {
+    transform: scaleX(0);
+  }
+}
+
+/* Stamp */
+.sello {
+  position: absolute;
+  top: var(--ff-space-4);
+  right: var(--ff-space-4);
+  padding: 6px 8px;
+  font-family: var(--ff-font-label);
+  font-size: 10px;
+  text-transform: uppercase;
+  color: var(--ff-ruby-700);
+  border: 3px solid var(--ff-ruby-700);
+  rotate: -8deg;
+  opacity: 0.85;
+  animation: sellar 0.45s 1.4s both cubic-bezier(0.2, 1.6, 0.4, 1);
+}
+@keyframes sellar {
+  from {
+    scale: 2.4;
+    opacity: 0;
+  }
+  to {
+    scale: 1;
+    opacity: 0.85;
+  }
+}
+
+/* History, on the felt of the table */
+.historial {
+  margin-top: var(--ff-space-8);
+}
+.historial h2 {
+  font-size: 36px;
+}
+.table-wrap.tapete {
+  padding: 0;
+}
+.table-wrap.tapete th {
+  color: var(--ff-gold-400);
+  border-bottom-color: rgb(232 184 80 / 30%);
+}
+.table-wrap.tapete td {
+  border-bottom-color: rgb(36 73 58 / 70%);
+}
+.table-wrap.tapete tbody tr:hover {
+  background: rgb(5 8 9 / 30%);
 }
 .match-cards {
   list-style: none;
@@ -31,12 +206,16 @@
   margin: 0;
   display: grid;
   gap: var(--ff-space-3);
+  perspective: 900px;
 }
 .match-card {
-  background: var(--ff-bg-700);
+  background: linear-gradient(160deg, var(--ff-bg-700), var(--ff-bg-800) 70%);
   border: 1px solid var(--ff-line);
+  border-left: 4px solid var(--ff-gold-600);
   border-radius: var(--ff-radius-card);
+  box-shadow: 0 12px 20px -14px rgb(0 0 0 / 80%);
   padding: var(--ff-space-3) var(--ff-space-4);
+  animation: ff-repartir 0.5s cubic-bezier(0.2, 0.8, 0.3, 1.25) calc(var(--i, 0) * 60ms) both;
 }
 .match-head {
   display: flex;
@@ -44,17 +223,17 @@
   align-items: center;
   margin-bottom: var(--ff-space-2);
 }
-dl {
+.match-card dl {
   display: grid;
   grid-template-columns: 1fr auto;
   gap: var(--ff-space-1) var(--ff-space-3);
   margin: 0;
   font-size: 14px;
 }
-dt {
+.match-card dt {
   color: var(--ff-fog-400);
 }
-dd {
+.match-card dd {
   margin: 0;
   text-align: right;
 }
@@ -72,6 +251,29 @@ dd {
   }
 }
 .count {
-  margin-top: var(--ff-space-2);
+  margin-top: var(--ff-space-3);
   text-align: center;
+}
+
+@media (max-width: 640px) {
+  .archivo {
+    padding: var(--ff-space-4);
+    rotate: none;
+  }
+  .ficha {
+    grid-template-columns: 72px minmax(0, 1fr);
+  }
+  .sello {
+    position: static;
+    justify-self: start;
+    order: -1;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .archivo,
+  .tachado::after,
+  .sello,
+  .match-card {
+    animation: none;
+  }
 }

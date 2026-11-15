@@ -1,18 +1,16 @@
-<!-- A hanging lamp over the title, as in the hero of the landing page; it switches on when the page opens -->
-<header class="cabecera">
-  <div class="luz" aria-hidden="true">
-    <span class="cable"></span>
-    <span class="pantalla"></span>
-    <span class="foco"></span>
-    <span class="haz"></span>
-  </div>
-  <span class="eyebrow lp-gold">Expediente</span>
-  <h1 class="crt">Busca tu expediente</h1>
-  <p class="claim">Escribe tu alias o tu ID. No necesitas contraseña.</p>
-</header>
+<app-cabecera-pagina
+  eyebrow="Expediente"
+  titulo="Busca tu expediente"
+  claim="Escribe tu alias o tu ID. No necesitas contraseña."
+/>
 
 <!-- The felt of the table around the search -->
-<form class="mesa" [class.buscando]="busqueda.cargando()" (ngSubmit)="buscar()" role="search">
+<form
+  class="tapete buscador"
+  [class.buscando]="busqueda.cargando()"
+  (ngSubmit)="buscar()"
+  role="search"
+>
   <label class="label" for="busqueda">Alias o ID</label>
   <div class="search">
     <input
