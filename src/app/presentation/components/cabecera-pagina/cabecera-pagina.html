@@ -1,0 +1,24 @@
+<header class="cabecera">
+  <div class="luz" aria-hidden="true">
+    <span class="cable"></span>
+    <span class="pantalla"></span>
+    <span class="foco"></span>
+    <span class="haz"></span>
+  </div>
+  <span class="eyebrow lp-gold">{{ eyebrow() }}</span>
+  <h1 class="crt">{{ titulo() }}</h1>
+  @if (claim(); as claim) {
+    <p class="claim">{{ claim }}</p>
+  }
+  <ng-content />
+</header>
+
+@if (crupier(); as linea) {
+  <p class="voz">
+    <span class="quien">Crupier</span>
+    <span class="solo-lector">{{ linea }}</span>
+    <span class="dicho" aria-hidden="true"
+      >{{ frase() }}<span class="cursor" aria-hidden="true"></span
+    ></span>
+  </p>
+}
