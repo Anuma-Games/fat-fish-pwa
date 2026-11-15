@@ -50,7 +50,7 @@ La PWA cierra el ciclo **jugar → registrar → reflexionar → opinar**:
 | Investigación           | Encuesta anónima sobre la percepción del juego y la ludopatía                                                                                                          |
 | Referencia *(deseable)* | Wiki del juego disponible sin conexión                                                                                                                                 |
 
-La PWA solo lee datos del juego y solo inserta opiniones. No registra jugadores ni partidas, no maneja contraseñas y no permite jugar. El jugador se identifica con su **ID público**, sin iniciar sesión.
+La PWA solo lee datos del juego y solo inserta opiniones. No registra jugadores ni partidas, no maneja contraseñas y no permite jugar. El jugador se identifica con su **ID público**, sin iniciar sesión. Los datos de la cuenta que guarda la API se explican en el [aviso de privacidad](#85-aviso-de-privacidad).
 
 ---
 
@@ -74,6 +74,7 @@ La PWA solo lee datos del juego y solo inserta opiniones. No registra jugadores 
 | Aviso de versión nueva y Background Sync                                      | ⏳ Pendiente para el MVP     |
 | Wiki                                                                          | ⏳ Deseable                  |
 | Publicación de la PWA en Firebase Hosting (despliegue automático desde `main`) | ✅ Construido                |
+| Aviso de privacidad (`/privacidad`), enlazado desde el pie de la landing y el menú lateral | ✅ Construido |
 
 Las fachadas de búsqueda, ranking y encuesta ya tienen su pantalla ([4.3](#43-fachadas-contrato-con-la-ui)).
 
@@ -158,7 +159,7 @@ El código se organiza en capas; cada una tiene una sola responsabilidad y solo 
 
 ```
 src/app/
-├── presentation/      # páginas (landing, búsqueda, expediente, ranking y opinión) y componentes reutilizables
+├── presentation/      # páginas (landing, búsqueda, expediente, ranking, opinión y aviso de privacidad) y componentes reutilizables
 ├── application/       # fachadas (casos de uso y estado con signals) y lógica compartida del outbox
 ├── domain/            # modelos y puertos (interfaces de los repositorios)
 ├── infrastructure/    # implementación de los puertos: API (repositorios y DTOs), IndexedDB, localStorage, conectividad
@@ -379,6 +380,7 @@ La PWA se ve como el casino clandestino del juego: fondo oscuro con un patrón d
 - **Consulta:** búsqueda por alias o ID (`/acceso`), que es el único buscador, y expediente (`/perfil`: estadísticas e historial, con el botón **Buscar otro jugador**). Cada página tiene su título: *Busca tu expediente* en `/acceso` y *Lo que el casino sabe de ti* en `/perfil`. **Expediente** abre el último jugador consultado o, si no hay ninguno (o ya no existe), el buscador. El ranking mundial (`/ranking`) muestra 10 jugadores por página, hasta 5 páginas, con la posición propia fija abajo si ya consultaste un expediente.
   - La búsqueda lista a cada jugador con su alias y su ID, porque el alias puede repetirse. Si nadie coincide, muestra **Sin resultados** y el Crupier responde con el texto buscado, por ejemplo: *No tengo a nadie llamado «pezgordo». Revisa el alias o dime tu ID.*
 - **Captura:** retroalimentación y encuesta anónima, en dos pestañas de la sección Opinión (`/opinion/retroalimentacion` y `/opinion/encuesta`).
+- **Legal:** aviso de privacidad (`/privacidad`), enlazado desde el pie de la landing y desde el grupo *Legal* del menú lateral ([8.5](#85-aviso-de-privacidad)).
 
 ![Vistas en teléfono](docs/img/pantallas-telefono.jpg)
 
@@ -425,6 +427,17 @@ Los valores de diseño solo se escriben en `tokens.css`; cada componente tiene s
 ![Vistas en escritorio](docs/img/pantallas-escritorio.jpg)
 
 Los textos van en español y de **tú**. El expediente describe hechos sin felicitar, como parte del mensaje sobre la ludopatía.
+
+### 8.5 Aviso de privacidad
+
+La página `/privacidad` publica el aviso de privacidad que pide la Ley Federal de Protección de Datos Personales en Posesión de los Particulares (arts. 14 y 15), porque la cuenta del juego guarda datos del jugador en el servidor del equipo. Su dirección pública es <https://fat-fish-511723.web.app/privacidad> y es la que enlaza el juego.
+
+- **Contenido:** responsable y contacto, datos que se tratan, para qué se usan, qué pueden ver otras personas (ranking y búsqueda), anonimato de la retroalimentación y la encuesta, proveedor de alojamiento, derechos ARCO y cómo limitar el uso de los datos, edad mínima de 15 años y cómo se avisa de los cambios.
+- **Dónde está el código:** `src/app/presentation/pages/privacidad/`. El texto está en `privacidad.page.html`; el correo de contacto y la fecha de última actualización, en `privacidad.page.ts` (`correo` y `actualizacion`).
+- **Enlaces:** el pie de la landing y el grupo *Legal* del menú lateral.
+- **Carga y sin conexión:** la ruta se carga bajo demanda (`loadComponent`) para no engordar el bundle inicial. Como el Service Worker precachea todos los `.js` ([7.2](#72-service-worker-y-caché)), la página también abre sin conexión.
+- **Cuándo actualizarlo:** cuando cambie lo que la PWA guarda en el dispositivo (`localStorage`, IndexedDB o caché), los datos que recibe la API o el proveedor de alojamiento. El texto y la fecha `actualizacion` se cambian en el mismo Pull Request.
+- El equipo lo redactó sin asesoría legal; es suficiente para el proyecto escolar y la demo gratuita.
 
 ---
 
