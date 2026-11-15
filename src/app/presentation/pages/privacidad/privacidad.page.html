@@ -1,8 +1,12 @@
-<article class="aviso">
-  <span class="eyebrow">Legal</span>
-  <h1>Aviso de privacidad de Fat Fish</h1>
+<app-cabecera-pagina
+  eyebrow="Legal"
+  titulo="Aviso de privacidad"
+  claim="Qué datos guarda Fat Fish, para qué y cómo pedir que los borremos."
+>
   <p class="muted small fecha">Última actualización: {{ actualizacion }}</p>
+</app-cabecera-pagina>
 
+<article class="aviso" aria-label="Aviso de privacidad de Fat Fish">
   <section class="card">
     <h2>1. Quién es el responsable</h2>
     <p>
@@ -100,12 +104,13 @@
     </p>
     <p>
       Como en cualquier sitio web, al conectarte el proveedor de alojamiento puede recibir datos
-      técnicos de conexión, como la dirección IP y la fecha. Anuma Games no los usa ni los almacena
-      para ningún proceso.
+      técnicos de conexión, como la dirección IP y la fecha. La API usa tu IP solo en memoria y por
+      unos minutos, para limitar las peticiones repetidas al crear una cuenta, iniciar sesión o
+      enviar tu opinión. No la guarda en la base de datos.
     </p>
     <p>
-      Conservamos tus datos mientras tu cuenta exista. Al borrarla, se eliminan de nuestra base de
-      datos.
+      Conservamos tus datos mientras tu cuenta exista. Si pides borrarla (sección 7), se eliminan de
+      nuestra base de datos.
     </p>
   </section>
 

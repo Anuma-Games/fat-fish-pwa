@@ -56,7 +56,7 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./presentation/pages/privacidad/privacidad.page').then((m) => m.PrivacidadPage),
     title: 'Aviso de privacidad - Fat Fish',
-    data: { seccion: 'Privacidad' },
+    data: { seccion: 'Aviso de privacidad' },
   },
   { path: '**', redirectTo: '' },
 ];

@@ -50,6 +50,10 @@ export class MenuLateral {
   protected readonly enlacesApp = computed(() =>
     this.menu.app.enlaces.map((e) => ({ ...e, activo: e.texto === this.seccion() })),
   );
+  /** Links to the legal pages, highlighted the same way. */
+  protected readonly enlacesLegal = computed(() =>
+    this.menu.legal.enlaces.map((e) => ({ ...e, activo: e.texto === this.seccion() })),
+  );
 
   private readonly injector = inject(Injector);
   /**

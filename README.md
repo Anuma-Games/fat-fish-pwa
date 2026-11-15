@@ -446,10 +446,10 @@ Los textos van en español y de **tú**. El expediente describe hechos sin felic
 La página `/privacidad` publica el aviso de privacidad que pide la Ley Federal de Protección de Datos Personales en Posesión de los Particulares (arts. 14 y 15), porque la cuenta del juego guarda datos del jugador en el servidor del equipo. Su dirección pública es <https://fat-fish-511723.web.app/privacidad> y es la que enlaza el juego.
 
 - **Contenido:** responsable y contacto, datos que se tratan, para qué se usan, qué pueden ver otras personas (ranking y búsqueda), anonimato de la retroalimentación y la encuesta, proveedor de alojamiento, derechos ARCO y cómo limitar el uso de los datos, edad mínima de 15 años y cómo se avisa de los cambios.
-- **Dónde está el código:** `src/app/presentation/pages/privacidad/`. El texto está en `privacidad.page.html`; el correo de contacto y la fecha de última actualización, en `privacidad.page.ts` (`correo` y `actualizacion`).
+- **Dónde está el código:** `src/app/presentation/pages/privacidad/`. El texto está en `privacidad.page.html`; el correo de contacto y la fecha de última actualización, en `privacidad.page.ts` (`correo` y `actualizacion`). El enlace del menú es el grupo `legal` de `MENU` (`core/config/landing.config.ts`).
 - **Enlaces:** el pie de la landing y el grupo *Legal* del menú lateral.
 - **Carga y sin conexión:** la ruta se carga bajo demanda (`loadComponent`) para no engordar el bundle inicial. Como el Service Worker precachea todos los `.js` ([7.2](#72-service-worker-y-caché)), la página también abre sin conexión.
-- **Cuándo actualizarlo:** cuando cambie lo que la PWA guarda en el dispositivo (`localStorage`, IndexedDB o caché), los datos que recibe la API o el proveedor de alojamiento. El texto y la fecha `actualizacion` se cambian en el mismo Pull Request.
+- **Cuándo actualizarlo:** cuando cambie lo que la PWA guarda en el dispositivo (`localStorage`, IndexedDB o caché), los datos que recibe o usa la API (por ejemplo, la IP para el límite de peticiones) o el proveedor de alojamiento. El texto y la fecha `actualizacion` se cambian en el mismo Pull Request.
 - El equipo lo redactó sin asesoría legal; es suficiente para el proyecto escolar y la demo gratuita.
 
 ---

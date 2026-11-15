@@ -33,4 +33,10 @@ describe('PrivacidadPage', () => {
     expect(texto).toContain('Derechos ARCO');
     expect(texto).toContain('15 años o más');
   });
+
+  it('tells that the API uses the IP only in memory to limit requests', async () => {
+    const texto = (await abrir()).textContent ?? '';
+    expect(texto).toContain('La API usa tu IP solo en memoria');
+    expect(texto).toContain('No la guarda en la base de datos');
+  });
 });

@@ -1,9 +1,12 @@
 :host {
   display: block;
+  max-width: 760px;
+  /* Centered in the content area, like Ranking and Opinión */
+  margin-inline: auto;
 }
 
 .fecha {
-  margin-top: var(--ff-space-2);
+  margin: var(--ff-space-2) 0 0;
 }
 
 .card {
@@ -44,10 +47,4 @@ a:focus-visible {
 
 .card > :last-child {
   margin-bottom: 0;
-}
-
-@media (min-width: 1024px) {
-  .aviso {
-    max-width: 760px;
-  }
 }

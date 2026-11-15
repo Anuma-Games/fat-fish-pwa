@@ -44,6 +44,19 @@
     <ng-container [ngTemplateOutlet]="mesa" />
   }
 
+  <span class="grupo">{{ menu.legal.titulo }}</span>
+  <nav class="enlaces" [attr.aria-label]="menu.legal.titulo" (click)="cerrar()">
+    @for (e of enlacesLegal(); track e.ruta) {
+      <a
+        [routerLink]="e.ruta"
+        [class.active]="e.activo"
+        [attr.aria-current]="e.activo ? 'page' : null"
+      >
+        <app-pixel-icon [name]="e.icono" [size]="16" /> {{ e.texto }}
+      </a>
+    }
+  </nav>
+
   <div class="pie">
     @if (sonido; as sonido) {
       <button
