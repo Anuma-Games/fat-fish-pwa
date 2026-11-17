@@ -15,6 +15,15 @@
     <link rel="apple-touch-icon" href="icons/icono-192.png" />
     <link rel="manifest" href="manifest.webmanifest" />
 
+    <!-- La ruleta del hero define el LCP de la landing. Se declara aqui para que el navegador
+         la descargue en paralelo con el JavaScript y no hasta que Angular pinte el hero. -->
+    <link
+      rel="preload"
+      as="image"
+      href="img/landing/hero/ruleta-numeros.png"
+      fetchpriority="high"
+    />
+
     <!-- Vista previa al compartir el enlace (WhatsApp, Discord, itch.io, Steam) -->
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Fat Fish" />
