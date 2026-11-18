@@ -15,14 +15,15 @@
     <link rel="apple-touch-icon" href="icons/icono-192.png" />
     <link rel="manifest" href="manifest.webmanifest" />
 
-    <!-- La ruleta del hero define el LCP de la landing. Se declara aqui para que el navegador
-         la descargue en paralelo con el JavaScript y no hasta que Angular pinte el hero. -->
-    <link
-      rel="preload"
-      as="image"
-      href="img/landing/hero/ruleta-numeros.png"
-      fetchpriority="high"
-    />
+    <!-- La ruleta del hero define el LCP de la landing. Sus cuatro capas ocupan la misma caja y
+         Chrome toma como LCP la primera que se pinta, asi que se precargan todas: si solo se
+         precarga una, la metrica mejora aunque la ruleta siga esperando a las demas. Se declaran
+         aqui para que el navegador las descargue en paralelo con el JavaScript y no hasta que
+         Angular pinte el hero. La cabeza es la mas pesada y lleva la prioridad alta. -->
+    <link rel="preload" as="image" href="img/landing/hero/ruleta-cabeza.png" fetchpriority="high" />
+    <link rel="preload" as="image" href="img/landing/hero/ruleta-cuenco.png" />
+    <link rel="preload" as="image" href="img/landing/hero/ruleta-numeros.png" />
+    <link rel="preload" as="image" href="img/landing/hero/ruleta-tapa.png" />
 
     <!-- Vista previa al compartir el enlace (WhatsApp, Discord, itch.io, Steam) -->
     <meta property="og:type" content="website" />

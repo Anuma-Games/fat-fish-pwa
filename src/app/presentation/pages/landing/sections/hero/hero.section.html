@@ -64,15 +64,30 @@
     </span>
     <div class="plano" #plano>
       <!-- Bowl and ball track: they do not turn -->
-      <img class="cuenco" src="img/landing/hero/ruleta-cuenco.png" alt="" />
+      <img
+        class="cuenco"
+        src="img/landing/hero/ruleta-cuenco.png"
+        alt=""
+        elementtiming="ruleta-cuenco"
+      />
 
       <!-- Wheel head: pockets, numbers, cone and turret. It turns. -->
       <div class="giro-lento">
         <div class="giro-jugado">
           <div class="cabeza">
-            <img class="rueda" src="img/landing/hero/ruleta-cabeza.png" alt="" />
+            <img
+              class="rueda"
+              src="img/landing/hero/ruleta-cabeza.png"
+              alt=""
+              elementtiming="ruleta-cabeza"
+            />
             <!-- Numbers on a layer of twice the resolution, so they stay crisp as the head turns -->
-            <img class="rueda" src="img/landing/hero/ruleta-numeros.png" alt="" />
+            <img
+              class="rueda"
+              src="img/landing/hero/ruleta-numeros.png"
+              alt=""
+              elementtiming="ruleta-numeros"
+            />
             <!-- The ball lives in the frame of the wheel head: it runs the other way and lands in a pocket -->
             <div class="orbita"><span class="bola"></span></div>
           </div>
@@ -80,7 +95,7 @@
       </div>
 
       <!-- Center cap with the badge: it stays upright while the wheel turns around it -->
-      <img class="tapa" src="img/landing/hero/ruleta-tapa.png" alt="" />
+      <img class="tapa" src="img/landing/hero/ruleta-tapa.png" alt="" elementtiming="ruleta-tapa" />
 
       <!-- Still light over the turning wheel, and the swirl shining on the lacquered rim -->
       <span class="brillo"></span>
