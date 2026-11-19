@@ -3,20 +3,28 @@ import { of } from 'rxjs';
 import { Conectividad } from '../../domain/ports/conectividad';
 import { OutboxRepository } from '../../domain/ports/outbox.repository';
 import { RetroalimentacionRepository } from '../../domain/ports/retroalimentacion.repository';
+import { SegundoPlano } from '../../domain/ports/segundo-plano';
 import { SesionRepository } from '../../domain/ports/sesion.repository';
-import { ConectividadFalsa, OutboxEnMemoria, SesionFalsa } from '../../testing/fakes';
+import {
+  ConectividadFalsa,
+  OutboxEnMemoria,
+  SegundoPlanoFalso,
+  SesionFalsa,
+} from '../../testing/fakes';
 import { RetroalimentacionFacade } from './retroalimentacion.facade';
 
 describe('RetroalimentacionFacade with a shared outbox', () => {
   let enviadas: string[];
   let outbox: OutboxEnMemoria;
   let conectividad: ConectividadFalsa;
+  let segundoPlano: SegundoPlanoFalso;
   let facade: RetroalimentacionFacade;
 
   beforeEach(() => {
     enviadas = [];
     outbox = new OutboxEnMemoria();
     conectividad = new ConectividadFalsa();
+    segundoPlano = new SegundoPlanoFalso();
     TestBed.configureTestingModule({
       providers: [
         {
@@ -31,6 +39,7 @@ describe('RetroalimentacionFacade with a shared outbox', () => {
         { provide: OutboxRepository, useValue: outbox },
         { provide: Conectividad, useValue: conectividad },
         { provide: SesionRepository, useValue: new SesionFalsa() },
+        { provide: SegundoPlano, useValue: segundoPlano },
       ],
     });
     facade = TestBed.inject(RetroalimentacionFacade);
@@ -76,5 +85,16 @@ describe('RetroalimentacionFacade with a shared outbox', () => {
     await facade.sincronizar();
     expect(enviadas).toHaveLength(0);
     expect(outbox.filas.get('encuesta-1')?.estado).toBe('PENDIENTE');
+  });
+
+  it('asks for Background Sync only while the feedback waits in the outbox', async () => {
+    conectividad.enLinea.set(false);
+    await facade.enviar(datos);
+    expect(segundoPlano.programados).toBe(1);
+    conectividad.enLinea.set(true);
+    await facade.sincronizar();
+    expect(segundoPlano.programados).toBe(1);
+    expect(await facade.enviar(datos)).toBe('ENVIADO');
+    expect(segundoPlano.programados).toBe(1);
   });
 });

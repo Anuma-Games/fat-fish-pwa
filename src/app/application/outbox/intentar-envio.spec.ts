@@ -45,3 +45,17 @@ describe('intentarEnvio', () => {
     expect(rechazado.ultimoError).toBe('Rechazado (400)');
   });
 });
+
+describe('intentarEnvio with the service worker', () => {
+  it('does not send a submission that is no longer PENDIENTE in the outbox', async () => {
+    const outbox = new OutboxEnMemoria();
+    const e = envio();
+    await outbox.guardar({ ...e, estado: 'ENVIADO', idServidor: '42', intentos: 1 });
+    let llamadas = 0;
+    const estado = await intentarEnvio(e, outbox, async () => String(++llamadas), 'POST /x');
+
+    expect(estado).toBe('ENVIADO');
+    expect(llamadas).toBe(0);
+    expect(e).toMatchObject({ estado: 'ENVIADO', idServidor: '42', intentos: 1 });
+  });
+});

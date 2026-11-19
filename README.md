@@ -71,7 +71,8 @@ La PWA solo lee datos del juego y solo inserta opiniones. No registra jugadores 
 | Pantalla de la encuesta anónima (`/opinion/encuesta`)                         | ✅ Construido                |
 | Pantalla del ranking mundial (`/ranking`)                                     | ✅ Construido                |
 | Pantalla de búsqueda por alias o ID (`/acceso`)                               | ✅ Construido                |
-| Aviso de versión nueva y Background Sync                                      | ⏳ Pendiente para el MVP     |
+| Aviso de versión nueva                                                        | ⏳ Pendiente para el MVP     |
+| Background Sync: el outbox se envía con la pestaña cerrada (Chrome y Android) | ✅ Construido                |
 | Wiki                                                                          | ⏳ Deseable                  |
 | Publicación de la PWA en Firebase Hosting (despliegue automático desde `main`) | ✅ Construido                |
 | Aviso de privacidad (`/privacidad`), enlazado desde el pie de la landing y el menú lateral | ✅ Construido |
@@ -98,6 +99,7 @@ La PWA queda en <http://localhost:8080> y la documentación de la API en <http:/
 | `npm start`   | Servidor de desarrollo con proxy a `/api` (el Service Worker no se activa) |
 | `npm run lab` | Build de producción con Service Worker, como en el laboratorio de pruebas  |
 | `npm test`    | Pruebas                                                                    |
+| `npm run test:sw` | Pruebas del Service Worker propio (`public/sw.js`), con `node --test`  |
 
 **Con la API en Google Cloud Run.** La dirección y la llave de la API se pasan en dos variables, `API_URL` y `API_KEY`. Para el servidor de desarrollo crea en la raíz un archivo `.env` (está en `.gitignore`, no se sube al repositorio):
 
@@ -338,7 +340,7 @@ Así viajan por la red; los repositorios las convierten en modelos del dominio (
 
 ### 7.2 Service Worker y caché
 
-Se usa el Service Worker de Angular, configurado en [`ngsw-config.json`](ngsw-config.json). Solo se activa en el build de producción y requiere HTTPS o `localhost`.
+Se usa el Service Worker de Angular, configurado en [`ngsw-config.json`](ngsw-config.json). La app registra [`public/sw.js`](public/sw.js), que importa el de Angular (`ngsw-worker.js`) y le agrega Background Sync ([7.4](#74-segundo-plano-y-actualizaciones)). Solo se activa en el build de producción y requiere HTTPS o `localhost`.
 
 | Recurso                          | Estrategia                                                                    | Vigencia                    |
 |----------------------------------|-------------------------------------------------------------------------------|-----------------------------|
@@ -363,11 +365,22 @@ El Service Worker solo guarda lo que ya se pidió, así que al cargar la primera
 | Encuesta          | Igual que la retroalimentación: la respuesta queda en el outbox y se envía sola al volver la conexión                                                          |
 | Menú              | Indica si hay conexión y la fecha de la última sincronización                                                                                                  |
 
-El outbox guarda cada envío con su UUID, su tipo (`retroalimentacion` o `encuesta`), el contenido, el número de intentos y su estado (`PENDIENTE`, `ENVIANDO`, `ENVIADO` o `FALLIDO`). Es el mismo almacén para los dos tipos y cada fachada solo procesa los suyos. Se vacía al abrir la app, en cualquier página, y al recuperar la conexión, con hasta 5 intentos: se reintentan los fallos temporales (sin red, `408`, `429` y errores `5xx`) y un rechazo del servidor, como un `400`, marca el envío como `FALLIDO` sin reintentar. Como el UUID viaja en `Idempotency-Key`, un reintento nunca crea un duplicado.
+El outbox guarda cada envío con su UUID, su tipo (`retroalimentacion` o `encuesta`), el contenido, el número de intentos y su estado (`PENDIENTE`, `ENVIANDO`, `ENVIADO` o `FALLIDO`). Es el mismo almacén para los dos tipos y cada fachada solo procesa los suyos. Se vacía al abrir la app, en cualquier página, y al recuperar la conexión, con hasta 5 intentos: se reintentan los fallos temporales (sin red, `408`, `429` y errores `5xx`) y un rechazo del servidor, como un `400`, marca el envío como `FALLIDO` sin reintentar. Como el UUID viaja en `Idempotency-Key`, un reintento nunca crea un duplicado. En Chrome y Android también se vacía en segundo plano con la pestaña cerrada ([7.4](#74-segundo-plano-y-actualizaciones)).
 
 ### 7.4 Segundo plano y actualizaciones
 
-El Service Worker funciona aparte de la página: descarga la app por adelantado y responde las consultas aunque no haya red. La propuesta agrega **Background Sync** para vaciar el outbox aun con la pestaña cerrada (solo existe en navegadores Chromium) y un aviso cuando hay una versión nueva; ambos están pendientes. Las notificaciones push quedan fuera de alcance.
+El Service Worker funciona aparte de la página: descarga la app por adelantado y responde las consultas aunque no haya red. El aviso cuando hay una versión nueva está pendiente. Las notificaciones push quedan fuera de alcance.
+
+**Background Sync.** Cuando una respuesta queda en el outbox (sin conexión o por un fallo temporal), la página registra la sincronización `fatfish-outbox` (`registration.sync.register`). Al volver la red, el navegador despierta al Service Worker aunque la pestaña ya esté cerrada, y `public/sw.js` vacía el outbox con las mismas reglas de la página: hasta 5 intentos, `Idempotency-Key` con el UUID, reintento solo en fallos temporales y `FALLIDO` ante un rechazo como un `400`. Si algo sigue pendiente, el navegador vuelve a intentarlo más tarde.
+
+| Navegador                   | Comportamiento                                                                          |
+|-----------------------------|-----------------------------------------------------------------------------------------|
+| Chrome, Edge y Android      | Se envía solo al volver la red, aunque la PWA esté cerrada                              |
+| Safari y Firefox            | No tienen Background Sync: el outbox se vacía al abrir la app o al recuperar la conexión |
+
+Para que nada se envíe dos veces, la página y el Service Worker toman el mismo candado (Web Locks, `fatfish-outbox`) antes de enviar y vuelven a leer el envío dentro de él: si el otro ya lo mandó, lo saltan. Aunque coincidieran, la API guarda cada `Idempotency-Key` una sola vez.
+
+`public/sw.js` es JavaScript plano porque Angular no compila un Service Worker propio. Usa la misma base de IndexedDB que `outbox-db.ts`, la misma llave pública que `api.config.ts` y los mismos nombres de etiqueta y candado; `npm run test:sw` comprueba que coincidan y prueba las reglas del envío. Para probarlo a mano en Chrome: `npm run lab`, en DevTools → Network marca *Offline*, envía una opinión, cierra la pestaña, quita *Offline* (o vuelve a conectar la red) y revisa en la base de datos que llegó; en DevTools → Application → Background services → Background sync se ve el evento.
 
 ---
 
@@ -473,7 +486,7 @@ Los diagramas corresponden a la propuesta completa; su código está en [`docs/d
 
 GitHub Actions ([`ci.yml`](.github/workflows/ci.yml)) corre en cada Pull Request y en cada cambio a `develop` y `main`:
 
-1. **Analizar y probar:** formato del código y pruebas.
+1. **Analizar y probar:** formato del código, pruebas de Angular y pruebas del Service Worker (`npm run test:sw`).
 2. **Compilar:** build de producción.
 3. **Construir imagen Docker:** comprueba que el `Dockerfile` funciona.
 

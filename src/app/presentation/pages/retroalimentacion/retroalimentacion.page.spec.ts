@@ -4,8 +4,14 @@ import { of } from 'rxjs';
 import { Conectividad } from '../../../domain/ports/conectividad';
 import { OutboxRepository } from '../../../domain/ports/outbox.repository';
 import { RetroalimentacionRepository } from '../../../domain/ports/retroalimentacion.repository';
+import { SegundoPlano } from '../../../domain/ports/segundo-plano';
 import { SesionRepository } from '../../../domain/ports/sesion.repository';
-import { ConectividadFalsa, OutboxEnMemoria, SesionFalsa } from '../../../testing/fakes';
+import {
+  ConectividadFalsa,
+  OutboxEnMemoria,
+  SegundoPlanoFalso,
+  SesionFalsa,
+} from '../../../testing/fakes';
 import { RetroalimentacionPage } from './retroalimentacion.page';
 
 describe('RetroalimentacionPage', () => {
@@ -33,6 +39,7 @@ describe('RetroalimentacionPage', () => {
         { provide: OutboxRepository, useValue: outbox },
         { provide: Conectividad, useValue: conectividad },
         { provide: SesionRepository, useValue: new SesionFalsa() },
+        { provide: SegundoPlano, useValue: new SegundoPlanoFalso() },
       ],
     }).compileComponents();
   });

@@ -3,6 +3,7 @@ import { EnvioOutbox } from '../domain/models/envio-outbox';
 import { Perfil } from '../domain/models/perfil';
 import { Conectividad } from '../domain/ports/conectividad';
 import { OutboxRepository } from '../domain/ports/outbox.repository';
+import { SegundoPlano } from '../domain/ports/segundo-plano';
 import { SesionRepository } from '../domain/ports/sesion.repository';
 
 /** Test doubles for the infrastructure ports used by the facade specs. */
@@ -15,6 +16,19 @@ export class OutboxEnMemoria implements OutboxRepository {
 
   async todos(): Promise<EnvioOutbox[]> {
     return [...this.filas.values()].sort((a, b) => b.creadoEn.localeCompare(a.creadoEn));
+  }
+
+  async obtener(id: string): Promise<EnvioOutbox | undefined> {
+    const fila = this.filas.get(id);
+    return fila && structuredClone(fila);
+  }
+}
+
+/** Counts how many times a facade asked for a background send. */
+export class SegundoPlanoFalso implements SegundoPlano {
+  programados = 0;
+  programarEnvio(): void {
+    this.programados++;
   }
 }
 
