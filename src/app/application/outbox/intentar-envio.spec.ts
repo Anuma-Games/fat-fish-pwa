@@ -59,3 +59,49 @@ describe('intentarEnvio with the service worker', () => {
     expect(e).toMatchObject({ estado: 'ENVIADO', idServidor: '42', intentos: 1 });
   });
 });
+
+describe('intentarEnvio with a submission left ENVIANDO', () => {
+  it('sends it again with the same key and counts the attempt', async () => {
+    const outbox = new OutboxEnMemoria();
+    const e: EnvioEncuesta = { ...envio(), estado: 'ENVIANDO', intentos: 1 };
+    await outbox.guardar(e);
+    let llamadas = 0;
+    expect(await intentarEnvio(e, outbox, async () => String(++llamadas), 'POST /x')).toBe(
+      'ENVIADO',
+    );
+    expect(llamadas).toBe(1);
+    expect(outbox.filas.get('e1')).toMatchObject({ estado: 'ENVIADO', intentos: 2 });
+  });
+});
+
+describe('intentarEnvio and the outbox lock', () => {
+  afterEach(() => vi.unstubAllGlobals());
+
+  it('marks ENVIANDO and sends only while holding the lock shared with the service worker', async () => {
+    let candado: string | null = null;
+    vi.stubGlobal('navigator', {
+      ...navigator,
+      locks: {
+        request: async (nombre: string, fn: () => Promise<unknown>) => {
+          candado = nombre;
+          try {
+            return await fn();
+          } finally {
+            candado = null;
+          }
+        },
+      },
+    });
+    const outbox = new OutboxEnMemoria();
+    const estadosVistos: (string | null)[] = [];
+    const guardar = outbox.guardar.bind(outbox);
+    outbox.guardar = async (e) => {
+      estadosVistos.push(`${e.estado}:${candado}`);
+      return guardar(e);
+    };
+    await intentarEnvio(envio(), outbox, async () => '1', 'POST /x');
+
+    // An ENVIANDO outside the lock would look abandoned to the other side and be sent twice
+    expect(estadosVistos).toEqual(['ENVIANDO:fatfish-outbox', 'ENVIADO:fatfish-outbox']);
+  });
+});

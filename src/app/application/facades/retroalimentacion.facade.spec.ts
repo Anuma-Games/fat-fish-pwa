@@ -97,4 +97,18 @@ describe('RetroalimentacionFacade with a shared outbox', () => {
     expect(await facade.enviar(datos)).toBe('ENVIADO');
     expect(segundoPlano.programados).toBe(1);
   });
+
+  it('sends again feedback left ENVIANDO when the tab closed mid-request', async () => {
+    await outbox.guardar({
+      id: 'abandonado',
+      tipo: 'retroalimentacion',
+      contenido: datos,
+      creadoEn: '2026-11-19T10:00:00.000Z',
+      intentos: 1,
+      estado: 'ENVIANDO',
+    });
+    await facade.sincronizar();
+    expect(enviadas).toEqual(['abandonado']);
+    expect(outbox.filas.get('abandonado')).toMatchObject({ estado: 'ENVIADO', intentos: 2 });
+  });
 });

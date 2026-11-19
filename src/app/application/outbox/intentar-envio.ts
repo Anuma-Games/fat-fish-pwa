@@ -1,7 +1,7 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { LOG_PREFIX } from '../../core/config/api.config';
 import { esReintentable } from '../../core/http/errores-http';
-import { EnvioOutbox, EstadoEnvio } from '../../domain/models/envio-outbox';
+import { EnvioOutbox, EstadoEnvio, porEnviar } from '../../domain/models/envio-outbox';
 import { OutboxRepository } from '../../domain/ports/outbox.repository';
 import { conCandadoOutbox } from './candado-outbox';
 
@@ -14,8 +14,8 @@ export const MAX_INTENTOS = 5;
  * `enviar` must resolve with the id the server gave to the stored record.
  *
  * The attempt runs inside the outbox lock shared with the service worker (public/sw.js), and the
- * submission is read again inside it: if the worker or another tab already took it, it is not sent
- * twice and the envelope takes the stored state.
+ * submission is read again inside it: if the worker or another tab already sent it, it is not sent
+ * twice and the envelope takes the stored state. One left ENVIANDO is sent again (see `porEnviar`).
  */
 export function intentarEnvio(
   envio: EnvioOutbox,
@@ -25,7 +25,7 @@ export function intentarEnvio(
 ): Promise<EstadoEnvio> {
   return conCandadoOutbox(async () => {
     const guardado = await outbox.obtener(envio.id);
-    if (guardado && guardado.estado !== 'PENDIENTE') {
+    if (guardado && !porEnviar(guardado)) {
       Object.assign(envio, guardado);
       return envio.estado;
     }
