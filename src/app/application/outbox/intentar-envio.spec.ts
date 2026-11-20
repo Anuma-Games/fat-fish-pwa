@@ -119,3 +119,24 @@ describe('intentarEnvio with a stale local copy', () => {
     expect(local.intentos).toBe(MAX_INTENTOS);
   });
 });
+
+describe('intentarEnvio with an ENVIANDO that used every attempt', () => {
+  it('marks it FALLIDO without sending it again', async () => {
+    const outbox = new OutboxEnMemoria();
+    // The tab closed during the fifth attempt
+    const e: EnvioEncuesta = { ...envio(), estado: 'ENVIANDO', intentos: MAX_INTENTOS };
+    await outbox.guardar(e);
+    let llamadas = 0;
+    vi.spyOn(console, 'warn').mockImplementation(() => undefined);
+
+    expect(await intentarEnvio(e, outbox, async () => String(++llamadas), 'POST /x')).toBe(
+      'FALLIDO',
+    );
+    expect(llamadas).toBe(0);
+    expect(outbox.filas.get('e1')).toMatchObject({
+      estado: 'FALLIDO',
+      intentos: MAX_INTENTOS,
+      ultimoError: 'Se agotaron los intentos',
+    });
+  });
+});

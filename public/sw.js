@@ -65,6 +65,16 @@ importScripts('./ngsw-worker.js');
       for (const { id } of pendientes) {
         const envio = await outbox.obtener(id);
         if (!envio || !porEnviar(envio) || !RUTAS[envio.tipo]) continue;
+        // An ENVIANDO recovered after its last attempt has no attempts left: no more POSTs
+        if (envio.intentos >= MAX_INTENTOS) {
+          envio.estado = 'FALLIDO';
+          envio.ultimoError ??= 'Se agotaron los intentos';
+          await outbox.guardar(envio);
+          console.warn(
+            `${LOG_PREFIX} [sync] ${envio.tipo} ${envio.id} sin intentos; estado FALLIDO`,
+          );
+          continue;
+        }
         envio.intentos += 1;
         envio.estado = 'ENVIANDO';
         await outbox.guardar(envio);

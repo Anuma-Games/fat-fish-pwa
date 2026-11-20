@@ -39,6 +39,14 @@ async function intentar(
   enviar: () => Promise<string>,
   descripcion: string,
 ): Promise<EstadoEnvio> {
+  // An ENVIANDO recovered after its last attempt has no attempts left: no more POSTs
+  if (envio.intentos >= MAX_INTENTOS) {
+    envio.estado = 'FALLIDO';
+    envio.ultimoError ??= 'Se agotaron los intentos';
+    await outbox.guardar(envio);
+    console.warn(`${LOG_PREFIX} ${descripcion} sin intentos (${envio.id}); estado FALLIDO`);
+    return envio.estado;
+  }
   envio.intentos += 1;
   envio.estado = 'ENVIANDO';
   await outbox.guardar(envio);

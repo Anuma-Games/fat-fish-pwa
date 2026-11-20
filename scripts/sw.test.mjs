@@ -219,7 +219,7 @@ describe('public/sw.js', () => {
     assert.equal(outbox.filas.get('a').intentos, 2);
   });
 
-  it('gives up on an abandoned ENVIANDO that already used its attempts', async () => {
+  it('uses the last attempt on an abandoned ENVIANDO and gives up if it fails', async () => {
     const outbox = outboxEnMemoria([
       envio('a', { estado: 'ENVIANDO', intentos: sw.api.MAX_INTENTOS - 1 }),
     ]);
@@ -239,5 +239,23 @@ describe('public/sw.js', () => {
       estados.filter((estado) => sw.api.porEnviar({ estado })),
       ['PENDIENTE', 'ENVIANDO'],
     );
+  });
+
+  it('does not send an abandoned ENVIANDO that already used every attempt', async () => {
+    // The tab closed during the fifth attempt
+    const outbox = outboxEnMemoria([
+      envio('a', { estado: 'ENVIANDO', intentos: sw.api.MAX_INTENTOS }),
+    ]);
+    const enviados = [];
+    const quedan = await sw.api.vaciarOutbox({
+      outbox,
+      enviar: async (e) => (enviados.push(e.id), '1'),
+      candado: sinCandado,
+    });
+    assert.equal(quedan, 0);
+    assert.deepEqual(enviados, []);
+    assert.equal(outbox.filas.get('a').estado, 'FALLIDO');
+    assert.equal(outbox.filas.get('a').intentos, sw.api.MAX_INTENTOS);
+    assert.equal(outbox.filas.get('a').ultimoError, 'Se agotaron los intentos');
   });
 });
