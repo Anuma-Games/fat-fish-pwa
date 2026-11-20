@@ -1,0 +1,32 @@
+@if (visible()) {
+  <div class="velo" aria-hidden="true" (click)="ahoraNo()"></div>
+  <div
+    class="aviso tapete"
+    role="alertdialog"
+    aria-modal="true"
+    aria-labelledby="aviso-version-titulo"
+    aria-describedby="aviso-version-texto"
+    (keydown.tab)="atrapar($event)"
+    (keydown.shift.tab)="atrapar($event)"
+  >
+    <p class="etiqueta">Versión nueva</p>
+    <h2 id="aviso-version-titulo">¿Cargar la versión nueva?</h2>
+    <p id="aviso-version-texto">
+      Ya se descargó una versión nueva de la PWA. Si la cargas ahora, la página se recarga.
+    </p>
+    <div class="acciones">
+      <button class="btn ghost" type="button" [disabled]="actualizando()" (click)="ahoraNo()">
+        Ahora no
+      </button>
+      <button
+        #actualizar
+        class="btn"
+        type="button"
+        [disabled]="actualizando()"
+        (click)="actualizarAhora()"
+      >
+        {{ actualizando() ? 'Actualizando…' : 'Actualizar' }}
+      </button>
+    </div>
+  </div>
+}

@@ -24,11 +24,11 @@ export function intentarEnvio(
   descripcion: string,
 ): Promise<EstadoEnvio> {
   return conCandadoOutbox(async () => {
+    // The stored copy wins: while this page waited for the lock, the worker may have sent it or
+    // used attempts, and a stale local copy would count from an old number
     const guardado = await outbox.obtener(envio.id);
-    if (guardado && !porEnviar(guardado)) {
-      Object.assign(envio, guardado);
-      return envio.estado;
-    }
+    if (guardado) Object.assign(envio, guardado);
+    if (!porEnviar(envio)) return envio.estado;
     return intentar(envio, outbox, enviar, descripcion);
   });
 }

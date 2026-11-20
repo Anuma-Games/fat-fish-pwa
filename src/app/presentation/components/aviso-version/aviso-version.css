@@ -1,0 +1,72 @@
+/* Above the top bar (30), the side menu (45-50) and the skip link (70) */
+.velo {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  background: rgb(5 8 9 / 70%);
+  animation: aparecer 0.2s ease both;
+}
+
+/* A felt card in the middle of the window, as the forms of the app (.tapete) */
+.aviso {
+  position: fixed;
+  z-index: 81;
+  left: 50%;
+  top: 50%;
+  translate: -50% -50%;
+  width: min(440px, calc(100% - 2 * var(--ff-space-4)));
+  display: grid;
+  gap: var(--ff-space-3);
+  color: var(--ff-cream-100);
+  animation: entrar 0.25s ease both;
+}
+.aviso h2 {
+  margin: 0;
+  font-family: var(--ff-font-display);
+  font-weight: 400;
+  font-size: 34px;
+  line-height: 1;
+  color: var(--ff-gold-400);
+}
+.aviso p {
+  margin: 0;
+  line-height: 1.5;
+}
+.etiqueta {
+  font-family: var(--ff-font-label);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ff-fog-400);
+}
+
+/* The main action goes on the right */
+.acciones {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: var(--ff-space-2);
+  margin-top: var(--ff-space-2);
+}
+.acciones .ghost {
+  font-family: var(--ff-font-display);
+  font-size: 22px;
+}
+
+@keyframes aparecer {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes entrar {
+  from {
+    opacity: 0;
+    translate: -50% calc(-50% + 12px);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .velo,
+  .aviso {
+    animation: none;
+  }
+}
