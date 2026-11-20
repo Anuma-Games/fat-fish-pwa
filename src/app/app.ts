@@ -7,10 +7,11 @@ import { filter, map } from 'rxjs';
 import { EncuestaFacade } from './application/facades/encuesta.facade';
 import { RetroalimentacionFacade } from './application/facades/retroalimentacion.facade';
 import { LOG_PREFIX } from './core/config/api.config';
+import { AvisoVersion } from './presentation/components/aviso-version/aviso-version';
 import { BarraNav } from './presentation/components/barra-nav/barra-nav';
 
 @Component({
-  imports: [RouterOutlet, BarraNav],
+  imports: [RouterOutlet, BarraNav, AvisoVersion],
   selector: 'app-root',
   styleUrl: './app.css',
   templateUrl: './app.html',
