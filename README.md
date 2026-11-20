@@ -71,7 +71,7 @@ La PWA solo lee datos del juego y solo inserta opiniones. No registra jugadores 
 | Pantalla de la encuesta anónima (`/opinion/encuesta`)                         | ✅ Construido                |
 | Pantalla del ranking mundial (`/ranking`)                                     | ✅ Construido                |
 | Pantalla de búsqueda por alias o ID (`/acceso`)                               | ✅ Construido                |
-| Aviso de versión nueva                                                        | ⏳ Pendiente para el MVP     |
+| Aviso de versión nueva (diálogo "¿Cargar la versión nueva?")                  | ✅ Construido                |
 | Background Sync: el outbox se envía con la pestaña cerrada (Chrome y Android) | ✅ Construido                |
 | Wiki                                                                          | ⏳ Deseable                  |
 | Publicación de la PWA en Firebase Hosting (despliegue automático desde `main`) | ✅ Construido                |
@@ -369,7 +369,16 @@ El outbox guarda cada envío con su UUID, su tipo (`retroalimentacion` o `encues
 
 ### 7.4 Segundo plano y actualizaciones
 
-El Service Worker funciona aparte de la página: descarga la app por adelantado y responde las consultas aunque no haya red. El aviso cuando hay una versión nueva está pendiente. Las notificaciones push quedan fuera de alcance.
+El Service Worker funciona aparte de la página: descarga la app por adelantado y responde las consultas aunque no haya red. Las notificaciones push quedan fuera de alcance.
+
+**Aviso de versión nueva.** Al abrir la app, el Service Worker revisa si hay una versión publicada más reciente y la descarga en segundo plano, pero la página sigue con la que abrió. Cuando la versión nueva está lista (`VERSION_READY` de `SwUpdate.versionUpdates`), el componente `aviso-version` pregunta "¿Cargar la versión nueva?":
+
+| Opción       | Qué pasa                                                                                       |
+|--------------|------------------------------------------------------------------------------------------------|
+| "Actualizar" | Activa la versión nueva (`activateUpdate()`) y recarga la página                               |
+| "Ahora no"   | Cierra el diálogo (también con Escape o tocando fuera); la versión nueva se usa la próxima vez que se abra la app |
+
+Con el Service Worker desactivado (`ng serve`) no se muestra nada. Para probarlo: abre la app con `npm run lab`, cambia algo, vuelve a compilar con `npm run build` sin detener el servidor y recarga la página una vez; el diálogo aparece cuando termina la descarga.
 
 **Background Sync.** Cuando una respuesta queda en el outbox (sin conexión o por un fallo temporal), la página registra la sincronización `fatfish-outbox` (`registration.sync.register`). Al volver la red, el navegador despierta al Service Worker aunque la pestaña ya esté cerrada, y `public/sw.js` vacía el outbox con las mismas reglas de la página: hasta 5 intentos, `Idempotency-Key` con el UUID, reintento solo en fallos temporales y `FALLIDO` ante un rechazo como un `400`. Si algo sigue pendiente, el navegador vuelve a intentarlo más tarde.
 
@@ -425,6 +434,7 @@ Las páginas de la app comparten las piezas del landing, para que todo el sitio 
 | `barra-nav`                     | Barra superior de todo el sitio: ☰, logo, enlaces a las secciones del landing y a la app (en escritorio) y "Jugar la demo" |
 | `menu-lateral`                  | Panel que abre ☰ en cualquier ancho. En la app resalta la sección actual y muestra la última sincronización |
 | `cabecera-pagina`               | Lámpara que se enciende, título con líneas de monitor viejo, frase dorada y una línea del Crupier         |
+| `aviso-version`                 | Diálogo sobre un tapete que pregunta si se carga la versión nueva de la app ([7.4](#74-segundo-plano-y-actualizaciones)) |
 | `.tapete` (`styles/paginas.css`) | Paño verde con el enrejado del casino y borde dorado: buscador, formularios de Opinión e historial        |
 
 El expediente (`/perfil`) es una hoja de papel como la del landing, y en el ranking los tres primeros lugares llevan las fichas del juego.
