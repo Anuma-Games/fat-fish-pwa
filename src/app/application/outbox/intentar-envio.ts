@@ -1,7 +1,7 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { LOG_PREFIX } from '../../core/config/api.config';
 import { esReintentable } from '../../core/http/errores-http';
-import { EnvioOutbox, EstadoEnvio } from '../../domain/models/envio-outbox';
+import { EnvioOutbox, EstadoEnvio, porEnviar } from '../../domain/models/envio-outbox';
 import { OutboxRepository } from '../../domain/ports/outbox.repository';
 import { conCandadoOutbox } from './candado-outbox';
 
@@ -14,8 +14,8 @@ export const MAX_INTENTOS = 5;
  * `enviar` must resolve with the id the server gave to the stored record.
  *
  * The attempt runs inside the outbox lock shared with the service worker (public/sw.js), and the
- * submission is read again inside it: if the worker or another tab already took it, it is not sent
- * twice and the envelope takes the stored state.
+ * submission is read again inside it: if the worker or another tab already sent it, it is not sent
+ * twice and the envelope takes the stored state. One left ENVIANDO is sent again (see `porEnviar`).
  */
 export function intentarEnvio(
   envio: EnvioOutbox,
@@ -28,7 +28,7 @@ export function intentarEnvio(
     // used attempts, and a stale local copy would count from an old number
     const guardado = await outbox.obtener(envio.id);
     if (guardado) Object.assign(envio, guardado);
-    if (envio.estado !== 'PENDIENTE') return envio.estado;
+    if (!porEnviar(envio)) return envio.estado;
     return intentar(envio, outbox, enviar, descripcion);
   });
 }
@@ -39,6 +39,14 @@ async function intentar(
   enviar: () => Promise<string>,
   descripcion: string,
 ): Promise<EstadoEnvio> {
+  // An ENVIANDO recovered after its last attempt has no attempts left: no more POSTs
+  if (envio.intentos >= MAX_INTENTOS) {
+    envio.estado = 'FALLIDO';
+    envio.ultimoError ??= 'Se agotaron los intentos';
+    await outbox.guardar(envio);
+    console.warn(`${LOG_PREFIX} ${descripcion} sin intentos (${envio.id}); estado FALLIDO`);
+    return envio.estado;
+  }
   envio.intentos += 1;
   envio.estado = 'ENVIANDO';
   await outbox.guardar(envio);

@@ -145,4 +145,21 @@ describe('EncuestaFacade', () => {
     expect(enviadas).toHaveLength(0);
     expect(facade.pendientes()).toBe(0);
   });
+
+  it('counts a survey left ENVIANDO as pending and sends it again', async () => {
+    await outbox.guardar({
+      id: 'abandonada',
+      tipo: 'encuesta',
+      contenido: { percepcionRiesgo: 4, cambioOpinion: 3, claridadMensaje: 5 },
+      creadoEn: '2026-11-19T10:00:00.000Z',
+      intentos: 1,
+      estado: 'ENVIANDO',
+    });
+    await facade.refrescar();
+    expect(facade.pendientes()).toBe(1);
+
+    await facade.sincronizar();
+    expect(enviadas.map((e) => e.clave)).toEqual(['abandonada']);
+    expect(facade.pendientes()).toBe(0);
+  });
 });

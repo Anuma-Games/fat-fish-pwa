@@ -4,6 +4,14 @@ import { Retroalimentacion } from './retroalimentacion';
 /** State of a submission stored in the outbox (IndexedDB). */
 export type EstadoEnvio = 'PENDIENTE' | 'ENVIANDO' | 'ENVIADO' | 'FALLIDO';
 
+/**
+ * Whether a submission still has to reach the API. ENVIANDO counts too: it is only set inside the
+ * outbox lock, so a submission seen ENVIANDO inside the lock was abandoned (the tab closed or the
+ * service worker stopped mid-request) and is sent again with the same Idempotency-Key.
+ */
+export const porEnviar = (envio: { estado: EstadoEnvio }): boolean =>
+  envio.estado === 'PENDIENTE' || envio.estado === 'ENVIANDO';
+
 interface EnvioBase {
   /** Generated on the device; also sent as the Idempotency-Key header. */
   id: string;
