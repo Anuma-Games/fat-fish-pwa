@@ -28,7 +28,7 @@ const TYPES = {
   '.woff2': 'font/woff2',
 };
 // Control files must never be cached by the browser, so new versions of the app arrive.
-const NO_CACHE = new Set(['/index.html', '/ngsw.json', '/ngsw-worker.js', '/manifest.webmanifest']);
+const NO_CACHE = new Set(['/index.html', '/ngsw.json', '/sw.js', '/ngsw-worker.js', '/manifest.webmanifest']);
 
 if (!existsSync(join(ROOT, 'index.html'))) {
   console.error(`No existe el build en ${ROOT}. Ejecuta primero: npm run lab`);

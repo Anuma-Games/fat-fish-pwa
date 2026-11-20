@@ -13,7 +13,7 @@ server {
     }
 
     # Control files of the app and the service worker: the browser always asks for the latest version
-    location ~ ^/(index\.html|ngsw\.json|ngsw-worker\.js|safety-worker\.js)$ {
+    location ~ ^/(index\.html|ngsw\.json|sw\.js|ngsw-worker\.js|safety-worker\.js)$ {
         add_header Cache-Control "no-cache";
         try_files $uri =404;
     }

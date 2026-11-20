@@ -6,7 +6,11 @@ const DB_NAME = 'fatfish-pwa';
 const DB_VERSION = 1;
 const STORE = 'outbox';
 
-/** Outbox in IndexedDB: submissions that could not reach the API wait here until there is a connection. */
+/**
+ * Outbox in IndexedDB: submissions that could not reach the API wait here until there is a connection.
+ * public/sw.js opens the same database to send them with Background Sync: a change of name, version
+ * or store goes in both files.
+ */
 @Injectable({ providedIn: 'root' })
 export class OutboxDb implements OutboxRepository {
   private dbPromise?: Promise<IDBDatabase>;
@@ -19,6 +23,10 @@ export class OutboxDb implements OutboxRepository {
     return this.tx('readonly', (store) => store.getAll()).then((rows) =>
       (rows as EnvioOutbox[]).sort((a, b) => b.creadoEn.localeCompare(a.creadoEn)),
     );
+  }
+
+  obtener(id: string): Promise<EnvioOutbox | undefined> {
+    return this.tx('readonly', (store) => store.get(id)) as Promise<EnvioOutbox | undefined>;
   }
 
   private open(): Promise<IDBDatabase> {

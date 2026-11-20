@@ -9,6 +9,7 @@ import {
 import { Retroalimentacion } from '../../domain/models/retroalimentacion';
 import { OutboxRepository } from '../../domain/ports/outbox.repository';
 import { RetroalimentacionRepository } from '../../domain/ports/retroalimentacion.repository';
+import { SegundoPlano } from '../../domain/ports/segundo-plano';
 import { intentarEnvio } from '../outbox/intentar-envio';
 import { SincronizacionFacade } from './sincronizacion.facade';
 
@@ -19,13 +20,15 @@ const esRetroalimentacion = (envio: EnvioOutbox): envio is EnvioRetroalimentacio
 
 /**
  * Sends feedback to the API. If there is no connection, the submission waits in the IndexedDB
- * outbox and is sent again when the connection comes back (or when the app opens).
+ * outbox and is sent again when the connection comes back (or when the app opens). It also asks for
+ * Background Sync, so in Chromium browsers the service worker sends it even with the tab closed.
  */
 @Injectable({ providedIn: 'root' })
 export class RetroalimentacionFacade {
   private readonly api = inject(RetroalimentacionRepository);
   private readonly outbox = inject(OutboxRepository);
   private readonly sync = inject(SincronizacionFacade);
+  private readonly segundoPlano = inject(SegundoPlano);
 
   private sincronizando = false;
 
@@ -55,11 +58,14 @@ export class RetroalimentacionFacade {
       console.warn(
         `${LOG_PREFIX} Sin conexión: retroalimentación ${envio.id} guardada en IndexedDB (outbox)`,
       );
+      this.segundoPlano.programarEnvio();
       return 'EN_COLA';
     }
     const estado = await this.intentar(envio);
     if (estado === 'ENVIADO') return 'ENVIADO';
-    return estado === 'FALLIDO' ? 'RECHAZADO' : 'EN_COLA';
+    if (estado === 'FALLIDO') return 'RECHAZADO';
+    this.segundoPlano.programarEnvio();
+    return 'EN_COLA';
   }
 
   /** Sends every pending submission; safe to repeat thanks to the Idempotency-Key. */
@@ -75,9 +81,11 @@ export class RetroalimentacionFacade {
           `${LOG_PREFIX} Sincronizando outbox: ${pendientes.length} envío(s) pendiente(s)`,
         );
       }
+      let quedan = 0;
       for (const envio of pendientes) {
-        await this.intentar(envio);
+        if ((await this.intentar(envio)) === 'PENDIENTE') quedan++;
       }
+      if (quedan > 0) this.segundoPlano.programarEnvio();
     } finally {
       this.sincronizando = false;
     }
