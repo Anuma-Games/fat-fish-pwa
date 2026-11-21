@@ -1,6 +1,9 @@
 /** Relative base: the PWA and the API share the same origin, so no CORS is needed. */
 export const API_BASE = '/api/pwa';
 
+/** Bound each outbox POST, including its body, so it cannot keep the shared lock forever. */
+export const TIMEOUT_ENVIO_MS = 15_000;
+
 /** Prefix for console traces, so they are easy to filter in DevTools. */
 export const LOG_PREFIX = '[FatFish]';
 
