@@ -54,6 +54,9 @@ jobs:
       - name: Pruebas
         run: npx ng test --watch=false
 
+      - name: Pruebas del Service Worker
+        run: npm run test:sw
+
   build:
     name: Compilar
     needs: check

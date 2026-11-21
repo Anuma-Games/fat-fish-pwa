@@ -3,6 +3,7 @@ import { LOG_PREFIX } from '../../core/config/api.config';
 import { esReintentable } from '../../core/http/errores-http';
 import { EnvioOutbox, EstadoEnvio } from '../../domain/models/envio-outbox';
 import { OutboxRepository } from '../../domain/ports/outbox.repository';
+import { conCandadoOutbox } from './candado-outbox';
 
 export const MAX_INTENTOS = 5;
 
@@ -11,8 +12,28 @@ export const MAX_INTENTOS = 5;
  * Updates the envelope (attempts, state, error) and saves it each time it changes.
  * A temporary failure leaves it PENDIENTE until MAX_INTENTOS; anything else is FALLIDO.
  * `enviar` must resolve with the id the server gave to the stored record.
+ *
+ * The attempt runs inside the outbox lock shared with the service worker (public/sw.js), and the
+ * submission is read again inside it: if the worker or another tab already took it, it is not sent
+ * twice and the envelope takes the stored state.
  */
-export async function intentarEnvio(
+export function intentarEnvio(
+  envio: EnvioOutbox,
+  outbox: OutboxRepository,
+  enviar: () => Promise<string>,
+  descripcion: string,
+): Promise<EstadoEnvio> {
+  return conCandadoOutbox(async () => {
+    // The stored copy wins: while this page waited for the lock, the worker may have sent it or
+    // used attempts, and a stale local copy would count from an old number
+    const guardado = await outbox.obtener(envio.id);
+    if (guardado) Object.assign(envio, guardado);
+    if (envio.estado !== 'PENDIENTE') return envio.estado;
+    return intentar(envio, outbox, enviar, descripcion);
+  });
+}
+
+async function intentar(
   envio: EnvioOutbox,
   outbox: OutboxRepository,
   enviar: () => Promise<string>,

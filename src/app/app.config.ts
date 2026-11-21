@@ -19,6 +19,7 @@ import { PartidaRepository } from './domain/ports/partida.repository';
 import { PerfilRepository } from './domain/ports/perfil.repository';
 import { RankingRepository } from './domain/ports/ranking.repository';
 import { RetroalimentacionRepository } from './domain/ports/retroalimentacion.repository';
+import { SegundoPlano } from './domain/ports/segundo-plano';
 import { SesionRepository } from './domain/ports/sesion.repository';
 import { apiKeyInterceptor } from './infrastructure/api/api-key.interceptor';
 import { EncuestaApiRepository } from './infrastructure/api/encuesta-api.repository';
@@ -27,6 +28,7 @@ import { PartidaApiRepository } from './infrastructure/api/partida-api.repositor
 import { PerfilApiRepository } from './infrastructure/api/perfil-api.repository';
 import { RankingApiRepository } from './infrastructure/api/ranking-api.repository';
 import { RetroalimentacionApiRepository } from './infrastructure/api/retroalimentacion-api.repository';
+import { BackgroundSyncService } from './infrastructure/pwa/background-sync.service';
 import { ConnectivityService } from './infrastructure/pwa/connectivity.service';
 import { OutboxDb } from './infrastructure/storage/outbox-db';
 import { SesionStorage } from './infrastructure/storage/sesion-storage';
@@ -44,6 +46,7 @@ export const puertos: Provider[] = [
   { provide: OutboxRepository, useExisting: OutboxDb },
   { provide: SesionRepository, useExisting: SesionStorage },
   { provide: Conectividad, useExisting: ConnectivityService },
+  { provide: SegundoPlano, useExisting: BackgroundSyncService },
 ];
 
 export const appConfig: ApplicationConfig = {
@@ -57,7 +60,8 @@ export const appConfig: ApplicationConfig = {
     { provide: LOCALE_ID, useValue: 'es-MX' },
     ...puertos,
     // Only active in production builds (npm run lab); ng serve does not register it.
-    provideServiceWorker('ngsw-worker.js', {
+    // public/sw.js imports Angular's worker (ngsw-worker.js) and adds Background Sync.
+    provideServiceWorker('sw.js', {
       enabled: !isDevMode(),
       registrationStrategy: 'registerWhenStable:30000',
     }),
