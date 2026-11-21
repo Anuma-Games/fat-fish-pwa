@@ -2,7 +2,12 @@ import { Injectable, computed, effect, inject, signal } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 import { LOG_PREFIX } from '../../core/config/api.config';
 import { Encuesta, validarEncuesta } from '../../domain/models/encuesta';
-import { EnvioEncuesta, EnvioOutbox, ResultadoEnvio } from '../../domain/models/envio-outbox';
+import {
+  EnvioEncuesta,
+  EnvioOutbox,
+  ResultadoEnvio,
+  porEnviar,
+} from '../../domain/models/envio-outbox';
 import { EncuestaRepository } from '../../domain/ports/encuesta.repository';
 import { OutboxRepository } from '../../domain/ports/outbox.repository';
 import { SegundoPlano } from '../../domain/ports/segundo-plano';
@@ -31,9 +36,7 @@ export class EncuestaFacade {
   private readonly segundoPlano = inject(SegundoPlano);
 
   readonly envios = signal<EnvioEncuesta[]>([]);
-  readonly pendientes = computed(
-    () => this.envios().filter((e) => e.estado === 'PENDIENTE').length,
-  );
+  readonly pendientes = computed(() => this.envios().filter(porEnviar).length);
   readonly enviando = signal(false);
   /** Message in Spanish for the user; null when there is nothing to report. */
   readonly error = signal<string | null>(null);
@@ -97,9 +100,7 @@ export class EncuestaFacade {
     if (this.sincronizando) return;
     this.sincronizando = true;
     try {
-      const pendientes = (await this.outbox.todos())
-        .filter(esEncuesta)
-        .filter((e) => e.estado === 'PENDIENTE');
+      const pendientes = (await this.outbox.todos()).filter(esEncuesta).filter(porEnviar);
       if (pendientes.length > 0) {
         console.info(
           `${LOG_PREFIX} Sincronizando outbox: ${pendientes.length} encuesta(s) pendiente(s)`,

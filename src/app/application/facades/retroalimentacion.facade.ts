@@ -5,6 +5,7 @@ import {
   EnvioOutbox,
   EnvioRetroalimentacion,
   ResultadoEnvio,
+  porEnviar,
 } from '../../domain/models/envio-outbox';
 import { Retroalimentacion } from '../../domain/models/retroalimentacion';
 import { OutboxRepository } from '../../domain/ports/outbox.repository';
@@ -73,9 +74,7 @@ export class RetroalimentacionFacade {
     if (this.sincronizando) return;
     this.sincronizando = true;
     try {
-      const pendientes = (await this.outbox.todos())
-        .filter(esRetroalimentacion)
-        .filter((e) => e.estado === 'PENDIENTE');
+      const pendientes = (await this.outbox.todos()).filter(esRetroalimentacion).filter(porEnviar);
       if (pendientes.length > 0) {
         console.info(
           `${LOG_PREFIX} Sincronizando outbox: ${pendientes.length} envío(s) pendiente(s)`,

@@ -206,6 +206,61 @@ describe('public/sw.js', () => {
     });
     assert.deepEqual(enviados, ['a']);
   });
+
+  it('sends again a submission left ENVIANDO, with the same key and one more attempt', async () => {
+    // The tab closed (or the worker stopped) in the middle of the request
+    const outbox = outboxEnMemoria([envio('a', { estado: 'ENVIANDO', intentos: 1 })]);
+    const claves = [];
+    const quedan = await sw.api.vaciarOutbox({
+      outbox,
+      enviar: async (e) => (claves.push(e.id), 'srv-a'),
+      candado: sinCandado,
+    });
+    assert.equal(quedan, 0);
+    assert.deepEqual(claves, ['a']);
+    assert.equal(outbox.filas.get('a').estado, 'ENVIADO');
+    assert.equal(outbox.filas.get('a').intentos, 2);
+  });
+
+  it('uses the last attempt on an abandoned ENVIANDO and gives up if it fails', async () => {
+    const outbox = outboxEnMemoria([
+      envio('a', { estado: 'ENVIANDO', intentos: sw.api.MAX_INTENTOS - 1 }),
+    ]);
+    await sw.api.vaciarOutbox({
+      outbox,
+      enviar: async () => Promise.reject({ status: 0 }),
+      candado: sinCandado,
+    });
+    assert.equal(outbox.filas.get('a').estado, 'FALLIDO');
+  });
+
+  it('uses the same rule as the page to know what still has to be sent', () => {
+    const modelo = readFileSync(join(RAIZ, 'src/app/domain/models/envio-outbox.ts'), 'utf8');
+    assert.match(modelo, /envio\.estado === 'PENDIENTE' \|\| envio\.estado === 'ENVIANDO'/);
+    const estados = ['PENDIENTE', 'ENVIANDO', 'ENVIADO', 'FALLIDO'];
+    assert.deepEqual(
+      estados.filter((estado) => sw.api.porEnviar({ estado })),
+      ['PENDIENTE', 'ENVIANDO'],
+    );
+  });
+
+  it('does not send an abandoned ENVIANDO that already used every attempt', async () => {
+    // The tab closed during the fifth attempt
+    const outbox = outboxEnMemoria([
+      envio('a', { estado: 'ENVIANDO', intentos: sw.api.MAX_INTENTOS }),
+    ]);
+    const enviados = [];
+    const quedan = await sw.api.vaciarOutbox({
+      outbox,
+      enviar: async (e) => (enviados.push(e.id), '1'),
+      candado: sinCandado,
+    });
+    assert.equal(quedan, 0);
+    assert.deepEqual(enviados, []);
+    assert.equal(outbox.filas.get('a').estado, 'FALLIDO');
+    assert.equal(outbox.filas.get('a').intentos, sw.api.MAX_INTENTOS);
+    assert.equal(outbox.filas.get('a').ultimoError, 'Se agotaron los intentos');
+  });
 });
 
 describe('Service Worker POST timeout', () => {
