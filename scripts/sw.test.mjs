@@ -19,6 +19,9 @@ function cargarSw() {
     self,
     importScripts: (url) => importados.push(url),
     console: consola,
+    AbortController,
+    setTimeout: (...args) => setTimeout(...args),
+    clearTimeout: (id) => clearTimeout(id),
   });
   return { api: self.fatFishOutbox, escuchas, importados };
 }
@@ -257,5 +260,76 @@ describe('public/sw.js', () => {
     assert.equal(outbox.filas.get('a').estado, 'FALLIDO');
     assert.equal(outbox.filas.get('a').intentos, sw.api.MAX_INTENTOS);
     assert.equal(outbox.filas.get('a').ultimoError, 'Se agotaron los intentos');
+  });
+});
+
+describe('Service Worker POST timeout', () => {
+  for (const fase of ['headers', 'body']) {
+    for (const intentos of [0, 4]) {
+      it(`aborts while waiting for ${fase} after ${intentos} previous attempts and processes the next submission`, async (t) => {
+        t.mock.timers.enable({ apis: ['setTimeout'] });
+        const { api } = cargarSw();
+        let signal;
+        let llamadas = 0;
+        const fetchFalso = async (_url, opciones) => {
+          llamadas++;
+          if (llamadas > 1) return { ok: true, json: async () => ({ id: '42' }) };
+          signal = opciones.signal;
+          const bloqueada = () =>
+            new Promise((_resolve, reject) =>
+              signal.addEventListener('abort', () => reject(signal.reason)),
+            );
+          return fase === 'headers' ? bloqueada() : { ok: true, json: bloqueada };
+        };
+        const outbox = outboxEnMemoria([envio('a', { intentos }), envio('b')]);
+        let dentro = false;
+        const resultado = api.vaciarOutbox({
+          outbox,
+          enviar: (e) => api.enviar(e, fetchFalso),
+          candado: async (fn) => {
+            dentro = true;
+            try {
+              return await fn();
+            } finally {
+              dentro = false;
+            }
+          },
+        });
+        await new Promise(setImmediate);
+        assert.equal(dentro, true);
+        t.mock.timers.tick(14_999);
+        assert.equal(signal?.aborted, false);
+        t.mock.timers.tick(1);
+        // The regression must fail without waiting forever on an un-aborted request.
+        assert.equal(signal.aborted, true);
+        assert.equal(await resultado, intentos === 0 ? 1 : 0);
+        assert.equal(dentro, false);
+        assert.equal(llamadas, 2);
+        assert.equal(outbox.filas.get('a').estado, intentos === 0 ? 'PENDIENTE' : 'FALLIDO');
+        assert.equal(outbox.filas.get('a').intentos, intentos + 1);
+        assert.equal(outbox.filas.get('b').estado, 'ENVIADO');
+      });
+    }
+  }
+});
+
+describe('Service Worker timeout lifetime', () => {
+  it('matches the page timeout and clears the timer on success and HTTP rejection', async (t) => {
+    t.mock.timers.enable({ apis: ['setTimeout'] });
+    const { api } = cargarSw();
+    const config = readFileSync(join(RAIZ, 'src/app/core/config/api.config.ts'), 'utf8');
+    const valor = config.match(/TIMEOUT_ENVIO_MS = ([\d_]+)/)[1];
+    assert.equal(api.TIMEOUT_ENVIO_MS, Number(valor.replaceAll('_', '')));
+    for (const ok of [true, false]) {
+      let signal;
+      const resultado = api.enviar(envio('a'), async (_url, opciones) => {
+        signal = opciones.signal;
+        return { ok, status: 400, json: async () => ({ id: '42' }) };
+      });
+      if (ok) assert.equal(await resultado, '42');
+      else await assert.rejects(resultado, { status: 400 });
+      t.mock.timers.tick(api.TIMEOUT_ENVIO_MS);
+      assert.equal(signal.aborted, false);
+    }
   });
 });

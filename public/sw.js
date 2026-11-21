@@ -17,6 +17,8 @@ importScripts('./ngsw-worker.js');
   const DB_VERSION = 1;
   const STORE = 'outbox';
   const MAX_INTENTOS = 5;
+  /** Same bound as TIMEOUT_ENVIO_MS in core/config/api.config.ts. Includes reading the body. */
+  const TIMEOUT_ENVIO_MS = 15_000;
   /** Same public key as API_KEY in core/config/api.config.ts (scripts/sw.test.mjs checks it). */
   const API_KEY = '592b1e9539192affbc34916c574836930b1bf725c34e672d38ce847827e9a450';
   const RUTAS = { retroalimentacion: '/api/pwa/retroalimentacion', encuesta: '/api/pwa/encuesta' };
@@ -34,22 +36,29 @@ importScripts('./ngsw-worker.js');
 
   /** POST of one submission; resolves with the id of the server or rejects with `{ status }`. */
   async function enviar(envio, fetchFn = fetch) {
-    let respuesta;
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), TIMEOUT_ENVIO_MS);
     try {
-      respuesta = await fetchFn(RUTAS[envio.tipo], {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Idempotency-Key': envio.id,
-          'X-Api-Key': API_KEY,
-        },
-        body: JSON.stringify(envio.contenido),
-      });
-    } catch {
-      throw { status: 0 };
+      let respuesta;
+      try {
+        respuesta = await fetchFn(RUTAS[envio.tipo], {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Idempotency-Key': envio.id,
+            'X-Api-Key': API_KEY,
+          },
+          body: JSON.stringify(envio.contenido),
+          signal: controller.signal,
+        });
+      } catch {
+        throw { status: 0 };
+      }
+      if (!respuesta.ok) throw { status: respuesta.status };
+      return String((await respuesta.json()).id);
+    } finally {
+      clearTimeout(timeout);
     }
-    if (!respuesta.ok) throw { status: respuesta.status };
-    return String((await respuesta.json()).id);
   }
 
   /**
@@ -159,6 +168,7 @@ importScripts('./ngsw-worker.js');
     API_KEY,
     MAX_INTENTOS,
     porEnviar,
+    TIMEOUT_ENVIO_MS,
     esReintentable,
     enviar,
     vaciarOutbox,
