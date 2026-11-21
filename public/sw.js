@@ -23,6 +23,13 @@ importScripts('./ngsw-worker.js');
   const API_KEY = '592b1e9539192affbc34916c574836930b1bf725c34e672d38ce847827e9a450';
   const RUTAS = { retroalimentacion: '/api/pwa/retroalimentacion', encuesta: '/api/pwa/encuesta' };
 
+  /**
+   * Same rule as `porEnviar` in domain/models/envio-outbox.ts. ENVIANDO is only set inside the
+   * lock, so one seen inside the lock was abandoned mid-request and is sent again with the same
+   * Idempotency-Key.
+   */
+  const porEnviar = (envio) => envio.estado === 'PENDIENTE' || envio.estado === 'ENVIANDO';
+
   /** Same rule as core/http/errores-http.ts: failures that may disappear by themselves. */
   const esReintentable = (status) =>
     status === 0 || status === 504 || status === 408 || status === 429 || status >= 500;
@@ -55,17 +62,28 @@ importScripts('./ngsw-worker.js');
   }
 
   /**
-   * Sends every PENDIENTE submission of the outbox, one at a time, inside the shared lock. Each
-   * submission is read again inside the lock, so one the page already sent is skipped.
+   * Sends every submission of the outbox that still has to reach the API, one at a time, inside the
+   * shared lock. Each submission is read again inside the lock, so one the page already sent is
+   * skipped.
    * Resolves with how many stay PENDIENTE after a temporary failure.
    */
   async function vaciarOutbox({ outbox, enviar, candado }) {
     return candado(async () => {
       let quedan = 0;
-      const pendientes = (await outbox.todos()).filter((e) => e.estado === 'PENDIENTE');
+      const pendientes = (await outbox.todos()).filter(porEnviar);
       for (const { id } of pendientes) {
         const envio = await outbox.obtener(id);
-        if (envio?.estado !== 'PENDIENTE' || !RUTAS[envio.tipo]) continue;
+        if (!envio || !porEnviar(envio) || !RUTAS[envio.tipo]) continue;
+        // An ENVIANDO recovered after its last attempt has no attempts left: no more POSTs
+        if (envio.intentos >= MAX_INTENTOS) {
+          envio.estado = 'FALLIDO';
+          envio.ultimoError ??= 'Se agotaron los intentos';
+          await outbox.guardar(envio);
+          console.warn(
+            `${LOG_PREFIX} [sync] ${envio.tipo} ${envio.id} sin intentos; estado FALLIDO`,
+          );
+          continue;
+        }
         envio.intentos += 1;
         envio.estado = 'ENVIANDO';
         await outbox.guardar(envio);
@@ -149,6 +167,7 @@ importScripts('./ngsw-worker.js');
     CANDADO,
     API_KEY,
     MAX_INTENTOS,
+    porEnviar,
     TIMEOUT_ENVIO_MS,
     esReintentable,
     enviar,
