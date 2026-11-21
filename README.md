@@ -380,6 +380,8 @@ El Service Worker funciona aparte de la página: descarga la app por adelantado 
 
 Con el Service Worker desactivado (`ng serve`) no se muestra nada. Para probarlo: abre la app con `npm run lab`, cambia algo, vuelve a compilar con `npm run build` sin detener el servidor y recarga la página una vez; el diálogo aparece cuando termina la descarga.
 
+Cada POST del outbox tiene un límite de 15 segundos, incluida la lectura de la respuesta. Al agotarse, se aborta la petición y se trata como un fallo temporal: queda `PENDIENTE` (o `FALLIDO` al quinto intento) y se libera el candado para continuar con los demás envíos. El reintento conserva el mismo `Idempotency-Key`.
+
 **Background Sync.** Cuando una respuesta queda en el outbox (sin conexión o por un fallo temporal), la página registra la sincronización `fatfish-outbox` (`registration.sync.register`). Al volver la red, el navegador despierta al Service Worker aunque la pestaña ya esté cerrada, y `public/sw.js` vacía el outbox con las mismas reglas de la página: hasta 5 intentos, `Idempotency-Key` con el UUID, reintento solo en fallos temporales y `FALLIDO` ante un rechazo como un `400`. Si algo sigue pendiente, el navegador vuelve a intentarlo más tarde.
 
 | Navegador                   | Comportamiento                                                                          |

@@ -1,7 +1,7 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable, map } from 'rxjs';
-import { API_BASE } from '../../core/config/api.config';
+import { API_BASE, TIMEOUT_ENVIO_MS } from '../../core/config/api.config';
 import { RespuestaEnvio, Retroalimentacion } from '../../domain/models/retroalimentacion';
 import { RetroalimentacionRepository } from '../../domain/ports/retroalimentacion.repository';
 import { RetroalimentacionResponseDto } from './dto/partida.dto';
@@ -14,7 +14,10 @@ export class RetroalimentacionApiRepository implements RetroalimentacionReposito
   enviar(datos: Retroalimentacion, idempotencyKey: string): Observable<RespuestaEnvio> {
     const headers = new HttpHeaders({ 'Idempotency-Key': idempotencyKey });
     return this.http
-      .post<RetroalimentacionResponseDto>(`${API_BASE}/retroalimentacion`, datos, { headers })
+      .post<RetroalimentacionResponseDto>(`${API_BASE}/retroalimentacion`, datos, {
+        headers,
+        timeout: TIMEOUT_ENVIO_MS,
+      })
       .pipe(map((dto) => ({ id: dto.id, creadaEn: new Date(dto.creadaEn) })));
   }
 }
