@@ -8,27 +8,122 @@ Banco de pruebas de la PWA de **Fat Fish** conectada a la API (Spring Boot) y a 
 
 Los datos son **simulados** (scripts de la carpeta [`sql/`](./sql/)).
 
+Este documento también reúne, en [Requisitos de Integradora](#requisitos-de-integradora), lo que pide la minuta de integradora para Aplicaciones Web Progresivas: la importación de la base de datos, las operaciones de creación y consulta de datos, y la documentación en Markdown.
+
 ## Índice
 
-1. [Tablas que usa el laboratorio](#1-tablas-que-usa-el-laboratorio)
-2. [Contenido de esta carpeta](#2-contenido-de-esta-carpeta)
-3. [Arquitectura del laboratorio](#3-arquitectura-del-laboratorio)
-4. [Requisitos](#4-requisitos)
-5. [Pasos](#5-pasos)
-   1. [Clonar los dos repositorios en la misma carpeta](#1-clonar-los-dos-repositorios-en-la-misma-carpeta)
-   2. [Crear el usuario y la base de datos (una sola vez)](#2-crear-el-usuario-y-la-base-de-datos-una-sola-vez)
-   3. [Levantar la API con el perfil del laboratorio](#3-levantar-la-api-con-el-perfil-del-laboratorio)
-   4. [Cargar los datos simulados (terminal de psql)](#4-cargar-los-datos-simulados-terminal-de-psql)
-   5. [Levantar la PWA](#5-levantar-la-pwa)
-6. [Casos de prueba](#6-casos-de-prueba)
-7. [Evidencias](#7-evidencias)
-   1. [Persistencia y base de datos (backend y DB)](#71-persistencia-y-base-de-datos-backend-y-db)
-   2. [Frontend y comportamiento PWA](#72-frontend-y-comportamiento-pwa)
-8. [Solución de problemas](#8-solución-de-problemas)
+- [Laboratorio de pruebas – PWA + API + PostgreSQL](#laboratorio-de-pruebas--pwa--api--postgresql)
+  - [Índice](#índice)
+  - [Requisitos de Integradora](#requisitos-de-integradora)
+    - [Importación de la base de datos](#importación-de-la-base-de-datos)
+    - [Creación de datos desde la PWA](#creación-de-datos-desde-la-pwa)
+    - [Consulta de datos desde la PWA](#consulta-de-datos-desde-la-pwa)
+    - [Documentación en Markdown](#documentación-en-markdown)
+  - [1. Tablas que usa el laboratorio](#1-tablas-que-usa-el-laboratorio)
+  - [2. Contenido de esta carpeta](#2-contenido-de-esta-carpeta)
+  - [3. Arquitectura del laboratorio](#3-arquitectura-del-laboratorio)
+  - [4. Requisitos](#4-requisitos)
+  - [5. Pasos](#5-pasos)
+    - [1. Clonar los dos repositorios en la misma carpeta](#1-clonar-los-dos-repositorios-en-la-misma-carpeta)
+    - [2. Crear el usuario y la base de datos (una sola vez)](#2-crear-el-usuario-y-la-base-de-datos-una-sola-vez)
+    - [3. Levantar la API con el perfil del laboratorio](#3-levantar-la-api-con-el-perfil-del-laboratorio)
+    - [4. Cargar los datos simulados (terminal de `psql`)](#4-cargar-los-datos-simulados-terminal-de-psql)
+    - [5. Levantar la PWA](#5-levantar-la-pwa)
+  - [6. Casos de prueba](#6-casos-de-prueba)
+  - [7. Evidencias](#7-evidencias)
+    - [7.1 Persistencia y base de datos (backend y DB)](#71-persistencia-y-base-de-datos-backend-y-db)
+      - [Scripts de carga y limpieza](#scripts-de-carga-y-limpieza)
+      - [Consultas antes y después del registro](#consultas-antes-y-después-del-registro)
+      - [Logs del servidor backend (Spring Boot)](#logs-del-servidor-backend-spring-boot)
+    - [7.2 Frontend y comportamiento PWA](#72-frontend-y-comportamiento-pwa)
+      - [Capturas de la interfaz](#capturas-de-la-interfaz)
+      - [DevTools: Network](#devtools-network)
+      - [DevTools: Application (service worker, almacenamiento y sincronización)](#devtools-application-service-worker-almacenamiento-y-sincronización)
+      - [DevTools: Console](#devtools-console)
+  - [8. Solución de problemas](#8-solución-de-problemas)
+
+## Requisitos de Integradora
+
+Esta sección reúne lo que pide la minuta de integradora para Aplicaciones Web Progresivas y dónde comprobarlo. Todo se prueba en una base local desechable: no se toca la base de producción y la API y la PWA se usan tal como están (no hay endpoints nuevos). Antes de `npm run lab` comprueba que las variables `API_URL` y `API_KEY` no estén definidas en tu terminal: sin ellas, la PWA apunta a `http://localhost:8080` (la consola lo imprime al arrancar). Si apuntaran a la API de producción, los envíos de prueba se guardarían ahí.
+
+| Requisito de la minuta                                       | Dónde se explica                                                                                                          | Evidencia                                                                                                                                                                                                 |
+| ------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Script de importación de base de datos `.sql`                | [Importación de la base de datos](#importación-de-la-base-de-datos)                                                       | [`bd-00-importacion.txt`](./evidencias/proyecta/bd-00-importacion.txt) y [`bd-01-antes.txt`](./evidencias/proyecta/bd-01-antes.txt)                                                                        |
+| Operaciones de creación y consulta de datos dentro de la PWA | [Creación de datos desde la PWA](#creación-de-datos-desde-la-pwa) y [Consulta de datos desde la PWA](#consulta-de-datos-desde-la-pwa) | [`ui-01-creacion-confirmacion.png`](./evidencias/proyecta/ui-01-creacion-confirmacion.png), [`ui-02-expediente.png`](./evidencias/proyecta/ui-02-expediente.png) y [`bd-02-despues.txt`](./evidencias/proyecta/bd-02-despues.txt) |
+| Documentación del desarrollo y las pruebas en Markdown       | [Documentación en Markdown](#documentación-en-markdown)                                                                   | Este archivo                                                                                                                                                                                              |
+
+### Importación de la base de datos
+
+La base se prepara en cuatro pasos, siempre en este orden. El esquema lo crea Flyway desde la API y los scripts de esta carpeta solo crean la base y cargan los datos de prueba.
+
+| Orden | Archivo                                                                                                                                                                   | Quién lo ejecuta                  | Qué hace                                                                              |
+| ----- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------- | ------------------------------------------------------------------------------------- |
+| 1     | [`sql/00_crear_bd.sql`](./sql/00_crear_bd.sql)                                                                                                                            | Tú, con el usuario `postgres`     | Crea el usuario `fatfish` y las bases `fatfish` y `fatfish_test` (borra las anteriores) |
+| 2     | [`V1__esquema_inicial.sql`](https://github.com/Anuma-Games/fat-fish-api/blob/main/src/main/resources/db/migration/V1__esquema_inicial.sql)                                | Flyway, al arrancar la API        | Crea las tablas y el catálogo de comodines                                            |
+| 2     | [`V2__partida_clave_idempotencia.sql`](https://github.com/Anuma-Games/fat-fish-api/blob/main/src/main/resources/db/migration/V2__partida_clave_idempotencia.sql)          | Flyway, al arrancar la API        | Cambia `partida`: agrega `clave_idempotencia` y `terminada_en` y quita `numero_local` |
+| 2     | [`V3__ronda_sin_limite.sql`](https://github.com/Anuma-Games/fat-fish-api/blob/main/src/main/resources/db/migration/V3__ronda_sin_limite.sql)                              | Flyway, al arrancar la API        | Acepta partidas que pasan de la ronda 9 (`ronda_alcanzada >= 1`)                      |
+| 3     | [`sql/01_limpieza.sql`](./sql/01_limpieza.sql)                                                                                                                            | Tú, con `psql`                    | Vacía las tablas (excepto el catálogo de comodines) y reinicia los `id`               |
+| 4     | [`sql/02_carga.sql`](./sql/02_carga.sql)                                                                                                                                  | Tú, con `psql`                    | Carga los datos de prueba                                                             |
+
+Las instrucciones para ejecutarlos están en la sección [5. Pasos](#5-pasos): el orden 1 en el [paso 2](#2-crear-el-usuario-y-la-base-de-datos-una-sola-vez), el 2 en el [paso 3](#3-levantar-la-api-con-el-perfil-del-laboratorio) y los órdenes 3 y 4 en el [paso 4](#4-cargar-los-datos-simulados-terminal-de-psql). Las migraciones están en la carpeta [`db/migration`](https://github.com/Anuma-Games/fat-fish-api/tree/main/src/main/resources/db/migration) de la API.
+
+Para comprobar que la importación terminó bien, corre [`03_consultas.sql`](./sql/03_consultas.sql). Debe mostrar:
+
+| Consulta                                             | Resultado esperado                                                                |
+| ---------------------------------------------------- | --------------------------------------------------------------------------------- |
+| 1. Conteos                                           | 28 jugadores, 107 partidas, 6 retroalimentaciones y 8 encuestas                   |
+| 8. Migraciones de Flyway (`flyway_schema_history`)   | Tres filas (`V1__esquema_inicial.sql`, `V2__partida_clave_idempotencia.sql` y `V3__ronda_sin_limite.sql`) con `success = t` |
+
+### Creación de datos desde la PWA
+
+Requisito previo: la PWA y la API corriendo, con los datos cargados (pasos 1 a 5 de [5. Pasos](#5-pasos)). Caso [LAB-02](#6-casos-de-prueba).
+
+1. Antes de usar la PWA, deja la base recién cargada (repite `01_limpieza.sql` y `02_carga.sql` si ya hiciste otros envíos) y guarda el estado inicial con `psql -U fatfish -h localhost -d fatfish -f fat-fish-pwa/docs/laboratorio-pruebas/sql/03_consultas.sql -o fat-fish-pwa/docs/laboratorio-pruebas/evidencias/proyecta/bd-01-antes.txt`. La consulta 1 muestra 6 retroalimentaciones y la consulta 6 sale vacía.
+2. En **http://localhost:4200/opinion/retroalimentacion** deja **Sugerencia** y **App web** y escribe el mensaje `Prueba FF-163: comprobar creación desde la PWA`.
+3. Pulsa **Enviar** una sola vez. Debe aparecer "¡Gracias! Tu mensaje se guardó en el servidor." Haz la captura con el aviso y el mensaje a la vista.
+4. Vuelve a correr `03_consultas.sql` con `-o …/evidencias/proyecta/bd-02-despues.txt`. La consulta 6 devuelve **una sola fila** con ese mensaje (con `id` 7 si es el primer envío tras cargar los datos), la consulta 1 muestra una retroalimentación más que antes (7) y la consulta 5 sale vacía.
+
+La consulta SQL que comprueba la creación es la 6 de [`03_consultas.sql`](./sql/03_consultas.sql):
+
+```sql
+select id, categoria, componente, mensaje, creada_en, clave_idempotencia
+from retroalimentacion
+where mensaje like 'Prueba FF-163%'
+order by id;
+```
+
+Evidencia: [`ui-01-creacion-confirmacion.png`](./evidencias/proyecta/ui-01-creacion-confirmacion.png) (confirmación en la PWA), [`bd-02-consulta-creacion.png`](./evidencias/proyecta/bd-02-consulta-creacion.png) (resultado de la consulta 6 en terminal) y [`bd-02-despues.txt`](./evidencias/proyecta/bd-02-despues.txt) (salida completa de `03_consultas.sql`; el estado inicial está en [`bd-01-antes.txt`](./evidencias/proyecta/bd-01-antes.txt)).
+
+### Consulta de datos desde la PWA
+
+Requisito previo: el mismo de la creación. Caso [LAB-01](#6-casos-de-prueba).
+
+1. En **Expediente** (`/acceso`) busca `1`, elige a `ManoDeHierro` y pulsa **Ver expediente**. La captura debe ser de la pantalla del expediente (`/perfil`), con `#1 / ManoDeHierro` y las 4 tarjetas a la vista, no de la lista de resultados.
+2. Compara los datos del expediente con la consulta 7 de [`03_consultas.sql`](./sql/03_consultas.sql), que une `jugador` y `estadistica_jugador`:
+
+| Dato en la PWA                          | Valor visible          | Columna en la base                                   | Valor en la base |
+| --------------------------------------- | ---------------------- | ---------------------------------------------------- | ---------------- |
+| Expediente n.º / alias                  | `#1` / `ManoDeHierro`  | `jugador.id` / `jugador.alias`                       | `1` / `ManoDeHierro` |
+| Partidas                                | 14                     | `estadistica_jugador.partidas_totales`               | 14               |
+| Ganaste                                 | 3                      | `estadistica_jugador.partidas_ganadas`               | 3                |
+| Total perdido                           | $31,700                | `estadistica_jugador.dinero_perdido`                 | 31700            |
+| De … invertidos                         | $61,850                | `estadistica_jugador.dinero_invertido`               | 61850            |
+| Racha de derrotas                       | 4 (seguidas)           | `estadistica_jugador.racha_derrotas_max`             | 4                |
+| Tiempo en la mesa                       | 5 h 4 min              | `estadistica_jugador.tiempo_jugado_seg` (18 248 s)   | 5 horas 4 minutos |
+
+Evidencia: [`ui-02-expediente.png`](./evidencias/proyecta/ui-02-expediente.png) (lo que muestra la PWA) y [`bd-02-despues.txt`](./evidencias/proyecta/bd-02-despues.txt) (resultado de la consulta 7).
+
+### Documentación en Markdown
+
+| Documento                                                                                          | Qué contiene                                                                                       |
+| -------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
+| [README de la PWA](../../README.md)                                                                | Diseño, estado de la construcción, modelo de datos y consumo de la API                             |
+| Este archivo                                                                                       | Preparación de la base, scripts `.sql`, casos de prueba, evidencias y solución de problemas        |
+| [README de la API](https://github.com/Anuma-Games/fat-fish-api/blob/main/README.md)                | Migraciones de Flyway, datos de demostración y endpoints                                           |
 
 ## 1. Tablas que usa el laboratorio
 
-La migración `V1` de la API crea el esquema completo con `id` numérico; el diagrama y la descripción de cada tabla están en la [sección 5 del README de la PWA](../../README.md#5-modelo-de-datos). El laboratorio usa estas:
+Las migraciones `V1`, `V2` y `V3` de la API (Flyway) crean el esquema completo con `id` numérico; el diagrama y la descripción de cada tabla están en la [sección 5 del README de la PWA](../../README.md#5-modelo-de-datos). El laboratorio usa estas:
 
 | Tabla                 | Uso en el laboratorio                                                                     |
 | --------------------- | ----------------------------------------------------------------------------------------- |
@@ -40,7 +135,7 @@ La migración `V1` de la API crea el esquema completo con `id` numérico; el dia
 
 **¿Por qué `clave_idempotencia` es un UUID?** La genera el navegador (`crypto.randomUUID()`) en el momento del envío, incluso sin conexión, cuando todavía no puede pedirle un número al servidor. Si cada dispositivo numerara 1, 2, 3…, dos dispositivos tendrían un "envío 1" y la API descartaría uno pensando que es un reintento. El UUID no se repite y viaja en la cabecera `Idempotency-Key`. El `id` de cada fila sigue siendo el número que asigna PostgreSQL; en los datos de prueba la clave la genera `gen_random_uuid()`.
 
-> En el juego, los jugadores se registran con alias y contraseña y envían sus partidas a `/api/juego` (ver el README de la API). En el laboratorio se cargan con [`02_carga.sql`](./sql/02_carga.sql), que es copia de [`fat-fish-api/sql/demo/02_cargar.sql`](https://github.com/Anuma-Games/fat-fish-api/blob/develop/sql/demo/02_cargar.sql) (los datos de demostración de producción). Su contraseña es aleatoria y nadie la conoce: el laboratorio solo lee sus datos desde la PWA.
+> En el juego, los jugadores se registran con alias y contraseña y envían sus partidas a `/api/juego` (ver el README de la API). En el laboratorio se cargan con [`02_carga.sql`](./sql/02_carga.sql), que es copia de [`fat-fish-api/sql/demo/02_cargar.sql`](https://github.com/Anuma-Games/fat-fish-api/blob/main/sql/demo/02_cargar.sql) (los datos de demostración de producción). Su contraseña es aleatoria y nadie la conoce: el laboratorio solo lee sus datos desde la PWA.
 
 ## 2. Contenido de esta carpeta
 
@@ -49,8 +144,8 @@ La migración `V1` de la API crea el esquema completo con `id` numérico; el dia
 | [`sql/00_crear_bd.sql`](./sql/00_crear_bd.sql)   | Crea el usuario `fatfish` y las bases `fatfish` y `fatfish_test` (borra las anteriores)                                                                                             |
 | [`sql/01_limpieza.sql`](./sql/01_limpieza.sql)   | Vacía las tablas (excepto el catálogo de comodines) y reinicia los `id`                                                                                                             |
 | [`sql/02_carga.sql`](./sql/02_carga.sql)         | Datos de prueba (los mismos de producción): 28 jugadores ficticios (`id` 1 a 28) con sus estadísticas, 107 partidas, 45 registros de comodines, 6 retroalimentaciones y 8 encuestas |
-| [`sql/03_consultas.sql`](./sql/03_consultas.sql) | Consultas de verificación para correr antes y después de usar la PWA                                                                                                                |
-| [`evidencias/`](./evidencias/)                   | Salidas de `psql`, logs de Spring Boot, consola del navegador, capturas y volcados de Cache Storage e IndexedDB                                                                     |
+| [`sql/03_consultas.sql`](./sql/03_consultas.sql) | Consultas de verificación para correr antes y después de usar la PWA: conteos, historial y estadísticas del jugador 1, retroalimentación, mensaje de prueba de integradora, expediente para compararlo con la PWA y migraciones de Flyway                                                                                                                |
+| [`evidencias/`](./evidencias/)                   | Salidas de `psql`, logs de Spring Boot, consola del navegador, capturas y volcados de Cache Storage e IndexedDB; la subcarpeta [`proyecta/`](./evidencias/proyecta/) tiene las evidencias de [Requisitos de Integradora](#requisitos-de-integradora)                                                                     |
 
 ## 3. Arquitectura del laboratorio
 
@@ -120,7 +215,7 @@ cd fat-fish-api
 ./mvnw spring-boot:run -Dspring-boot.run.profiles=lab
 ```
 
-- Espera la línea `Started FatFishApiApplication`. Flyway crea las tablas (migración `V1`) en el primer arranque.
+- Espera la línea `Started FatFishApiApplication`. Flyway aplica las migraciones `V1`, `V2` y `V3` (crean las tablas y el catálogo de comodines) en el primer arranque.
 - Si tu sistema tiene otra versión de Java por defecto, indica el JDK 21 antes del comando:
   - Linux / WSL: `export JAVA_HOME=/usr/lib/jvm/java-21-openjdk-amd64` (ajusta la ruta a tu instalación).
   - macOS: `export JAVA_HOME=$(/usr/libexec/java_home -v 21)`.
@@ -163,10 +258,10 @@ psql -U fatfish -h localhost -d fatfish -f fat-fish-pwa/docs/laboratorio-pruebas
 
 | ID      | Caso                                       | Pasos                                                                                                                                                                       | Resultado esperado                                                                                                                                                                                                                          | Evidencia                                                                                                                                                                                                                                                                                                                                                                                                 |
 | ------- | ------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| LAB-01  | Consulta y renderizado                     | Abrir **Expediente**, que lleva al buscador (`/acceso`), buscar `1` (o `ManoDeHierro`) y elegir al jugador                                                                  | Alias `ManoDeHierro` con `ID #1`, 4 tarjetas de estadísticas y las 10 partidas más recientes; la consola muestra los dos GET, su tiempo y el tiempo de renderizado                                                                          | [`ui-01-expediente-en-linea.png`](./evidencias/ui-01-expediente-en-linea.png), [`consola-navegador.txt`](./evidencias/consola-navegador.txt), [`backend-spring-boot.log.txt`](./evidencias/backend-spring-boot.log.txt)                                                                                                                                                                                   |
+| LAB-01  | Consulta y renderizado                     | Abrir **Expediente**, que lleva al buscador (`/acceso`), buscar `1` (o `ManoDeHierro`) y elegir al jugador                                                                  | Alias `ManoDeHierro` con `ID #1`, 4 tarjetas de estadísticas y las 10 partidas más recientes (sus valores coinciden con la consulta 7 de [`03_consultas.sql`](./sql/03_consultas.sql)); la consola muestra los dos GET, su tiempo y el tiempo de renderizado                                                                          | [`ui-01-expediente-en-linea.png`](./evidencias/ui-01-expediente-en-linea.png), [`consola-navegador.txt`](./evidencias/consola-navegador.txt), [`backend-spring-boot.log.txt`](./evidencias/backend-spring-boot.log.txt)                                                                                                                                                                                   |
 | LAB-01b | Paginación                                 | Clic en **Ver más partidas**                                                                                                                                                | Se agregan las 4 partidas restantes (`GET …&pagina=1`) y el texto cambia a "14 de 14 partidas"                                                                                                                                              | [`ui-01b-ver-mas-partidas.png`](./evidencias/ui-01b-ver-mas-partidas.png), [`consola-navegador.txt`](./evidencias/consola-navegador.txt)                                                                                                                                                                                                                                                                  |
 | LAB-01c | Jugador sin partidas y jugador inexistente | En **Buscar otro jugador** (`/acceso`), buscar `5` y luego `999`                                                                                                            | `recien_llegado` muestra "Este jugador todavía no tiene partidas"; `999` muestra **Sin resultados** y el Crupier responde "No tengo a nadie llamado «999»…" (`99` no sirve: coincide con el alias `TodoONada99`)                            | —                                                                                                                                                                                                                                                                                                                                                                                                         |
-| LAB-02  | Envío en línea                             | En `/opinion/retroalimentacion`, enviar un mensaje de 10 o más caracteres                                                                                                   | Aviso "Tu mensaje se guardó en el servidor"; en PostgreSQL aparece la fila nueva                                                                                                                                                            | [`ui-02-retroalimentacion-en-linea.png`](./evidencias/ui-02-retroalimentacion-en-linea.png), [`bd-02-despues.txt`](./evidencias/bd-02-despues.txt)                                                                                                                                                                                                                                                        |
+| LAB-02  | Envío en línea                             | En `/opinion/retroalimentacion`, enviar un mensaje de 10 o más caracteres (para Integradora: `Prueba FF-163: comprobar creación desde la PWA`)                                                                                                   | Aviso "Tu mensaje se guardó en el servidor"; en PostgreSQL aparece la fila nueva (consulta 6 de [`03_consultas.sql`](./sql/03_consultas.sql))                                                                                                                                                            | [`ui-02-retroalimentacion-en-linea.png`](./evidencias/ui-02-retroalimentacion-en-linea.png), [`bd-02-despues.txt`](./evidencias/bd-02-despues.txt)                                                                                                                                                                                                                                                        |
 | LAB-03  | Validación                                 | Enviar un mensaje de menos de 10 caracteres                                                                                                                                 | Se rechaza en la PWA; la API también responde `400` si se le envía directo                                                                                                                                                                  | —                                                                                                                                                                                                                                                                                                                                                                                                         |
 | LAB-04  | Envío sin conexión                         | DevTools → Network → **Offline**; enviar otro mensaje                                                                                                                       | Aviso "Guardado en tu dispositivo"; en DevTools → Application → IndexedDB → `fatfish-pwa` → `outbox` el registro tiene `estado: "PENDIENTE"` e `intentos: 0`; la base no cambia                                                             | [`ui-03-retroalimentacion-sin-conexion.png`](./evidencias/ui-03-retroalimentacion-sin-conexion.png), [`devtools-04a-indexeddb-pendiente.png`](./evidencias/devtools-04a-indexeddb-pendiente.png), [`almacenamiento-sin-conexion.json`](./evidencias/almacenamiento-sin-conexion.json)                                                                                                                     |
 | LAB-05  | Historial sin conexión                     | En línea, buscar `1` para que la app vuelva a recordar a `ManoDeHierro` (LAB-01c la dejó en el `5`); luego, con Offline activo, abrir **Expediente** (`/perfil`) y recargar | La app abre y muestra el perfil y las partidas desde Cache Storage, con el aviso "Sin conexión" y la fecha de los datos                                                                                                                     | [`ui-04-expediente-sin-conexion.png`](./evidencias/ui-04-expediente-sin-conexion.png)                                                                                                                                                                                                                                                                                                                     |
@@ -262,3 +357,6 @@ Los scripts están en [`sql/`](./sql/) (descritos en [Contenido de esta carpeta]
 | El menú dice "Service worker: inactivo"                                 | Se abrió con `ng serve`; usa `npm run lab`                                                                                                      |
 | Se ve una versión vieja de la PWA                                       | DevTools → Application → Service workers → **Update** (o _Unregister_ y recargar)                                                               |
 | `password authentication failed for user "fatfish"`                     | Repite el paso 2 o indica la contraseña con `DB_PASSWORD`                                                                                       |
+| `database "fatfish" is being accessed by other users` al repetir el paso 2 | La API sigue conectada: deténla antes de ejecutar `00_crear_bd.sql` y vuélvela a arrancar después                                            |
+| `psql` no se reconoce en PowerShell                                     | Agrega la carpeta `bin` de PostgreSQL al `PATH` de la sesión: `$env:Path += ";C:\Program Files\PostgreSQL\17\bin"`                           |
+| Los acentos salen rotos en los `.txt` de evidencias (Windows)           | Define `$env:PGCLIENTENCODING = "UTF8"` y guarda con `psql … -o archivo.txt` en lugar de `> archivo.txt` o `Out-File` (que agrega BOM o cambia la codificación) |
