@@ -35,6 +35,6 @@
     "prettier": "^3.10.1",
     "puppeteer-core": "24.43.1",
     "typescript": "~6.0.2",
-    "vitest": "^5.1.0"
+    "vitest": "^5.1.1"
   }
 }
