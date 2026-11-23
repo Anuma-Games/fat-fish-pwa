@@ -12,9 +12,10 @@ flowchart LR
         PWA["PWA Angular<br/>+ Service Worker"]
     end
 
-    subgraph GCP["Google Cloud"]
-        subgraph CR["Cloud Run: contenedor único"]
-            BE["Spring Boot<br/>/api/juego/**<br/>/api/pwa/**<br/>+ archivos de la PWA"]
+    subgraph GCP["Google Cloud y Firebase"]
+        FH["Firebase Hosting<br/>archivos estáticos de la PWA<br/>reenvía /api/** a la API"]
+        subgraph CR["Cloud Run"]
+            BE["API Spring Boot<br/>/api/juego/**<br/>/api/pwa/**<br/>solo JSON"]
         end
         DB[("Cloud SQL<br/>PostgreSQL")]
     end
@@ -23,5 +24,7 @@ flowchart LR
     J -->|consulta su expediente| PWA
     V -->|ranking, wiki, opinión| PWA
     Q -->|"POST /api/juego/partidas"| BE
-    PWA -->|"GET y POST /api/pwa/**"| BE
+    PWA -->|"GET y POST /api/pwa/**"| FH
+    FH -->|"entrega la app (HTML, JS, CSS)"| PWA
+    FH -->|"reenvía /api/**"| BE
     BE --> DB
