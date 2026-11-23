@@ -262,6 +262,22 @@ export const CRUPIER = {
 };
 
 /** The wheel of the hero can be spun by the visitor; this is the hint before the first spin. */
+/**
+ * Trailer of the game (YouTube, channel of the team). A CRT monitor in the hero plays a silent
+ * montage of it, and the monitor or "Ver tráiler" open the full video, loading YouTube only then.
+ */
+export const TRAILER = {
+  youtube: '6DxVmyy-x_8',
+  titulo: 'Tráiler de Fat Fish',
+  /**
+   * Silent montage for the monitor (public/img/landing/hero, README 8.3): the Crupier, a payout,
+   * the shop, the bosses and the pawnshop, never the wheel, which is already the hero. `poster` is
+   * its still frame, also shown with reduced motion.
+   */
+  clip: 'img/landing/hero/trailer-monitor.mp4',
+  poster: 'img/landing/hero/trailer-monitor.jpg',
+};
+
 export const RULETA = {
   pista: 'Toca o arrastra la ruleta para girarla.',
   colores: { rojo: 'rojo', negro: 'negro', cero: 'verde' },

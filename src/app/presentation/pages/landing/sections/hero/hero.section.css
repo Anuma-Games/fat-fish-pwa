@@ -4,12 +4,6 @@
   --techo: 104px;
   --tilt: 56deg;
   --calida: 255 214 150;
-  /* Color of the swirl shining on the wheel and the Crupier: green and gold at rest, red on a spin */
-  --reflejo: color-mix(
-    in srgb,
-    rgb(150 196 96) calc(100% - var(--calor, 0) * 100%),
-    rgb(238 72 44)
-  );
   position: relative;
   display: grid;
   grid-template-columns: minmax(0, 1fr);
@@ -30,7 +24,12 @@
   z-index: -1;
   background:
     radial-gradient(ellipse 46% 30% at 50% 14%, rgb(4 7 6 / 70%), transparent),
-    radial-gradient(ellipse 70% 62% at 50% 58%, transparent 30%, rgb(4 7 6 / 75%) 80%, #040706),
+    radial-gradient(
+      ellipse 80% 70% at 50% 58%,
+      transparent 35%,
+      rgb(4 7 6 / 65%) 82%,
+      rgb(4 7 6 / 90%)
+    ),
     linear-gradient(transparent 72%, var(--ff-bg-900));
 }
 
@@ -76,7 +75,8 @@
   box-shadow: 0 0 40px 18px rgb(var(--calida) / 45%);
   animation: parpadeo-luz 11s infinite steps(1);
 }
-/* Cone of light: a blurred trapezoid (soft sides) that also fades toward the floor */
+/* Cone of light: a blurred trapezoid (soft sides) that also fades toward the floor. Plain blend
+   and a clip to the cone: otherwise the edges of its box showed over the trailer video. */
 .haz {
   position: absolute;
   inset: 76px 0 0;
@@ -94,7 +94,8 @@
     var(--forma-haz) center / 100% 100% no-repeat,
     linear-gradient(#000 40%, transparent 96%);
   mask-composite: intersect;
-  mix-blend-mode: screen;
+  /* Where the SVG mask is not applied, the gradient filled the whole box over the video */
+  clip-path: polygon(37% 0, 63% 0, 99% 100%, 1% 100%);
   animation: parpadeo-luz 11s infinite steps(1);
 }
 .haz i {
@@ -176,7 +177,7 @@
 .mesa.girando {
   cursor: progress;
 }
-/* Pool of lamp light around the wheel, with a dark ring where the paint drains under it */
+/* Pool of lamp light around the wheel, with a dark ring under it */
 .mesa::before {
   content: '';
   position: absolute;
@@ -221,7 +222,7 @@
   display: block;
   image-rendering: pixelated;
 }
-/* The Crupier across the wheel: lamp on his head, the swirl shining on his sides */
+/* The Crupier across the wheel, with the lamp on his head */
 .crupier {
   position: absolute;
   z-index: 0;
@@ -231,8 +232,7 @@
   aspect-ratio: 64 / 54;
   translate: -50% 0;
   pointer-events: none;
-  filter: brightness(0.8) drop-shadow(-3px 0 0 var(--reflejo)) drop-shadow(3px 0 0 var(--reflejo))
-    drop-shadow(0 -3px 0 rgb(var(--calida) / 60%));
+  filter: brightness(0.8) drop-shadow(0 -3px 0 rgb(var(--calida) / 60%));
 }
 .crupier img {
   position: absolute;
@@ -286,7 +286,7 @@
   inset: 0;
   border-radius: 50%;
 }
-/* In hard steps, like the posterized light of the swirl */
+/* In hard steps, like posterized pixel-art light */
 .brillo::before {
   background: radial-gradient(
     circle at 50% 42%,

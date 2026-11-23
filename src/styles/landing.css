@@ -141,28 +141,171 @@ a.btn.lp-iman {
   }
 }
 
-/* Swirl of the game's start menu behind the hero (HeroSection), pixelated; without WebGL the dark
-   gradient of the hero shows */
+/* Light of the hero's TV on the room (HeroSection): a tiny frame of the trailer, blurred and
+   stretched over the whole hero, under the shadow of the room */
 .lp-ambiente {
   position: absolute;
-  inset: 0;
+  inset: -12%;
   z-index: -2;
+  width: 124%;
+  height: 124%;
+  object-fit: cover;
+  filter: blur(56px) saturate(1.4) brightness(0.9);
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+/* Old TV of the hero's room with the trailer (HeroSection). Below the calls to action on narrow
+   screens; on wide ones it stands to the right of the table, a little tilted, lit by its own glow. */
+.lp-monitor {
+  grid-row: 4;
+  grid-column: 1;
+  position: relative;
+  z-index: 2;
+  width: min(440px, calc(100% - 2 * var(--ff-space-4)));
+  margin-top: var(--ff-space-6);
+  padding: 14px 14px 30px;
+  font: inherit;
+  color: inherit;
+  background: linear-gradient(160deg, #3a332b, #1b1814 60%, #100e0b);
+  border: 2px solid #000;
+  border-radius: 22px;
+  box-shadow:
+    var(--ff-shadow-hard),
+    inset 0 2px 0 rgb(255 255 255 / 8%),
+    0 0 60px rgb(150 220 180 / 12%);
+  cursor: pointer;
+  transition:
+    rotate 0.3s ease,
+    scale 0.3s ease;
+}
+/* Two knobs on the frame, under the screen */
+.lp-monitor::after {
+  content: '';
+  position: absolute;
+  right: 22px;
+  bottom: 10px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #0b0a08;
+  box-shadow:
+    -18px 0 0 #0b0a08,
+    -44px 1px 0 -3px var(--ff-ruby-700);
+}
+.lp-monitor-pantalla {
+  position: relative;
+  display: block;
+  aspect-ratio: 640 / 356;
+  overflow: hidden;
+  background: #050605;
+  border-radius: 14px / 18px;
+  box-shadow: inset 0 0 0 2px #000;
+}
+.lp-monitor-pantalla :is(video, img) {
   display: block;
   width: 100%;
   height: 100%;
-  image-rendering: pixelated;
-  opacity: 0.8;
+  object-fit: cover;
+  filter: saturate(1.1) contrast(1.05);
 }
-
-/* The swirl shining on the lacquered rim of the hero's wheel (--reflejo, HeroSection) */
-.lp-reflejo {
+/* Glass of the tube: scan lines, a curved glare and dark corners */
+.lp-monitor-pantalla::after {
+  content: '';
   position: absolute;
   inset: 0;
-  border-radius: 50%;
-  box-shadow: inset 0 0 0 calc(var(--ancho) * 3 / 260) var(--reflejo);
-  mix-blend-mode: screen;
-  opacity: 0.5;
   pointer-events: none;
+  background:
+    radial-gradient(ellipse 70% 45% at 30% 15%, rgb(255 255 255 / 10%), transparent 70%),
+    repeating-linear-gradient(transparent 0 2px, rgb(0 0 0 / 28%) 2px 3px);
+  box-shadow: inset 0 0 40px 8px rgb(0 0 0 / 70%);
+}
+.lp-monitor-ver {
+  position: absolute;
+  z-index: 1;
+  left: 50%;
+  bottom: 10px;
+  translate: -50% 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  font-family: var(--ff-font-label);
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  white-space: nowrap;
+  color: var(--ff-cream-100);
+  background: rgb(0 0 0 / 70%);
+  border: 1px solid var(--ff-gold-600);
+  border-radius: var(--ff-radius-field);
+}
+.lp-monitor:hover,
+.lp-monitor:focus-visible {
+  scale: 1.03;
+}
+.lp-monitor:hover .lp-monitor-ver,
+.lp-monitor:focus-visible .lp-monitor-ver {
+  color: #000;
+  background: var(--ff-gold-400);
+}
+@media (min-width: 1280px) {
+  .lp-monitor {
+    /* Out of its grid row, so `top` counts from the top of the hero and not from that row */
+    grid-row: auto;
+    grid-column: auto;
+    position: absolute;
+    /* Next to the Crupier, in the first screen, filling the room to the right of the wheel */
+    top: 280px;
+    left: calc(50% + var(--ancho) / 2 + 8px);
+    width: min(420px, calc(50% - var(--ancho) / 2 - 32px));
+    margin: 0;
+    rotate: -4deg;
+  }
+  .lp-monitor:hover,
+  .lp-monitor:focus-visible {
+    rotate: -2deg;
+  }
+}
+
+/* Full trailer of the hero, over the page; the close button sits above the video */
+.lp-trailer {
+  width: min(960px, 94vw);
+  max-width: none;
+  padding: 0;
+  overflow: visible;
+  color: var(--ff-cream-100);
+  background: #000;
+  border: 2px solid var(--ff-gold-600);
+  border-radius: var(--ff-radius-card);
+  box-shadow: var(--ff-shadow-hard);
+}
+.lp-trailer::backdrop {
+  background: rgb(4 7 6 / 85%);
+}
+.lp-trailer-marco {
+  position: relative;
+  aspect-ratio: 16 / 9;
+}
+.lp-trailer iframe {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+.lp-trailer-cerrar {
+  position: absolute;
+  top: -52px;
+  right: -2px;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  color: var(--ff-cream-100);
+  background: var(--ff-bg-800);
+  border: 2px solid var(--ff-gold-600);
+  border-radius: var(--ff-radius-field);
+  cursor: pointer;
 }
 
 /* The paper bag of the hero's Crupier nods one pixel of its sprite at a time */
@@ -176,52 +319,6 @@ a.btn.lp-iman {
   }
   70% {
     translate: calc(100% / 64) 0;
-  }
-}
-
-/* Chips dragged by the swirl of the hero (HeroSection): each one turns around the wheel on the
-   plane of the table (squashed by the cosine of --tilt) while it falls toward the rim and fades. */
-.lp-arrastre {
-  position: absolute;
-  z-index: 0;
-  left: 50%;
-  top: 50%;
-  width: 0;
-  height: 0;
-  scale: 1 0.56;
-  pointer-events: none;
-}
-.lp-arrastre span {
-  position: absolute;
-  animation: lp-vuelta var(--vuelta) linear var(--desfase) infinite;
-}
-.lp-arrastre i {
-  position: absolute;
-  width: var(--tam);
-  aspect-ratio: 1;
-  margin: calc(var(--tam) / -2);
-  background: var(--ficha) center / contain no-repeat;
-  image-rendering: pixelated;
-  filter: brightness(0.75);
-  animation: lp-caida var(--caida) linear var(--retraso) infinite;
-}
-@keyframes lp-vuelta {
-  to {
-    rotate: 360deg;
-  }
-}
-@keyframes lp-caida {
-  0% {
-    translate: calc(var(--ancho) * 1.05) 0;
-    opacity: 0;
-  }
-  15%,
-  80% {
-    opacity: 0.85;
-  }
-  100% {
-    translate: calc(var(--ancho) * 0.52) 0;
-    opacity: 0;
   }
 }
 
@@ -286,9 +383,7 @@ a.btn.lp-iman {
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  .lp-arrastre {
-    display: none;
-  }
+  .lp-monitor,
   .lp-reveal,
   .lp-iman,
   .lp-foco {

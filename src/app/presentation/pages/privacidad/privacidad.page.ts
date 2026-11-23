@@ -10,5 +10,5 @@ import { CabeceraPagina } from '../../components/cabecera-pagina/cabecera-pagina
 })
 export class PrivacidadPage {
   protected readonly correo = 'anumagames@gmail.com';
-  protected readonly actualizacion = '14 de noviembre de 2026';
+  protected readonly actualizacion = '23 de noviembre de 2026';
 }

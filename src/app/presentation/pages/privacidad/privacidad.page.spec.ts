@@ -39,4 +39,11 @@ describe('PrivacidadPage', () => {
     expect(texto).toContain('La API usa tu IP solo en memoria');
     expect(texto).toContain('No la guarda en la base de datos');
   });
+
+  it('tells that YouTube only loads when the visitor opens the trailer', async () => {
+    const texto = (await abrir()).textContent ?? '';
+    expect(texto).toContain('YouTube');
+    expect(texto).toContain('Ver tráiler');
+    expect(texto).toContain('youtube-nocookie.com');
+  });
 });

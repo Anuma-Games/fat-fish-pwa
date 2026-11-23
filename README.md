@@ -441,6 +441,8 @@ Las páginas de la app comparten las piezas del landing, para que todo el sitio 
 
 El expediente (`/perfil`) es una hoja de papel como la del landing, y en el ranking los tres primeros lugares llevan las fichas del juego.
 
+El hero del landing ya no tiene el remolino pintado de fondo (FF-166). En la sala hay una tele vieja con el tráiler del juego: un montaje corto y sin sonido (el Crupier, un cobro, la tienda, los jefes y la casa de empeño, nunca la ruleta, que ya es el centro del hero). La tele ilumina la sala: unas veces por segundo su imagen se copia a un canvas de 32 × 18 que se difumina sobre todo el hero (como el modo ambiente de YouTube), así que el fondo toma los colores del tráiler. Un clic en la tele (**Ver tráiler**) abre el video completo de YouTube en un diálogo; el reproductor solo se carga con ese clic, en el modo de privacidad mejorada (`youtube-nocookie.com`), y se quita al cerrarlo. En pantallas angostas la tele va debajo de los botones; desde 1280 px, a la derecha de la mesa, ocupando el espacio libre (hasta 420 px). Con movimiento reducido o ahorro de datos la tele y la luz de la sala usan solo la imagen fija. Todo se configura en `TRAILER` (`landing.config.ts`). El montaje (`img/landing/hero/trailer-monitor.mp4`, 10.9 s, 379 KB, 640 × 356) une los segundos 14.2–16.4, 21.2–22.0, 26.5–27.5, 29.0–30.4, 32.0–32.8, 38.0–38.8, 40.6–42.6 y 53.4–55.2 del tráiler, con un fundido en cada extremo; la imagen fija es el segundo 15.4. Se exportó con ffmpeg de una copia comprimida por WhatsApp: cuando haya el archivo original, se vuelve a exportar con los mismos tramos y se reemplazan los dos archivos.
+
 ![Componentes base e íconos](docs/img/guia-componentes.jpg)
 
 ### 8.4 Estructura modular y diseño adaptativo
