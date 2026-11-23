@@ -80,7 +80,7 @@ Requisito previo: la PWA y la API corriendo, con los datos cargados (pasos 1 a 5
 
 1. Antes de usar la PWA, deja la base recién cargada (repite `01_limpieza.sql` y `02_carga.sql` si ya hiciste otros envíos) y guarda el estado inicial con `psql -U fatfish -h localhost -d fatfish -f fat-fish-pwa/docs/laboratorio-pruebas/sql/03_consultas.sql -o fat-fish-pwa/docs/laboratorio-pruebas/evidencias/proyecta/bd-01-antes.txt`. La consulta 1 muestra 6 retroalimentaciones y la consulta 6 sale vacía.
 2. En **http://localhost:4200/opinion/retroalimentacion** deja **Sugerencia** y **App web** y escribe el mensaje `Prueba FF-163: comprobar creación desde la PWA`.
-3. Pulsa **Enviar** una sola vez. Debe aparecer "¡Gracias! Tu mensaje se guardó en el servidor." Haz la captura con el aviso y el mensaje a la vista.
+3. Antes de enviar, toma una captura con el mensaje escrito en el campo. Pulsa **Enviar** una sola vez; debe aparecer "¡Gracias! Tu mensaje se guardó en el servidor." y la PWA puede vaciar el campo. Toma una segunda captura con el aviso a la vista.
 4. Vuelve a correr `03_consultas.sql` con `-o …/evidencias/proyecta/bd-02-despues.txt`. La consulta 6 devuelve **una sola fila** con ese mensaje (con `id` 7 si es el primer envío tras cargar los datos), la consulta 1 muestra una retroalimentación más que antes (7) y la consulta 5 sale vacía.
 
 La consulta SQL que comprueba la creación es la 6 de [`03_consultas.sql`](./sql/03_consultas.sql):
