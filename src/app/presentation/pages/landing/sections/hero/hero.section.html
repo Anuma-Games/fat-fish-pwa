@@ -116,7 +116,9 @@
     </p>
     <p class="lead">{{ hero.texto }}</p>
     <div class="actions">
-      <a class="btn" appIman [href]="cta.demo">Jugar la demo</a>
+      @if (cta.demo) {
+        <a class="btn" appIman [href]="cta.demo">Jugar la demo</a>
+      }
       <a class="btn lp-alt" appIman [routerLink]="cta.expediente">Ver un expediente</a>
     </div>
   </div>

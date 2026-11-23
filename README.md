@@ -433,13 +433,17 @@ Las páginas de la app comparten las piezas del landing, para que todo el sitio 
 
 | Componente o clase              | Qué es                                                                                                   |
 |---------------------------------|----------------------------------------------------------------------------------------------------------|
-| `barra-nav`                     | Barra superior de todo el sitio: ☰, logo, enlaces a las secciones del landing y a la app (en escritorio) y "Jugar la demo" |
+| `barra-nav`                     | Barra superior de todo el sitio: ☰, logo, enlaces a las secciones del landing y a la app (en escritorio) y "Jugar la demo" cuando la demo tiene enlace |
 | `menu-lateral`                  | Panel que abre ☰ en cualquier ancho. En la app resalta la sección actual y muestra la última sincronización |
 | `cabecera-pagina`               | Lámpara que se enciende, título con líneas de monitor viejo, frase dorada y una línea del Crupier         |
 | `aviso-version`                 | Diálogo sobre un tapete que pregunta si se carga la versión nueva de la app ([7.4](#74-segundo-plano-y-actualizaciones)) |
 | `.tapete` (`styles/paginas.css`) | Paño verde con el enrejado del casino y borde dorado: buscador, formularios de Opinión e historial        |
 
 El expediente (`/perfil`) es una hoja de papel como la del landing, y en el ranking los tres primeros lugares llevan las fichas del juego.
+
+Las cartas de comodines del landing llevan íconos de pixel art de 16 × 16 (`public/img/landing/comodines/*.svg`, con contorno oscuro). El de **Tridente** sale de su modelo en el juego (`Assets/PreFab/Modifiers/Tridente.prefab`). **Reloj de arena**, **Ficha cargada** y **Seguro de la casa** todavía no tienen modelo: en la tienda del juego se ven como una ficha del color de su efecto (`ModifierFallbackVisual`), así que sus íconos usan ese color (ámbar, rojo y azul) con una figura propia. Cuando el juego les dé modelo, se redibujan a partir de él.
+
+Los botones "Jugar la demo" solo aparecen cuando `CTA.demo` (`landing.config.ts`) tiene el enlace de la demo; mientras esté vacío, no se muestran.
 
 ![Componentes base e íconos](docs/img/guia-componentes.jpg)
 
