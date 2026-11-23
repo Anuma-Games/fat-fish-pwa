@@ -33,7 +33,7 @@ Este documento reúne la **propuesta de diseño** de la PWA y el **estado actual
 | Laboratorio de pruebas 1 | Scripts de carga y limpieza                                | [`sql/`](docs/laboratorio-pruebas/sql)                                                                                    |
 | Laboratorio de pruebas 1 | Consultas antes y después, logs del backend                | [Evidencias](docs/laboratorio-pruebas/README.md#7-evidencias)                                                             |
 | Laboratorio de pruebas 1 | Interfaz y DevTools (Network, Application, Console)        | [Casos de prueba](docs/laboratorio-pruebas/README.md#6-casos-de-prueba) y [evidencias](docs/laboratorio-pruebas/evidencias) |
-| Laboratorio de pruebas 1 | Requisitos de Integradora: importación de BD, creación y consulta | [Requisitos de Integradora](docs/laboratorio-pruebas/README.md#requisitos-de-proyecta) |
+| Laboratorio de pruebas 1 | Requisitos de Integradora: importación de BD, creación y consulta | [Requisitos de Integradora](docs/laboratorio-pruebas/README.md#requisitos-de-integradora) |
 
 ---
 
