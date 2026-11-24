@@ -1,0 +1,75 @@
+ jugadores 
+-----------
+        28
+(1 row)
+
+ partidas 
+----------
+      107
+(1 row)
+
+ retroalimentaciones 
+---------------------
+                   7
+(1 row)
+
+ encuestas 
+-----------
+         8
+(1 row)
+
+ id | resultado | ronda_alcanzada | puntaje | dinero_invertido | dinero_perdido |       creada_en        
+----+-----------+-----------------+---------+------------------+----------------+------------------------
+ 14 | VICTORIA  |               9 |    1200 |             8100 |           2050 | 2026-10-30 17:02:00-06
+ 13 | DERROTA   |               2 |     148 |             1800 |           1450 | 2026-10-30 08:45:00-06
+ 12 | ABANDONO  |               3 |     210 |             2850 |           1750 | 2026-10-27 22:33:00-06
+ 11 | DERROTA   |               6 |     570 |             5350 |           4400 | 2026-10-25 20:30:00-06
+ 10 | VICTORIA  |               9 |    1301 |             8400 |           1750 | 2026-10-22 18:28:00-06
+  9 | DERROTA   |               2 |     128 |             1800 |           1250 | 2026-10-20 13:06:00-06
+  8 | DERROTA   |               3 |     221 |             2800 |           1850 | 2026-10-20 08:46:00-06
+  7 | ABANDONO  |               5 |     435 |             4950 |           3400 | 2026-10-18 16:30:00-06
+  6 | DERROTA   |               3 |     214 |             2950 |           2200 | 2026-10-13 16:53:00-06
+  5 | DERROTA   |               5 |     436 |             5050 |           4400 | 2026-10-07 16:55:00-06
+  4 | VICTORIA  |               9 |    1113 |             9300 |           1950 | 2026-10-03 19:24:00-06
+  3 | DERROTA   |               1 |      60 |              900 |            700 | 2026-10-03 08:19:00-06
+  2 | ABANDONO  |               2 |     143 |             1900 |            800 | 2026-09-30 14:34:00-06
+  1 | DERROTA   |               6 |     511 |             5700 |           3750 | 2026-09-28 09:30:00-06
+(14 rows)
+
+ partidas_totales | partidas_ganadas | dinero_invertido | dinero_perdido | racha_derrotas_max | tiempo_jugado_seg 
+------------------+------------------+------------------+----------------+--------------------+-------------------
+               14 |                3 |            61850 |          31700 |                  4 |             18248
+(1 row)
+
+ id | categoria  | componente |                                 mensaje                                 |           creada_en           |          clave_idempotencia          
+----+------------+------------+-------------------------------------------------------------------------+-------------------------------+--------------------------------------
+  1 | SUGERENCIA | PWA        | Me gustaría filtrar mi historial por victorias y derrotas               | 2026-10-12 11:05:00-06        | 50a9d44c-eaea-437a-a885-21e362277e2e
+  2 | ERROR      | JUEGO      | La bola se quedó girando en la ronda 3 y tuve que reiniciar la partida  | 2026-10-16 21:40:00-06        | 3baf33fc-fc65-4f9b-aa6f-2d66a82dcc2f
+  3 | SUGERENCIA | JUEGO      | Estaría bien ver cuánto dinero llevo perdido antes de pedir un préstamo | 2026-10-21 18:20:00-06        | 9323715c-dfe2-418f-8e6d-8c19c99a1645
+  4 | OTRO       | PWA        | Me ayudó ver en el expediente cuánto tiempo llevo jugando               | 2026-10-26 13:15:00-06        | 937337a7-b1a5-48fd-96ed-81674eee6156
+  5 | ERROR      | PWA        | En el celular el ranking tarda en cargar cuando tengo mala señal        | 2026-10-30 08:50:00-06        | 64047780-9de1-4c06-b44c-040d3328ccd3
+  6 | SUGERENCIA | OTRO       | Podrían agregar una guía corta de cómo funcionan los comodines          | 2026-11-02 19:30:00-06        | dd0cb8ad-3510-4e34-8692-f3fb645d0115
+  7 | SUGERENCIA | PWA        | Prueba FF-163: comprobar creación desde la PWA                          | 2026-11-21 23:30:41.147223-06 | 6aaa560d-6ef3-4ac6-be43-5927eec0d0c6
+(7 rows)
+
+ clave_idempotencia | count 
+--------------------+-------
+(0 rows)
+
+ id | categoria  | componente |                    mensaje                     |           creada_en           |          clave_idempotencia          
+----+------------+------------+------------------------------------------------+-------------------------------+--------------------------------------
+  7 | SUGERENCIA | PWA        | Prueba FF-163: comprobar creación desde la PWA | 2026-11-21 23:30:41.147223-06 | 6aaa560d-6ef3-4ac6-be43-5927eec0d0c6
+(1 row)
+
+ id |    alias     | partidas_totales | partidas_ganadas | dinero_perdido | dinero_invertido | racha_derrotas_max | horas | minutos | partidas_en_historial 
+----+--------------+------------------+------------------+----------------+------------------+--------------------+-------+---------+-----------------------
+  1 | ManoDeHierro |               14 |                3 |          31700 |            61850 |                  4 |     5 |       4 |                    14
+(1 row)
+
+ installed_rank | version |        description         |               script               | success 
+----------------+---------+----------------------------+------------------------------------+---------
+              1 | 1       | esquema inicial            | V1__esquema_inicial.sql            | t
+              2 | 2       | partida clave idempotencia | V2__partida_clave_idempotencia.sql | t
+              3 | 3       | ronda sin limite           | V3__ronda_sin_limite.sql           | t
+(3 rows)
+
