@@ -147,7 +147,6 @@ describe('LandingPage', () => {
 
   it('links the side menu to sections that exist, the sample dossier among them', async () => {
     const el = await render();
-    // Leaves out "Jugar la demo", still on '#' until the demo exists
     const anclas = [...el.querySelectorAll('#lp-menu a[href^="#"]')]
       .map((a) => a.getAttribute('href') ?? '')
       .filter((h) => h.length > 1);
@@ -155,6 +154,21 @@ describe('LandingPage', () => {
     for (const ancla of anclas) {
       expect(el.querySelector(ancla), ancla).not.toBeNull();
     }
+  });
+
+  it('hides "Jugar la demo" while the demo has no link', async () => {
+    const el = await render();
+    expect(el.textContent).not.toContain('Jugar la demo');
+    expect(el.querySelector('a[href="#"]')).toBeNull();
+  });
+
+  it('shows a pixel-art icon on every wildcard card, without text glyphs', async () => {
+    const el = await render();
+    const iconos = [...el.querySelectorAll('#comodines .frente img.icono')];
+    expect(iconos).toHaveLength(4);
+    for (const i of iconos)
+      expect(i.getAttribute('src')).toMatch(/^img\/landing\/comodines\/.+\.svg$/);
+    expect(el.querySelector('#comodines .glifo')).toBeNull();
   });
 
   it('has no video', async () => {

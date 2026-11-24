@@ -4,9 +4,10 @@
  * Everything is static: the landing page never calls the API or reads stored data.
  */
 
-/** Destinations of the call-to-action buttons. They stay in '#' until the pages exist. */
+/** Destinations of the call-to-action buttons. */
 export const CTA = {
-  demo: '#',
+  /** Link to the demo. Empty until the demo is published: every "Jugar la demo" stays hidden. */
+  demo: '',
   /** Internal routes of the PWA, used as plain links. */
   expediente: '/perfil',
   opinion: '/opinion/retroalimentacion',
@@ -121,31 +122,37 @@ export const PILARES = [
   },
 ];
 
-/** The four wildcards of the MVP (fat-fish-diseno, section 6). */
+/**
+ * A sample of the game's wildcards, one per category (Ruleta, Mesa, Fichas, Economía in
+ * fat-fish-game, Assets/Modifiers). Only some of them and without figures, so the page does not go
+ * out of date when the shop changes; the full catalog lives in the game.
+ * `icono` is a pixel-art SVG in public/img/landing/comodines (README 8.3).
+ */
 export const COMODINES = [
   {
-    categoria: 'Puntuación',
-    titulo: 'Multiplicador de puntos',
-    texto: 'Aporta al multiplicador de comodines y crece con las copias.',
-    glifo: '×',
-  },
-  {
     categoria: 'Ruleta',
-    titulo: 'Bola adicional',
-    texto: 'Una bola más en el giro: más aciertos, menos puntos.',
-    glifo: '+1',
-  },
-  {
-    categoria: 'Economía',
-    titulo: 'Bonificación económica',
-    texto: 'Dinero adicional, con un límite por ronda.',
-    glifo: '$',
+    titulo: 'Tridente',
+    texto: 'Lanza más bolas y cuenta la que más te paga. La casa cobra por cada bola extra.',
+    icono: 'tridente',
   },
   {
     categoria: 'Mesa',
-    titulo: 'Cambio de color',
-    texto: 'Cambia qué casillas cubren las jugadas por color.',
-    glifo: 'R/N',
+    titulo: 'Reloj de arena',
+    texto: 'Más giros en cada ronda. El tiempo que le robas a tu familia.',
+    icono: 'reloj-de-arena',
+  },
+  {
+    categoria: 'Fichas',
+    titulo: 'Ficha cargada',
+    texto: 'Tus plenos hacen crecer el bono de la casa.',
+    icono: 'ficha-cargada',
+  },
+  {
+    categoria: 'Economía',
+    titulo: 'Seguro de la casa',
+    texto:
+      'Te regresa parte de lo que pierdes en cada giro. La casa siempre gana, pero te consuela.',
+    icono: 'seguro-de-la-casa',
   },
 ];
 

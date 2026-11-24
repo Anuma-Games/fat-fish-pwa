@@ -4,7 +4,6 @@
   --papel-linea: rgb(34 30 22 / 9%);
   --tinta: var(--ff-ink-900);
   --tinta-suave: #5b5444;
-  --maquina: 'Courier New', Courier, ui-monospace, monospace;
   display: block;
 }
 .otro {
@@ -66,7 +65,7 @@
   bottom: 6px;
   translate: -50% 0;
   padding: 1px 6px;
-  font-family: var(--maquina);
+  font-family: var(--ff-font-doc);
   font-size: 11px;
   font-weight: 700;
   color: var(--papel);
@@ -82,7 +81,7 @@
   max-width: 100%;
   margin: 0;
   overflow: hidden;
-  font-family: var(--maquina);
+  font-family: var(--ff-font-doc);
   font-weight: 700;
   font-size: clamp(26px, 5vw, 36px);
   line-height: 1;
@@ -96,7 +95,7 @@
 }
 .nota {
   margin: 0;
-  font-family: var(--maquina);
+  font-family: var(--ff-font-doc);
   font-size: 13px;
   color: var(--tinta-suave);
 }
@@ -116,7 +115,7 @@
 }
 .datos dd {
   margin: 0;
-  font-family: var(--maquina);
+  font-family: var(--ff-font-doc);
   font-weight: 700;
   font-size: 30px;
   line-height: 1.1;

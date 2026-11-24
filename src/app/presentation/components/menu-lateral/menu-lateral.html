@@ -85,7 +85,9 @@
         </p>
       </div>
     }
-    <a class="btn" [href]="cta.demo" (click)="cerrar()">Jugar la demo</a>
+    @if (cta.demo) {
+      <a class="btn" [href]="cta.demo" (click)="cerrar()">Jugar la demo</a>
+    }
   </div>
 </aside>
 

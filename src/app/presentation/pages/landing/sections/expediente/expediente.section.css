@@ -3,7 +3,6 @@
   --papel-linea: rgb(34 30 22 / 9%);
   --tinta: var(--ff-ink-900);
   --tinta-suave: #5b5444;
-  --maquina: 'Courier New', Courier, ui-monospace, monospace;
 }
 .split {
   display: grid;
@@ -38,7 +37,7 @@
 .archivo h3 {
   margin: 0;
   min-height: 1em;
-  font-family: var(--maquina);
+  font-family: var(--ff-font-doc);
   font-weight: 700;
   font-size: 30px;
   line-height: 1;
@@ -75,7 +74,7 @@
   bottom: 6px;
   translate: -50% 0;
   padding: 1px 6px;
-  font-family: var(--maquina);
+  font-family: var(--ff-font-doc);
   font-size: 11px;
   font-weight: 700;
   color: var(--papel);
@@ -89,7 +88,7 @@
 .estado {
   justify-self: start;
   padding: 2px 6px;
-  font-family: var(--maquina);
+  font-family: var(--ff-font-doc);
   font-size: 13px;
   font-weight: 700;
   text-transform: uppercase;
@@ -120,7 +119,7 @@
 .datos dd {
   margin: 0;
   min-height: 1em;
-  font-family: var(--maquina);
+  font-family: var(--ff-font-doc);
   font-weight: 700;
   font-size: 26px;
   line-height: 1;
