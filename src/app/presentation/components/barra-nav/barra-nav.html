@@ -36,7 +36,9 @@
       }
     }
     <ng-content select=".sonido" />
-    <a class="btn cta" [href]="cta.demo">Jugar la demo</a>
+    @if (cta.demo) {
+      <a class="btn cta" [href]="cta.demo">Jugar la demo</a>
+    }
   </div>
   <ng-content select=".progreso" />
 </header>

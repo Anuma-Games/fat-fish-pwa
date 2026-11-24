@@ -4,9 +4,10 @@
  * Everything is static: the landing page never calls the API or reads stored data.
  */
 
-/** Destinations of the call-to-action buttons. They stay in '#' until the pages exist. */
+/** Destinations of the call-to-action buttons. */
 export const CTA = {
-  demo: '#',
+  /** Link to the demo. Empty until the demo is published: every "Jugar la demo" stays hidden. */
+  demo: '',
   /** Internal routes of the PWA, used as plain links. */
   expediente: '/perfil',
   opinion: '/opinion/retroalimentacion',
@@ -58,7 +59,7 @@ export const HERO = {
   titulo: 'Fat Fish',
   claim: 'Una mesa. Cada ronda pide más. El casino siempre sabe de ti.',
   texto:
-    'Un juego de ruleta donde el azar solo decide el número: lo que ganas depende de tus jugadas, ' +
+    'Un juego de ruleta donde el azar solo decide el número: los puntos dependen de tus jugadas, ' +
     'tu combo y tus comodines.',
 };
 
@@ -68,30 +69,29 @@ export interface Paso {
 }
 
 /**
- * "Cómo se juega": the loop of one round. The goal is money, not points (fat-fish-game README,
- * "Balance, jefes y casa de empeño"). It gives no figures and never states how many rounds a run
- * has, so the page does not go out of date when the game is rebalanced.
+ * "Cómo se juega": the loop of one round. It never states how many rounds a run has; the page
+ * only shows that the goal keeps rising (fat-fish-diseno, sections 3 and 4).
  */
 export const PASOS: Paso[] = [
   {
     titulo: 'Coloca tus fichas',
-    texto: 'Reparte tu dinero como quieras.',
+    texto: 'Reparte tu dinero en la mesa: hasta cinco jugadas por giro.',
   },
   {
     titulo: 'Gira la ruleta',
     texto: 'La bola decide el número. Nada más.',
   },
   {
-    titulo: 'Cobra',
-    texto: 'Si aciertas, cobras. Si ganas, la casa te suma un bono.',
+    titulo: 'Suma puntos',
+    texto: 'Cada jugada que aciertas te acerca a la meta, y tus comodines te ayudan a llegar.',
   },
   {
     titulo: 'Alcanza la meta',
-    texto: 'Termina con más dinero. Tus giros están contados.',
+    texto: 'Tus giros están contados. Si se acaban antes de llegar, la partida termina.',
   },
   {
     titulo: 'Pasa por la tienda',
-    texto: 'Compra comodines. Lo que gastes, recupéralo en la mesa.',
+    texto: 'Compra comodines con el dinero que te queda y vuelve a la mesa.',
   },
 ];
 
@@ -103,22 +103,22 @@ export const PILARES = [
   {
     icono: 'ruleta',
     titulo: 'La estrategia vence al azar',
-    texto: 'El número es de la bola. La ganancia, tuya.',
+    texto: 'El número lo decide la bola; los puntos, tú.',
   },
   {
     icono: 'alerta',
     titulo: 'Riesgo visible',
-    texto: 'Cada jefe te dice su regla antes de girar.',
+    texto: 'Sabes a qué te enfrentas antes del primer giro.',
   },
   {
     icono: 'flecha',
     titulo: 'Cada ronda pide más',
-    texto: 'Cada meta pide más dinero que la anterior.',
+    texto: 'La meta sube con cada ronda que superas.',
   },
   {
     icono: 'moneda',
     titulo: 'Todo o nada',
-    texto: 'Invierte todo en un giro, o empeña lo que tienes.',
+    texto: 'Sin dinero, puedes empeñar un bien o pedir un préstamo.',
   },
 ];
 
@@ -126,32 +126,33 @@ export const PILARES = [
  * A sample of the game's wildcards, one per category (Ruleta, Mesa, Fichas, Economía in
  * fat-fish-game, Assets/Modifiers). Only some of them and without figures, so the page does not go
  * out of date when the shop changes; the full catalog lives in the game.
+ * `icono` is a pixel-art SVG in public/img/landing/comodines (README 8.3).
  */
 export const COMODINES = [
   {
     categoria: 'Ruleta',
     titulo: 'Tridente',
     texto: 'Lanza más bolas y cuenta la que más te paga. La casa cobra por cada bola extra.',
-    glifo: '+1',
+    icono: 'tridente',
   },
   {
     categoria: 'Mesa',
     titulo: 'Reloj de arena',
     texto: 'Más giros en cada ronda. El tiempo que le robas a tu familia.',
-    glifo: '+G',
+    icono: 'reloj-de-arena',
   },
   {
     categoria: 'Fichas',
     titulo: 'Ficha cargada',
     texto: 'Tus plenos hacen crecer el bono de la casa.',
-    glifo: '×',
+    icono: 'ficha-cargada',
   },
   {
     categoria: 'Economía',
     titulo: 'Seguro de la casa',
     texto:
       'Te regresa parte de lo que pierdes en cada giro. La casa siempre gana, pero te consuela.',
-    glifo: '%',
+    icono: 'seguro-de-la-casa',
   },
 ];
 

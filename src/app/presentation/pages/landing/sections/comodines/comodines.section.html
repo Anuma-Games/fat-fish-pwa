@@ -21,7 +21,13 @@
           >
             <div class="cara frente">
               <span class="categoria">{{ c.categoria }}</span>
-              <span class="glifo" aria-hidden="true">{{ c.glifo }}</span>
+              <img
+                class="icono"
+                [src]="'img/landing/comodines/' + c.icono + '.svg'"
+                alt=""
+                width="72"
+                height="72"
+              />
               <div>
                 <h3>{{ c.titulo }}</h3>
                 <p class="small muted">{{ c.texto }}</p>
