@@ -19,6 +19,46 @@ describe('LandingPage', () => {
 
   const esperar = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
+  it('loads YouTube only after a click on the TV and removes the player on close', async () => {
+    const fixture = TestBed.createComponent(LandingPage);
+    await fixture.whenStable();
+    const el = fixture.nativeElement as HTMLElement;
+    expect(el.querySelector('iframe')).toBeNull();
+
+    expect(el.querySelector('.hero .actions')?.textContent).not.toContain('Ver tráiler');
+    (el.querySelector('button.lp-monitor') as HTMLButtonElement).click();
+    await fixture.whenStable();
+    const iframe = el.querySelector('dialog.lp-trailer iframe');
+    expect(iframe?.getAttribute('src')).toMatch(
+      /^https:\/\/www\.youtube-nocookie\.com\/embed\/6DxVmyy-x_8\?autoplay=1/,
+    );
+
+    (el.querySelector('.lp-trailer-cerrar') as HTMLButtonElement).click();
+    await fixture.whenStable();
+    expect(el.querySelector('iframe')).toBeNull();
+  });
+
+  it('has no painted background, and the trailer plays on a monitor that opens it', async () => {
+    const fixture = TestBed.createComponent(LandingPage);
+    await fixture.whenStable();
+    const el = fixture.nativeElement as HTMLElement;
+    expect(el.querySelector('.hero canvas')).toBeNull();
+    // The test browser cannot tell the motion preference: the monitor shows the still frame
+    const monitor = el.querySelector('button.lp-monitor') as HTMLButtonElement;
+    expect(monitor.querySelector('img')?.getAttribute('src')).toBe(
+      'img/landing/hero/trailer-monitor.jpg',
+    );
+    expect(monitor.querySelector('video')).toBeNull();
+    // ...and the room is lit by that frame
+    expect(el.querySelector('.hero img.lp-ambiente')?.getAttribute('src')).toBe(
+      'img/landing/hero/trailer-monitor.jpg',
+    );
+
+    monitor.click();
+    await fixture.whenStable();
+    expect(el.querySelector('dialog.lp-trailer iframe')).not.toBeNull();
+  });
+
   it('lets the visitor spin the wheel and lands on a real number', async () => {
     const fixture = TestBed.createComponent(LandingPage);
     await fixture.whenStable();

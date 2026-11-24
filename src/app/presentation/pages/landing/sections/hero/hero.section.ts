@@ -9,14 +9,15 @@ import {
   untracked,
   viewChild,
 } from '@angular/core';
+import { DomSanitizer } from '@angular/platform-browser';
 import { RouterLink } from '@angular/router';
-import { CRUPIER, CTA, HERO, RULETA } from '../../../../../core/config/landing.config';
+import { CRUPIER, CTA, HERO, RULETA, TRAILER } from '../../../../../core/config/landing.config';
+import { PixelIcon } from '../../../../components/pixel-icon/pixel-icon';
 import { Crupier } from '../../crupier';
 import { Iman } from '../../iman.directive';
 import { prefiereMenosMovimiento } from '../../motion';
 import { Rodado, SonidoMesa } from '../../sonido-mesa';
 import { VisitDossier } from '../../visit-dossier';
-import { iniciarFondo } from './fondo-remolino';
 
 /** European wheel order, from the 0 clockwise. */
 const ORDEN = [
@@ -32,18 +33,6 @@ const POLVO = Array.from({ length: 16 }, (_, i) => ({
   tam: 1 + (i % 3),
   retraso: -((i * 1.7) % 9),
   duracion: 8 + (i % 5) * 2,
-}));
-
-/** Chips the swirl drags into the wheel (fixed values, so the page looks the same each load). */
-const FICHAS = ['ficha-5', 'ficha-10', 'ficha-25', 'ficha-50', 'ficha-100'];
-const ARRASTRADAS = Array.from({ length: 8 }, (_, i) => ({
-  ficha: FICHAS[(i * 3) % FICHAS.length],
-  tam: 28 + ((i * 7) % 4) * 6,
-  vuelta: 26 + ((i * 11) % 5) * 6,
-  caida: 18 + ((i * 5) % 4) * 5,
-  retraso: -((i * 4.3) % 22),
-  // Spread around the wheel instead of all starting on the same side
-  desfase: -(i / 8) * (26 + ((i * 11) % 5) * 6),
 }));
 
 /** Radii of the ball (on the track and in a pocket) and size of the viewBox. */
@@ -64,6 +53,12 @@ function suaveEntre(a: number, b: number, x: number): number {
 /** Across a pocket (0 center, 0.5 fret, 1 next center): the ball lingers in the pocket and hops the fret. */
 function saltoDeTraste(f: number): number {
   return suaveEntre(0, 1, suaveEntre(0, 1, f));
+}
+
+/** True when the visitor asked to save data: the monitor then skips its video. */
+function ahorraDatos(): boolean {
+  const conexion = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection;
+  return conexion?.saveData === true;
 }
 
 function aleatorio(n: number): number {
@@ -89,7 +84,7 @@ function radioEn(k: number, desde: number): number {
  */
 @Component({
   selector: 'app-landing-hero',
-  imports: [RouterLink, Iman],
+  imports: [RouterLink, Iman, PixelIcon],
   templateUrl: './hero.section.html',
   styleUrl: './hero.section.css',
 })
@@ -98,19 +93,27 @@ export class HeroSection {
   protected readonly cta = CTA;
   protected readonly ruleta = RULETA;
   protected readonly polvo = POLVO;
-  protected readonly arrastradas = ARRASTRADAS;
+  protected readonly trailer = TRAILER;
+  /** YouTube privacy-enhanced mode; the URL is fixed in the config, never built from user input. */
+  protected readonly trailerUrl = inject(DomSanitizer).bypassSecurityTrustResourceUrl(
+    `https://www.youtube-nocookie.com/embed/${TRAILER.youtube}?autoplay=1&rel=0&playsinline=1`,
+  );
+  protected readonly trailerAbierto = signal(false);
 
   protected readonly girando = signal(false);
   protected readonly encendiendo = signal(true);
   protected readonly resultado = signal<{ numero: number; color: string } | null>(null);
 
   private readonly plano = viewChild.required<ElementRef<HTMLElement>>('plano');
-  private readonly fondo = viewChild.required<ElementRef<HTMLCanvasElement>>('fondo');
-  private readonly mesa = viewChild.required<ElementRef<HTMLElement>>('mesa');
   private readonly visita = inject(VisitDossier);
   private readonly crupier = inject(Crupier);
   private readonly sonido = inject(SonidoMesa);
-  private readonly quieto = prefiereMenosMovimiento();
+  private readonly dialogoTrailer =
+    viewChild.required<ElementRef<HTMLDialogElement>>('dialogoTrailer');
+  private readonly clipMonitor = viewChild<ElementRef<HTMLVideoElement>>('clipMonitor');
+  private readonly ambiente = viewChild<ElementRef<HTMLCanvasElement>>('ambiente');
+  /** Reduced motion or saving data: the monitor only shows the still frame of the trailer. */
+  protected readonly quieto = prefiereMenosMovimiento() || ahorraDatos();
 
   /** Ball angle in the frame of the wheel head (degrees, clockwise from the top) and its radius. */
   private fi = 0;
@@ -145,17 +148,16 @@ export class HeroSection {
     });
 
     afterNextRender(() => {
+      // Some browsers only autoplay a video created from script once it is muted as a property
+      const video = this.clipMonitor()?.nativeElement;
+      if (video) {
+        video.muted = true;
+        void video.play().catch(() => undefined);
+      }
+      const detenerAmbiente = this.iluminarSala(video, this.ambiente()?.nativeElement);
+      destroyRef.onDestroy(() => detenerAmbiente?.());
       this.pintar();
       this.encender();
-      const detenerFondo = iniciarFondo(this.fondo().nativeElement, {
-        contenedor: host,
-        centro: this.mesa().nativeElement,
-        quieto: this.quieto,
-        girando: () => this.girando(),
-        // The swirl lights the rim of the wheel and the Crupier with its own color (hero.section.css)
-        alCalor: (calor) => host.style.setProperty('--calor', calor.toFixed(2)),
-      });
-      destroyRef.onDestroy(() => detenerFondo?.());
       let observador: IntersectionObserver | undefined;
       if (!this.quieto && typeof IntersectionObserver !== 'undefined') {
         observador = new IntersectionObserver(([entrada]) => {
@@ -183,6 +185,50 @@ export class HeroSection {
         this.crupier.decir(CRUPIER.otraRonda);
       });
     });
+  }
+
+  /**
+   * Ambient light of the TV: a few times per second the current frame of the monitor is drawn on a
+   * 32x18 canvas that CSS blurs over the whole hero (like the ambient mode of YouTube). Only while
+   * the hero is on screen and the video is playing. Returns the function that stops it.
+   */
+  private iluminarSala(
+    video: HTMLVideoElement | undefined,
+    lienzo: HTMLCanvasElement | undefined,
+  ): (() => void) | undefined {
+    const ctx = lienzo?.getContext('2d');
+    if (!video || !lienzo || !ctx) return;
+    const pintar = () => {
+      if (!this.visible || video.paused || video.readyState < 2) return;
+      ctx.drawImage(video, 0, 0, lienzo.width, lienzo.height);
+    };
+    const reloj = setInterval(pintar, 160);
+    video.addEventListener('loadeddata', pintar);
+    return () => {
+      clearInterval(reloj);
+      video.removeEventListener('loadeddata', pintar);
+    };
+  }
+
+  /** Opens the trailer: only now is the YouTube player loaded (privacy notice, section 6). */
+  protected abrirTrailer(): void {
+    this.trailerAbierto.set(true);
+    const dialogo = this.dialogoTrailer().nativeElement;
+    if (typeof dialogo.showModal === 'function') dialogo.showModal();
+    else dialogo.setAttribute('open', '');
+  }
+
+  /** Closing removes the player, so the video stops and nothing keeps running. */
+  protected cerrarTrailer(): void {
+    const dialogo = this.dialogoTrailer().nativeElement;
+    if (typeof dialogo.close === 'function') dialogo.close();
+    else dialogo.removeAttribute('open');
+    this.trailerAbierto.set(false);
+  }
+
+  /** A click on the dark backdrop around the video closes it too. */
+  protected cerrarSiFondo(e: MouseEvent): void {
+    if (e.target === e.currentTarget) this.cerrarTrailer();
   }
 
   protected alClic(): void {
