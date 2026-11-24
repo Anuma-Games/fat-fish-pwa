@@ -1,6 +1,10 @@
 -- Laboratorio de pruebas de la PWA – 02: datos de prueba
--- Copia de fat-fish-api/sql/demo/02_cargar.sql (los mismos datos que producción). Si cambias uno, cambia el otro.
--- Ejecutar después de 01_limpieza.sql.
+-- Copia de fat-fish-api/sql/demo/02_cargar.sql (los mismos datos que producción). Los datos y los ids son idénticos;
+-- la única diferencia son los setval del final: aquí fijan la secuencia en max(id) porque 01_limpieza.sql la reinicia
+-- (truncate … restart identity), mientras que la versión de la API usa greatest() para no bajar una secuencia en uso.
+-- Si cambias los datos de uno, cambia también el otro.
+-- Ejecutar después de 01_limpieza.sql. Donde el texto de abajo menciona 01_limpiar.sql, es el equivalente de la API
+-- (aquí corresponde a 01_limpieza.sql).
 
 -- Fat Fish: datos de demostración (FF-129)
 -- Mismo juego de datos para producción (Cloud SQL) y para el laboratorio de pruebas de la PWA.
