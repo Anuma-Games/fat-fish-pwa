@@ -31,8 +31,9 @@ Este documento reúne la **propuesta de diseño** de la PWA y el **estado actual
 | Diseño preproyecto       | Estructura modular (JS/CSS) y diseño adaptativo            | [4.2](#42-capas-del-código) y [8](#8-experiencia-de-usuario-uiux)                                                         |
 | Diseño preproyecto       | Diagramas de la aplicación                                 | [4](#4-arquitectura), [5](#5-modelo-de-datos) y [9](#9-diagramas-de-la-aplicación)                                        |
 | Laboratorio de pruebas 1 | Scripts de carga y limpieza                                | [`sql/`](docs/laboratorio-pruebas/sql)                                                                                    |
-| Laboratorio de pruebas 1 | Consultas antes y después, logs del backend                | [Evidencias](docs/laboratorio-pruebas/README.md#evidencias)                                                               |
-| Laboratorio de pruebas 1 | Interfaz y DevTools (Network, Application, Console)        | [Casos de prueba](docs/laboratorio-pruebas/README.md#casos-de-prueba) y [evidencias](docs/laboratorio-pruebas/evidencias) |
+| Laboratorio de pruebas 1 | Consultas antes y después, logs del backend                | [Evidencias](docs/laboratorio-pruebas/README.md#7-evidencias)                                                             |
+| Laboratorio de pruebas 1 | Interfaz y DevTools (Network, Application, Console)        | [Casos de prueba](docs/laboratorio-pruebas/README.md#6-casos-de-prueba) y [evidencias](docs/laboratorio-pruebas/evidencias) |
+| Laboratorio de pruebas 1 | Requisitos de Integradora: importación de BD, creación y consulta | [Requisitos de Integradora](docs/laboratorio-pruebas/README.md#requisitos-de-integradora) |
 
 ---
 
