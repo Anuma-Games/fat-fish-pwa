@@ -268,10 +268,13 @@ a.btn.lp-iman {
   }
 }
 
-/* Full trailer of the hero, over the page; the close button sits above the video */
+/* Full trailer of the hero, over the page; the close button sits above the video.
+   The width also follows the height of the screen, so on a phone held sideways the
+   video fits and there are always 56px above it for the close button */
 .lp-trailer {
-  width: min(960px, 94vw);
+  width: min(960px, 94vw, calc((100dvh - 112px) * 16 / 9));
   max-width: none;
+  max-height: none;
   padding: 0;
   overflow: visible;
   color: var(--ff-cream-100);
