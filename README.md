@@ -420,9 +420,9 @@ La PWA se ve como el casino clandestino del juego: fondo oscuro con un patrón d
 | Dorado (lo importante, foco del teclado) | `#E8B850`                                                                                   |
 | Victoria / derrota                       | `#6FD39A` / `#882020`                                                                       |
 | Texto                                    | `#F2E8CC` y `#9AA8A2`                                                                       |
-| Fuentes                                  | **Jersey 10** (títulos y cifras), **Press Start 2P** (etiquetas cortas) y **Geist** (texto) |
+| Fuentes                                  | Las del juego: **Jersey 10** (títulos, botones y cifras), **Jersey 15** (lectura), **Fat Fish Pixel** (etiquetas y sellos) y **Courier Prime** (el expediente) |
 
-Los textos tienen buen contraste y el resultado de una partida siempre se escribe (VICTORIA, DERROTA, ABANDONO), no se indica solo con color. Las fuentes están en `public/fonts/` para funcionar sin conexión.
+Los textos tienen buen contraste y el resultado de una partida siempre se escribe (VICTORIA, DERROTA, ABANDONO), no se indica solo con color. Las fuentes están en `public/fonts/` para funcionar sin conexión, con sus licencias en [`public/fonts/LICENSE.md`](public/fonts/LICENSE.md).
 
 ![Colores y tipografía](docs/img/guia-colores-tipografia.jpg)
 
