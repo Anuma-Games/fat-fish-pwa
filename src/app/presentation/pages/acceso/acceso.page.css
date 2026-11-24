@@ -19,6 +19,13 @@
   min-height: 48px;
   font-size: 18px;
 }
+/* On a phone the example ("pezgordo o 1042") fits whole; 16px keeps iOS from zooming the field */
+@media (max-width: 480px) {
+  .buscador input {
+    font-size: 16px;
+    padding-inline: var(--ff-space-2);
+  }
+}
 .buscar {
   display: inline-flex;
   align-items: center;

@@ -1,4 +1,7 @@
-/* Design tokens (README 6.2 and 6.3). Components only use var(--ff-*). */
+/* Design tokens (README 8.2). Components only use var(--ff-*).
+   Fonts of the game (fat-fish-game, Assets/Art/Fonts and UiTheme.asset): Jersey 10 for titles,
+   buttons and figures; Jersey 15 for reading; Fat Fish Pixel for labels and stamps; Courier Prime
+   for documents such as the dossier. Licenses in public/fonts/LICENSE.md. */
 @font-face {
   font-family: 'Jersey 10';
   src: url('/fonts/jersey-10-latin-400-normal.woff2') format('woff2');
@@ -6,30 +9,39 @@
   font-display: swap;
 }
 @font-face {
-  font-family: 'Press Start 2P';
-  src: url('/fonts/press-start-2p-latin-400-normal.woff2') format('woff2');
+  font-family: 'Jersey 15';
+  src: url('/fonts/jersey-15-latin-400-normal.woff2') format('woff2');
+  font-weight: 400;
+  font-display: swap;
+  /* Its x-height is 0.41 em against 0.53 of the sans-serif it replaces: 130% keeps every
+     font-size of the site as readable as before */
+  size-adjust: 130%;
+}
+/* Fat Fish Pixel derives from Press Start 2P with the Spanish accented capitals at full height */
+@font-face {
+  font-family: 'Fat Fish Pixel';
+  src: url('/fonts/fat-fish-pixel-latin-400-normal.woff2') format('woff2');
   font-weight: 400;
   font-display: swap;
 }
-/* Spanish accented capitals of Press Start 2P at full height (scripts/fuente-acentos.py): that font
-   squeezes Á É Í Ó Ú Ñ Ü so they look lowercase with text-transform: uppercase */
+/* The arrows ← ↑ → ↓ that Jersey 15 lacks, as in the game */
 @font-face {
-  font-family: 'Fat Fish Acentos';
-  src: url('/fonts/fat-fish-acentos.woff') format('woff');
+  font-family: 'Fat Fish Flechas';
+  src: url('/fonts/fat-fish-flechas.woff2') format('woff2');
   font-weight: 400;
   font-display: swap;
-  unicode-range: U+00C1, U+00C9, U+00CD, U+00D1, U+00D3, U+00DA, U+00DC;
+  unicode-range: U+2190-2193;
 }
 @font-face {
-  font-family: 'Geist';
-  src: url('/fonts/geist-latin-400-normal.woff2') format('woff2');
+  font-family: 'Courier Prime';
+  src: url('/fonts/courier-prime-latin-400-normal.woff2') format('woff2');
   font-weight: 400;
   font-display: swap;
 }
 @font-face {
-  font-family: 'Geist';
-  src: url('/fonts/geist-latin-600-normal.woff2') format('woff2');
-  font-weight: 600;
+  font-family: 'Courier Prime';
+  src: url('/fonts/courier-prime-latin-700-normal.woff2') format('woff2');
+  font-weight: 700;
   font-display: swap;
 }
 
@@ -51,9 +63,11 @@
   --ff-paper-200: #e6dec8;
   --ff-ink-900: #221e16;
 
-  --ff-font-display: 'Jersey 10', system-ui, sans-serif;
-  --ff-font-label: 'Fat Fish Acentos', 'Press Start 2P', ui-monospace, monospace;
-  --ff-font-body: 'Geist', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --ff-font-display: 'Jersey 10', 'Fat Fish Flechas', 'Fat Fish Pixel', system-ui, sans-serif;
+  --ff-font-label: 'Fat Fish Pixel', ui-monospace, monospace;
+  --ff-font-body: 'Jersey 15', 'Fat Fish Flechas', 'Fat Fish Pixel', system-ui, sans-serif;
+  /* Typewritten documents: the dossier sheets */
+  --ff-font-doc: 'Courier Prime', 'Courier New', ui-monospace, monospace;
 
   --ff-space-1: 4px;
   --ff-space-2: 8px;
