@@ -48,7 +48,9 @@
         muestra.
       </p>
       <div class="botones">
-        <a class="btn" appIman [href]="cta.demo">Jugar la demo</a>
+        @if (cta.demo) {
+          <a class="btn" appIman [href]="cta.demo">Jugar la demo</a>
+        }
         <button class="btn lp-alt" appIman type="button" (click)="visita.otraRonda()">
           Otra ronda
         </button>

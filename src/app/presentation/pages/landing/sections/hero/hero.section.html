@@ -1,6 +1,10 @@
 <section class="hero" id="inicio" data-seccion="inicio" [class.encendiendo]="encendiendo()">
-  <!-- The swirling paint of the game's start menu, with the wheel at its eye (fondo-remolino.ts) -->
-  <canvas class="lp-ambiente" #fondo aria-hidden="true"></canvas>
+  <!-- Light of the TV on the room: the colors of the trailer, blurred over the whole hero -->
+  @if (quieto) {
+    <img class="lp-ambiente" [src]="trailer.poster" alt="" aria-hidden="true" />
+  } @else {
+    <canvas class="lp-ambiente" #ambiente width="32" height="18" aria-hidden="true"></canvas>
+  }
   <div class="penumbra" aria-hidden="true"></div>
 
   <!-- Lamp and its beam: they span the title and the table, so the light ends on the wheel -->
@@ -41,22 +45,6 @@
     (pointerdown)="arrastreInicio($event)"
     (pointerup)="arrastreFin($event)"
   >
-    <!-- Chips dragged by the swirl, spiralling into the wheel on the plane of the table -->
-    <div class="lp-arrastre" aria-hidden="true">
-      @for (f of arrastradas; track $index) {
-        <span
-          [style.--vuelta.s]="f.vuelta"
-          [style.--caida.s]="f.caida"
-          [style.--retraso.s]="f.retraso"
-          [style.--desfase.s]="f.desfase"
-        >
-          <i
-            [style.--ficha]="'url(img/landing/fichas/' + f.ficha + '.png)'"
-            [style.--tam.px]="f.tam"
-          ></i>
-        </span>
-      }
-    </div>
     <!-- The Crupier of the game, on the other side of the wheel (sprites from scripts/sprites-hero.py) -->
     <span class="crupier" aria-hidden="true">
       <img src="img/landing/hero/crupier-traje.png" alt="" />
@@ -97,9 +85,8 @@
       <!-- Center cap with the badge: it stays upright while the wheel turns around it -->
       <img class="tapa" src="img/landing/hero/ruleta-tapa.png" alt="" elementtiming="ruleta-tapa" />
 
-      <!-- Still light over the turning wheel, and the swirl shining on the lacquered rim -->
+      <!-- Still light over the turning wheel -->
       <span class="brillo"></span>
-      <span class="lp-reflejo"></span>
     </div>
     <span class="sombra"></span>
   </button>
@@ -117,13 +104,73 @@
     </p>
     <p class="lead">{{ hero.texto }}</p>
     <div class="actions">
-      <a class="btn" appIman [href]="cta.demo">Jugar la demo</a>
+      @if (cta.demo) {
+        <a class="btn" appIman [href]="cta.demo">Jugar la demo</a>
+      }
       <a class="btn lp-alt" appIman [routerLink]="cta.expediente">Ver un expediente</a>
     </div>
   </div>
+
+  <!-- The trailer on an old TV of the room: silent montage; a click opens it with sound -->
+  <button
+    type="button"
+    class="lp-monitor"
+    aria-label="Ver el tráiler de Fat Fish"
+    (click)="abrirTrailer()"
+  >
+    <span class="lp-monitor-pantalla">
+      @if (quieto) {
+        <img [src]="trailer.poster" alt="" />
+      } @else {
+        <video
+          #clipMonitor
+          [src]="trailer.clip"
+          [poster]="trailer.poster"
+          [muted]="true"
+          autoplay
+          loop
+          playsinline
+          disablepictureinpicture
+          preload="auto"
+          aria-hidden="true"
+          tabindex="-1"
+        ></video>
+      }
+      <span class="lp-monitor-ver"><app-pixel-icon name="play" [size]="12" /> Ver tráiler</span>
+    </span>
+  </button>
 
   <a class="scroll-hint" href="#como-se-juega" aria-label="Bajar a cómo se juega">
     <span class="eyebrow">Cómo se juega</span>
     <span class="flecha" aria-hidden="true"></span>
   </a>
 </section>
+
+<!-- Full trailer with sound. The YouTube player only exists while this dialog is open -->
+<dialog
+  class="lp-trailer"
+  #dialogoTrailer
+  aria-label="Tráiler de Fat Fish"
+  (close)="trailerAbierto.set(false)"
+  (click)="cerrarSiFondo($event)"
+>
+  <div class="lp-trailer-marco">
+    <button
+      class="lp-trailer-cerrar"
+      type="button"
+      aria-label="Cerrar el tráiler"
+      (click)="cerrarTrailer()"
+    >
+      <app-pixel-icon name="cerrar" [size]="16" />
+    </button>
+    @if (trailerAbierto()) {
+      <iframe
+        [src]="trailerUrl"
+        [title]="trailer.titulo"
+        allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
+        referrerpolicy="strict-origin-when-cross-origin"
+        allowfullscreen
+      ></iframe>
+    }
+  </div>
+</dialog>

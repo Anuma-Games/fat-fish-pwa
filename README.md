@@ -450,9 +450,9 @@ La PWA se ve como el casino clandestino del juego: fondo oscuro con un patrón d
 | Dorado (lo importante, foco del teclado) | `#E8B850`                                                                                   |
 | Victoria / derrota                       | `#6FD39A` / `#882020`                                                                       |
 | Texto                                    | `#F2E8CC` y `#9AA8A2`                                                                       |
-| Fuentes                                  | **Jersey 10** (títulos y cifras), **Press Start 2P** (etiquetas cortas) y **Geist** (texto) |
+| Fuentes                                  | Las del juego: **Jersey 10** (títulos, botones y cifras), **Jersey 15** (lectura), **Fat Fish Pixel** (etiquetas y sellos) y **Courier Prime** (el expediente) |
 
-Los textos tienen buen contraste y el resultado de una partida siempre se escribe (VICTORIA, DERROTA, ABANDONO), no se indica solo con color. Las fuentes están en `public/fonts/` para funcionar sin conexión.
+Los textos tienen buen contraste y el resultado de una partida siempre se escribe (VICTORIA, DERROTA, ABANDONO), no se indica solo con color. Las fuentes están en `public/fonts/` para funcionar sin conexión, con sus licencias en [`public/fonts/LICENSE.md`](public/fonts/LICENSE.md).
 
 ![Colores y tipografía](docs/img/guia-colores-tipografia.jpg)
 
@@ -464,13 +464,19 @@ Las páginas de la app comparten las piezas del landing, para que todo el sitio 
 
 | Componente o clase              | Qué es                                                                                                   |
 |---------------------------------|----------------------------------------------------------------------------------------------------------|
-| `barra-nav`                     | Barra superior de todo el sitio: ☰, logo, enlaces a las secciones del landing y a la app (en escritorio) y "Jugar la demo" |
+| `barra-nav`                     | Barra superior de todo el sitio: ☰, logo, enlaces a las secciones del landing y a la app (en escritorio) y "Jugar la demo" cuando la demo tiene enlace |
 | `menu-lateral`                  | Panel que abre ☰ en cualquier ancho. En la app resalta la sección actual y muestra la última sincronización |
 | `cabecera-pagina`               | Lámpara que se enciende, título con líneas de monitor viejo, frase dorada y una línea del Crupier         |
 | `aviso-version`                 | Diálogo sobre un tapete que pregunta si se carga la versión nueva de la app ([7.4](#74-segundo-plano-y-actualizaciones)) |
 | `.tapete` (`styles/paginas.css`) | Paño verde con el enrejado del casino y borde dorado: buscador, formularios de Opinión e historial        |
 
 El expediente (`/perfil`) es una hoja de papel como la del landing, y en el ranking los tres primeros lugares llevan las fichas del juego.
+
+El hero del landing ya no tiene el remolino pintado de fondo (FF-166). En la sala hay una tele vieja con el tráiler del juego: un montaje corto y sin sonido (el Crupier, un cobro, la tienda, los jefes y la casa de empeño, nunca la ruleta, que ya es el centro del hero). La tele ilumina la sala: unas veces por segundo su imagen se copia a un canvas de 32 × 18 que se difumina sobre todo el hero (como el modo ambiente de YouTube), así que el fondo toma los colores del tráiler. Un clic en la tele (**Ver tráiler**) abre el video completo de YouTube en un diálogo; el reproductor solo se carga con ese clic, en el modo de privacidad mejorada (`youtube-nocookie.com`), y se quita al cerrarlo. En pantallas angostas la tele va debajo de los botones; desde 1280 px, a la derecha de la mesa, ocupando el espacio libre (hasta 420 px). Con movimiento reducido o ahorro de datos la tele y la luz de la sala usan solo la imagen fija. Todo se configura en `TRAILER` (`landing.config.ts`). El montaje (`img/landing/hero/trailer-monitor.mp4`, 10.9 s, 379 KB, 640 × 356) une los segundos 14.2–16.4, 21.2–22.0, 26.5–27.5, 29.0–30.4, 32.0–32.8, 38.0–38.8, 40.6–42.6 y 53.4–55.2 del tráiler, con un fundido en cada extremo; la imagen fija es el segundo 15.4. Se exportó con ffmpeg de una copia comprimida por WhatsApp: cuando haya el archivo original, se vuelve a exportar con los mismos tramos y se reemplazan los dos archivos.
+
+Las cartas de comodines del landing llevan íconos de pixel art de 16 × 16 (`public/img/landing/comodines/*.svg`, con contorno oscuro). El de **Tridente** sale de su modelo en el juego (`Assets/PreFab/Modifiers/Tridente.prefab`). **Reloj de arena**, **Ficha cargada** y **Seguro de la casa** todavía no tienen modelo: en la tienda del juego se ven como una ficha del color de su efecto (`ModifierFallbackVisual`), así que sus íconos usan ese color (ámbar, rojo y azul) con una figura propia. Cuando el juego les dé modelo, se redibujan a partir de él.
+
+Los botones "Jugar la demo" solo aparecen cuando `CTA.demo` (`landing.config.ts`) tiene el enlace de la demo; mientras esté vacío, no se muestran.
 
 ![Componentes base e íconos](docs/img/guia-componentes.jpg)
 
