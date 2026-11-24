@@ -58,7 +58,7 @@ export const HERO = {
   titulo: 'Fat Fish',
   claim: 'Una mesa. Cada ronda pide más. El casino siempre sabe de ti.',
   texto:
-    'Un juego de ruleta donde el azar solo decide el número: los puntos dependen de tus jugadas, ' +
+    'Un juego de ruleta donde el azar solo decide el número: lo que ganas depende de tus jugadas, ' +
     'tu combo y tus comodines.',
 };
 
@@ -68,29 +68,30 @@ export interface Paso {
 }
 
 /**
- * "Cómo se juega": the loop of one round. It never states how many rounds a run has; the page
- * only shows that the goal keeps rising (fat-fish-diseno, sections 3 and 4).
+ * "Cómo se juega": the loop of one round. The goal is money, not points (fat-fish-game README,
+ * "Balance, jefes y casa de empeño"). It gives no figures and never states how many rounds a run
+ * has, so the page does not go out of date when the game is rebalanced.
  */
 export const PASOS: Paso[] = [
   {
     titulo: 'Coloca tus fichas',
-    texto: 'Reparte tu dinero en la mesa: hasta cinco jugadas por giro.',
+    texto: 'Reparte tu dinero como quieras.',
   },
   {
     titulo: 'Gira la ruleta',
     texto: 'La bola decide el número. Nada más.',
   },
   {
-    titulo: 'Suma puntos',
-    texto: 'Cada jugada que aciertas te acerca a la meta, y tus comodines te ayudan a llegar.',
+    titulo: 'Cobra',
+    texto: 'Si aciertas, cobras. Si ganas, la casa te suma un bono.',
   },
   {
     titulo: 'Alcanza la meta',
-    texto: 'Tus giros están contados. Si se acaban antes de llegar, la partida termina.',
+    texto: 'Termina con más dinero. Tus giros están contados.',
   },
   {
     titulo: 'Pasa por la tienda',
-    texto: 'Compra comodines con el dinero que te queda y vuelve a la mesa.',
+    texto: 'Compra comodines. Lo que gastes, recupéralo en la mesa.',
   },
 ];
 
@@ -102,50 +103,55 @@ export const PILARES = [
   {
     icono: 'ruleta',
     titulo: 'La estrategia vence al azar',
-    texto: 'El número lo decide la bola; los puntos, tú.',
+    texto: 'El número es de la bola. La ganancia, tuya.',
   },
   {
     icono: 'alerta',
     titulo: 'Riesgo visible',
-    texto: 'Sabes a qué te enfrentas antes del primer giro.',
+    texto: 'Cada jefe te dice su regla antes de girar.',
   },
   {
     icono: 'flecha',
     titulo: 'Cada ronda pide más',
-    texto: 'La meta sube con cada ronda que superas.',
+    texto: 'Cada meta pide más dinero que la anterior.',
   },
   {
     icono: 'moneda',
     titulo: 'Todo o nada',
-    texto: 'Sin dinero, puedes empeñar un bien o pedir un préstamo.',
+    texto: 'Invierte todo en un giro, o empeña lo que tienes.',
   },
 ];
 
-/** The four wildcards of the MVP (fat-fish-diseno, section 6). */
+/**
+ * A sample of the game's wildcards, one per category (Ruleta, Mesa, Fichas, Economía in
+ * fat-fish-game, Assets/Modifiers). Only some of them and without figures, so the page does not go
+ * out of date when the shop changes; the full catalog lives in the game.
+ */
 export const COMODINES = [
   {
-    categoria: 'Puntuación',
-    titulo: 'Multiplicador de puntos',
-    texto: 'Aporta al multiplicador de comodines y crece con las copias.',
-    glifo: '×',
-  },
-  {
     categoria: 'Ruleta',
-    titulo: 'Bola adicional',
-    texto: 'Una bola más en el giro: más aciertos, menos puntos.',
+    titulo: 'Tridente',
+    texto: 'Lanza más bolas y cuenta la que más te paga. La casa cobra por cada bola extra.',
     glifo: '+1',
   },
   {
-    categoria: 'Economía',
-    titulo: 'Bonificación económica',
-    texto: 'Dinero adicional, con un límite por ronda.',
-    glifo: '$',
+    categoria: 'Mesa',
+    titulo: 'Reloj de arena',
+    texto: 'Más giros en cada ronda. El tiempo que le robas a tu familia.',
+    glifo: '+G',
   },
   {
-    categoria: 'Mesa',
-    titulo: 'Cambio de color',
-    texto: 'Cambia qué casillas cubren las jugadas por color.',
-    glifo: 'R/N',
+    categoria: 'Fichas',
+    titulo: 'Ficha cargada',
+    texto: 'Tus plenos hacen crecer el bono de la casa.',
+    glifo: '×',
+  },
+  {
+    categoria: 'Economía',
+    titulo: 'Seguro de la casa',
+    texto:
+      'Te regresa parte de lo que pierdes en cada giro. La casa siempre gana, pero te consuela.',
+    glifo: '%',
   },
 ];
 
