@@ -1,6 +1,6 @@
 flowchart LR
     subgraph NAV["Navegador del jugador"]
-        APP["PWA Angular"]
+        APP["PWA Angular<br/>la interfaz se genera aquí (CSR)"]
         SW["Service Worker<br/>precaché + caché de datos"]
         IDB[("IndexedDB<br/>outbox de formularios")]
         LS["localStorage<br/>sesión: ID y alias"]
@@ -9,8 +9,15 @@ flowchart LR
         APP --> LS
     end
 
-    subgraph CR["Cloud Run: contenedor único"]
-        SB["Spring Boot<br/>sirve la PWA (estáticos) y /api/pwa/..."]
+    subgraph FH["Firebase Hosting: un solo origen"]
+        EST["Archivos estáticos de la PWA<br/>index.html, JS, CSS"]
+        RW["Rewrite de /api/**"]
     end
 
-    SW -->|"HTTPS, mismo origen"| SB
+    subgraph CR["Cloud Run"]
+        API["API Spring Boot<br/>solo JSON: /api/pwa/..."]
+    end
+
+    SW -->|"descarga la app"| EST
+    SW -->|"GET y POST /api/pwa/..."| RW
+    RW -->|"reenvía"| API

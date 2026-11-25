@@ -152,7 +152,8 @@ docker run --rm -p 8080:8080 --env-file .env fat-fish-pwa
 
 ![Vista general de la arquitectura](docs/diagramas/arquitectura.png)
 
-- **Un solo origen.** La PWA consume la API con rutas relativas (`/api/pwa/...`), por lo que no requiere CORS. En la propuesta, el mismo contenedor sirve la PWA y la API; en el laboratorio, Nginx cumple ese papel con un proxy hacia la API. En producción, la PWA se aloja en Firebase Hosting y este reenvía `/api/**` a la API en Cloud Run, de modo que el navegador sigue viendo un solo origen ([10.1](#101-despliegue-en-firebase-hosting)).
+- **Renderizado en el cliente (CSR).** La interfaz se genera en el navegador con Angular; la API solo entrega JSON y no sirve archivos de la PWA ([4.4](#44-estrategia-de-renderizado)).
+- **Un solo origen.** La PWA consume la API con rutas relativas (`/api/pwa/...`), por lo que no requiere CORS. Quien entrega la PWA también reenvía `/api` a la API: Firebase Hosting en producción (hacia Cloud Run, [10.1](#101-despliegue-en-firebase-hosting)), Nginx en la imagen de Docker, `scripts/lab-server.mjs` en `npm run lab` y el proxy de `ng serve` en desarrollo ([3](#3-cómo-ejecutarla)). En todos los casos el navegador ve un solo origen.
 - **El Service Worker atiende todas las peticiones** y decide qué responder desde la caché y qué pedir a la red ([7](#7-estrategia-pwa)).
 - **Angular moderno:** componentes *standalone* y *signals* para el estado.
 
@@ -235,6 +236,36 @@ Al elegir un jugador, la pantalla llama a `HistorialFacade.buscar(jugadorId)` y 
 | `enviando`                     | Deshabilita el botón mientras se envía                                                                                                                                                                                                                  |
 | `pendientes`, `envios`         | Cuántas respuestas esperan conexión y su detalle                                                                                                                                                                                                        |
 | `sincronizar()`, `refrescar()` | Se ejecutan solos al abrir la app y al volver la conexión; `refrescar()` actualiza la lista al abrir la pantalla                                                                                                                                        |
+
+### 4.4 Estrategia de renderizado
+
+La PWA se renderiza en el cliente (**CSR**, *client-side rendering*): el navegador recibe un `index.html` casi vacío y Angular genera toda la interfaz con JavaScript. No usa SSR (renderizado en servidor) ni prerenderizado, y la API no genera HTML: solo responde JSON.
+
+| Qué se revisó                             | Qué se encontró                                                                                                                                               |
+|-------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `angular.json`                            | Constructor `@angular/build:application` solo con la entrada `browser` (`src/main.ts`). No hay opciones `server`, `ssr` ni `prerender`                        |
+| `package.json`                            | Sin `@angular/ssr` ni `@angular/platform-server`                                                                                                              |
+| `src/main.ts` y `src/app/app.config.ts`   | `bootstrapApplication` en el navegador; sin hidratación (`provideClientHydration`) ni rutas de servidor                                                       |
+| `src/app/app.routes.ts`                   | El enrutador de Angular resuelve las rutas en el navegador. La landing va en el bundle inicial y las demás páginas se cargan bajo demanda con `loadComponent` |
+| Resultado de `npx ng build`               | Solo crea `dist/Pwa_FatFish/browser` (sin carpeta `server`). El `<body>` de `index.html` trae únicamente `<app-root></app-root>` y el `<script>` del bundle   |
+| `firebase.json`, Nginx y `lab-server.mjs` | Sirven archivos estáticos y mandan cualquier ruta a `index.html` (Firebase: rewrite `**`; Nginx: `try_files`)                                                 |
+
+**Dónde se genera la interfaz.** Todo ocurre en el navegador:
+
+1. Firebase Hosting (producción), Nginx (Docker) o `lab-server.mjs` (laboratorio) entregan `index.html` y los archivos `.js` y `.css`. Desde la primera visita, el Service Worker los guarda en la precaché ([7.2](#72-service-worker-y-caché)).
+2. Angular arranca con `bootstrapApplication`, el enrutador resuelve la URL y carga la página que corresponde.
+3. La página pide los datos a su fachada. El repositorio HTTP hace un `GET` o un `POST` a `/api/pwa/...` con `HttpClient` y recibe JSON. El Service Worker responde con la red o, sin conexión, con la última copia guardada ([7.3](#73-sin-conexión)).
+4. El repositorio convierte el DTO en un modelo del dominio, la fachada lo guarda en *signals* y la plantilla de la página pinta la pantalla ([6.2](#62-de-la-respuesta-a-la-lista-en-pantalla)).
+
+La API solo participa en el paso 3: devuelve JSON y no tiene plantillas HTML ni archivos estáticos. Su contrato está en el [README de la API](https://github.com/Anuma-Games/fat-fish-api#endpoints) y el recorrido por capas, en [4.2](#42-capas-del-código).
+
+Detalles de esta configuración:
+
+- El build de producción incrusta el CSS crítico en `index.html` (Beasties). Eso no es prerenderizado: el contenido de las pantallas sigue sin estar en el HTML.
+- Sin JavaScript solo se ve el aviso de `<noscript>`.
+- El título de cada ruta (`title` en `app.routes.ts`) lo pone el enrutador en el navegador. La descripción y las etiquetas Open Graph de `index.html` son las de la landing para cualquier ruta, porque quien lee solo el HTML no ejecuta Angular.
+
+Explicación breve de cómo trabajan la PWA y la API, por separado y juntas: [`docs/pwa-y-api.md`](docs/pwa-y-api.md).
 
 ---
 
