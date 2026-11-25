@@ -169,8 +169,8 @@ export const EXPEDIENTE = {
   titulo: 'Lo que el casino sabe de ti',
   texto:
     'El expediente no es un logro: es el perfil que el casino construyó de ti. Registra cuántas ' +
-    'veces volviste, cuánto dinero del juego perdiste, cada vez que arriesgaste todo, tu momento ' +
-    'de mayor desesperación y qué empeñaste o pediste prestado para seguir jugando.',
+    'veces volviste, cuánto dinero del juego perdiste, cada vez que arriesgaste todo y qué ' +
+    'empeñaste o pediste prestado para seguir jugando.',
   cta: 'Ver un expediente',
   alias: 'pezgordo',
   id: '1042',
@@ -180,7 +180,6 @@ export const EXPEDIENTE = {
     { etiqueta: 'Todo o nada', valor: '1 vez' },
     { etiqueta: 'Empeños', valor: 'Automóvil' },
     { etiqueta: 'Préstamos', valor: 500, prefijo: '$' },
-    { etiqueta: 'Mayor desesperación', valor: 'Ronda 3, giro 4' },
   ] as DatoExpediente[],
 };
 
