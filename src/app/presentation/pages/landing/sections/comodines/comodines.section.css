@@ -80,12 +80,12 @@
   text-transform: uppercase;
   color: var(--ff-gold-400);
 }
-.glifo {
-  font-family: var(--ff-font-display);
-  font-size: 42cqi;
-  line-height: 0.8;
-  color: var(--ff-gold-400);
-  text-shadow: 4px 4px 0 #000;
+/* Pixel-art icon of the wildcard (public/img/landing/comodines), sharp at any size */
+.icono {
+  width: 44cqi;
+  height: auto;
+  image-rendering: pixelated;
+  filter: drop-shadow(4px 4px 0 #000);
 }
 .frente h3 {
   font-size: 14.8cqi;

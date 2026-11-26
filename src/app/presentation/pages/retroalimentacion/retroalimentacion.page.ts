@@ -1,4 +1,3 @@
-import { DatePipe } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import {
@@ -7,11 +6,13 @@ import {
 } from '../../../application/facades/retroalimentacion.facade';
 import { SincronizacionFacade } from '../../../application/facades/sincronizacion.facade';
 import { Categoria, Componente } from '../../../domain/models/retroalimentacion';
+import { CabeceraPagina } from '../../components/cabecera-pagina/cabecera-pagina';
+import { OpinionTabs } from '../../components/opinion-tabs/opinion-tabs';
 import { PixelIcon } from '../../components/pixel-icon/pixel-icon';
 
 @Component({
   selector: 'app-retroalimentacion-page',
-  imports: [FormsModule, DatePipe, PixelIcon],
+  imports: [FormsModule, PixelIcon, OpinionTabs, CabeceraPagina],
   templateUrl: './retroalimentacion.page.html',
   styleUrl: './retroalimentacion.page.css',
 })
@@ -30,20 +31,11 @@ export class RetroalimentacionPage {
     { valor: 'OTRO', texto: 'Otro' },
   ];
 
-  /** Visible text of a value of `categorias` or `componentes` (the API keeps its own codes). */
-  protected textoDe<T>(lista: { valor: T; texto: string }[], valor: T): string {
-    return lista.find((o) => o.valor === valor)?.texto ?? String(valor);
-  }
-
   protected categoria: Categoria = 'SUGERENCIA';
   protected componente: Componente = 'PWA';
   protected mensaje = '';
   protected readonly enviando = signal(false);
   protected readonly aviso = signal<{ tipo: ResultadoEnvio; texto: string } | null>(null);
-
-  constructor() {
-    void this.facade.refrescar();
-  }
 
   protected async enviar(): Promise<void> {
     if (this.mensaje.trim().length < 10) {

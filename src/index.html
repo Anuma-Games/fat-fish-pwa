@@ -15,6 +15,27 @@
     <link rel="apple-touch-icon" href="icons/icono-192.png" />
     <link rel="manifest" href="manifest.webmanifest" />
 
+    <!-- La ruleta del hero define el LCP de la landing. Se precargan la cabeza y el cuenco, las
+         dos capas pesadas (72 KB), para que el navegador las descargue en paralelo con el
+         JavaScript y no hasta que Angular pinte el hero; la cabeza lleva la prioridad alta. Los
+         numeros y la tapa (13 KB) no se precargan: en las mediciones de FF-155 la ruleta completa
+         aparecio igual o antes sin ellas (npm run medir:ruleta).
+         index.html sirve todas las rutas, asi que la precarga se agrega solo si la pagina abre en
+         el landing (/): en las demas rutas la ruleta no se usa. Va en un script en linea y no en
+         un componente porque tiene que declararse antes de que cargue el JavaScript de Angular. -->
+    <script>
+      if (location.pathname === '/') {
+        [['ruleta-cabeza', 'high'], ['ruleta-cuenco']].forEach(([capa, prioridad]) => {
+          const precarga = document.createElement('link');
+          precarga.rel = 'preload';
+          precarga.as = 'image';
+          precarga.href = `img/landing/hero/${capa}.png`;
+          if (prioridad) precarga.fetchPriority = prioridad;
+          document.head.appendChild(precarga);
+        });
+      }
+    </script>
+
     <!-- Vista previa al compartir el enlace (WhatsApp, Discord, itch.io, Steam) -->
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Fat Fish" />

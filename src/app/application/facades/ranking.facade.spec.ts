@@ -2,10 +2,12 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { TestBed } from '@angular/core/testing';
 import { Observable, Subject, of, throwError } from 'rxjs';
 import { EntradaRanking, PaginaRanking } from '../../domain/models/ranking';
+import { Perfil } from '../../domain/models/perfil';
 import { Conectividad } from '../../domain/ports/conectividad';
+import { PerfilRepository } from '../../domain/ports/perfil.repository';
 import { RankingRepository } from '../../domain/ports/ranking.repository';
 import { SesionRepository } from '../../domain/ports/sesion.repository';
-import { ConectividadFalsa, SesionFalsa } from '../../testing/fakes';
+import { ConectividadFalsa, SesionFalsa, perfilDeJugador } from '../../testing/fakes';
 import { RankingFacade } from './ranking.facade';
 
 const fila = (posicion: number): EntradaRanking => ({
@@ -32,13 +34,17 @@ function pagina(numero: number, ultima = false, miPosicion: EntradaRanking | nul
 describe('RankingFacade', () => {
   let pedidas: { pagina: number; jugadorId: string | null }[];
   let responder: (pagina: number) => Observable<PaginaRanking>;
+  let perfilesPedidos: string[];
+  let responderPerfil: (jugadorId: string) => Observable<Perfil>;
   let conectividad: ConectividadFalsa;
   let sesion: SesionFalsa;
   let facade: RankingFacade;
 
   beforeEach(() => {
     pedidas = [];
+    perfilesPedidos = [];
     responder = (n) => of(pagina(n, n === 4));
+    responderPerfil = (id) => of(perfilDeJugador(id));
     conectividad = new ConectividadFalsa();
     sesion = new SesionFalsa();
     TestBed.configureTestingModule({
@@ -49,6 +55,15 @@ describe('RankingFacade', () => {
             pagina: (n: number, jugadorId: string | null) => {
               pedidas.push({ pagina: n, jugadorId });
               return responder(n);
+            },
+          },
+        },
+        {
+          provide: PerfilRepository,
+          useValue: {
+            perfil: (id: string) => {
+              perfilesPedidos.push(id);
+              return responderPerfil(id);
             },
           },
         },
@@ -147,6 +162,48 @@ describe('RankingFacade', () => {
     expect(vieja.observed || masVieja.observed).toBe(false);
   });
 
+  it('shows a single page in place of the rows with irAPagina() and keeps it within 5 pages', () => {
+    conectividad.enLinea.set(false); // no prefetch, so only the requested pages are asked
+    facade.cargar();
+    expect(facade.totalPaginas()).toBe(5);
+    facade.irAPagina(2);
+    expect(facade.paginaActual()).toBe(2);
+    expect(facade.entradas().map((e) => e.posicion)).toEqual([
+      21, 22, 23, 24, 25, 26, 27, 28, 29, 30,
+    ]);
+    facade.irAPagina(2); // the page already shown is not asked again
+    facade.irAPagina(5); // there is no sixth page
+    facade.irAPagina(-1);
+    expect(pedidas.map((p) => p.pagina)).toEqual([0, 2]);
+
+    facade.cargar();
+    expect(facade.paginaActual()).toBe(0);
+  });
+
+  it('asks for fresh data of the page shown when the connection returns after DESDE_CACHE', () => {
+    conectividad.enLinea.set(false);
+    facade.cargar();
+    facade.irAPagina(1);
+    expect(facade.estado()).toBe('DESDE_CACHE');
+
+    conectividad.enLinea.set(true);
+    TestBed.tick();
+    expect(facade.estado()).toBe('CON_DATOS');
+    expect(facade.paginaActual()).toBe(1);
+    expect(pedidas.map((p) => p.pagina)).toEqual([0, 1, 1]);
+  });
+
+  it('keeps the page shown when irAPagina() fails without connection', () => {
+    conectividad.enLinea.set(false);
+    facade.cargar();
+    responder = () => throwError(() => new HttpErrorResponse({ status: 504 }));
+    facade.irAPagina(3);
+    expect(facade.paginaActual()).toBe(0);
+    expect(facade.entradas()[0].posicion).toBe(1);
+    expect(facade.error()).toContain('no está guardada');
+    expect(facade.cargandoMas()).toBe(false);
+  });
+
   it('keeps the rows already shown when "Ver más" fails', () => {
     conectividad.enLinea.set(false);
     facade.cargar();
@@ -156,5 +213,63 @@ describe('RankingFacade', () => {
     expect(facade.estado()).toBe('DESDE_CACHE');
     expect(facade.error()).toContain('Sin conexión');
     expect(facade.cargandoMas()).toBe(false);
+  });
+
+  describe('saved player that the ranking does not place', () => {
+    beforeEach(() => {
+      sesion.id = '99';
+      // The API sends miPosicion null for a player without victories and for one that is gone
+      responder = (n) => of(pagina(n, n === 4, null));
+    });
+
+    it.each([404, 400])('forgets the saved ID when the profile answers %s', (status) => {
+      responderPerfil = () => throwError(() => new HttpErrorResponse({ status }));
+      facade.cargar();
+      expect(perfilesPedidos).toEqual(['99']);
+      expect(sesion.id).toBeNull();
+      expect(facade.consultoExpediente()).toBe(false);
+      expect(facade.miPosicion()).toBeNull();
+      expect(facade.estado()).toBe('CON_DATOS');
+      expect(facade.error()).toBeNull();
+    });
+
+    it('keeps the ID of a player that exists but has no victories', () => {
+      facade.cargar();
+      expect(perfilesPedidos).toEqual(['99']);
+      expect(sesion.id).toBe('99');
+      expect(facade.consultoExpediente()).toBe(true);
+      expect(facade.error()).toBeNull();
+    });
+
+    it.each([0, 504, 500])('keeps the ID when the profile fails with %s', (status) => {
+      conectividad.enLinea.set(status === 500);
+      responderPerfil = () => throwError(() => new HttpErrorResponse({ status }));
+      facade.cargar();
+      expect(sesion.id).toBe('99');
+      expect(facade.consultoExpediente()).toBe(true);
+    });
+
+    it('does not forget a player looked up while the profile answer was on its way', () => {
+      const tardia = new Subject<Perfil>();
+      responderPerfil = () => tardia;
+      facade.cargar();
+      sesion.id = '5';
+      tardia.error(new HttpErrorResponse({ status: 404 }));
+      expect(sesion.id).toBe('5');
+      expect(facade.consultoExpediente()).toBe(true);
+    });
+
+    it('does not ask the profile when the ranking already places the player', () => {
+      responder = (n) => of(pagina(n, n === 4, fila(73)));
+      facade.cargar();
+      expect(perfilesPedidos).toEqual([]);
+      expect(facade.miPosicion()?.posicion).toBe(73);
+    });
+
+    it('does not ask the profile when there is no saved player', () => {
+      sesion.id = null;
+      facade.cargar();
+      expect(perfilesPedidos).toEqual([]);
+    });
   });
 });

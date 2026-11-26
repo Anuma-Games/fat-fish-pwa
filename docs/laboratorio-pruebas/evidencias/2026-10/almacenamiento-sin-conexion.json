@@ -1,0 +1,45 @@
+{
+  "cacheStorage": {
+    "ngsw:/:db:control": "(app)",
+    "ngsw:/:c34c295256638a987994cb9fbedae172715cba70:assets:app:cache": "(app)",
+    "ngsw:/:db:c34c295256638a987994cb9fbedae172715cba70:assets:app:meta": "(app)",
+    "ngsw:/:c34c295256638a987994cb9fbedae172715cba70:assets:assets:cache": "(app)",
+    "ngsw:/:db:c34c295256638a987994cb9fbedae172715cba70:assets:assets:meta": "(app)",
+    "ngsw:/:1:data:api-expediente:cache": [
+      "http://localhost:4200/api/pwa/perfil?id=1",
+      "http://localhost:4200/api/pwa/partidas?id=1&pagina=0&tamano=10",
+      "http://localhost:4200/api/pwa/partidas?id=1&pagina=1&tamano=10"
+    ],
+    "ngsw:/:db:1:data:api-expediente:lru": "(app)",
+    "ngsw:/:db:1:data:api-expediente:age": "(app)"
+  },
+  "indexedDB": [
+    {
+      "id": "73a32db0-9a25-4018-bd3a-814ac7c5cc95",
+      "tipo": "retroalimentacion",
+      "contenido": {
+        "categoria": "ERROR",
+        "componente": "PWA",
+        "mensaje": "Error reportado sin conexión: queda en IndexedDB"
+      },
+      "creadoEn": "2026-10-17T00:28:40.498Z",
+      "intentos": 0,
+      "estado": "PENDIENTE"
+    },
+    {
+      "id": "b3b5c4e7-e4e8-43d3-8631-9236fb94f01a",
+      "tipo": "retroalimentacion",
+      "contenido": {
+        "categoria": "SUGERENCIA",
+        "componente": "PWA",
+        "mensaje": "Sugerencia enviada en línea desde el laboratorio"
+      },
+      "creadoEn": "2026-10-17T00:28:37.227Z",
+      "intentos": 1,
+      "estado": "ENVIADO",
+      "idServidor": "3"
+    }
+  ],
+  "serviceWorker": "activated",
+  "onLine": false
+}

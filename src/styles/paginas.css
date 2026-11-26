@@ -1,0 +1,49 @@
+/* Pieces of the pages of the app that come from the landing page (README 8.3). */
+
+/* The felt of the table: lattice of the casino, as on the back of the wildcards */
+.tapete {
+  position: relative;
+  padding: var(--ff-space-4);
+  background:
+    repeating-linear-gradient(45deg, rgb(232 184 80 / 7%) 0 2px, transparent 2px 14px),
+    repeating-linear-gradient(-45deg, rgb(232 184 80 / 7%) 0 2px, transparent 2px 14px),
+    linear-gradient(160deg, var(--ff-felt-700), var(--ff-felt-800) 70%);
+  border: 2px solid var(--ff-gold-600);
+  border-radius: var(--ff-radius-card);
+  box-shadow:
+    inset 0 0 0 4px rgb(0 0 0 / 25%),
+    var(--ff-shadow-hard);
+}
+.tapete h2 {
+  font-size: 34px;
+  line-height: 1;
+}
+/* Fields on the felt: darker, so they read as holes in the cloth */
+.tapete :is(input, textarea) {
+  background: rgb(5 8 9 / 70%);
+}
+.tapete .option {
+  background: rgb(5 8 9 / 55%);
+}
+.tapete .option.selected {
+  background: var(--ff-felt-700);
+}
+@media (min-width: 768px) {
+  .tapete {
+    padding: var(--ff-space-6);
+  }
+}
+
+/* Cards dealt on the table: each one waits its turn (--i) */
+@keyframes ff-repartir {
+  from {
+    opacity: 0;
+    transform: translateY(-28px) rotateX(55deg) rotateZ(-3deg) scale(0.92);
+  }
+}
+@keyframes ff-aparecer {
+  from {
+    opacity: 0;
+    translate: 0 12px;
+  }
+}

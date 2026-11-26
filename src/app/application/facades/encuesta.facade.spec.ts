@@ -5,8 +5,14 @@ import { Encuesta, RespuestaEncuesta } from '../../domain/models/encuesta';
 import { Conectividad } from '../../domain/ports/conectividad';
 import { EncuestaRepository } from '../../domain/ports/encuesta.repository';
 import { OutboxRepository } from '../../domain/ports/outbox.repository';
+import { SegundoPlano } from '../../domain/ports/segundo-plano';
 import { SesionRepository } from '../../domain/ports/sesion.repository';
-import { ConectividadFalsa, OutboxEnMemoria, SesionFalsa } from '../../testing/fakes';
+import {
+  ConectividadFalsa,
+  OutboxEnMemoria,
+  SegundoPlanoFalso,
+  SesionFalsa,
+} from '../../testing/fakes';
 import { EncuestaFacade } from './encuesta.facade';
 
 const datos: Encuesta = {
@@ -21,6 +27,7 @@ describe('EncuestaFacade', () => {
   let responder: () => Observable<RespuestaEncuesta>;
   let outbox: OutboxEnMemoria;
   let conectividad: ConectividadFalsa;
+  let segundoPlano: SegundoPlanoFalso;
   let facade: EncuestaFacade;
 
   beforeEach(() => {
@@ -28,6 +35,7 @@ describe('EncuestaFacade', () => {
     responder = () => of({ id: '9', enviadaEn: new Date() });
     outbox = new OutboxEnMemoria();
     conectividad = new ConectividadFalsa();
+    segundoPlano = new SegundoPlanoFalso();
     TestBed.configureTestingModule({
       providers: [
         {
@@ -42,11 +50,26 @@ describe('EncuestaFacade', () => {
         { provide: OutboxRepository, useValue: outbox },
         { provide: Conectividad, useValue: conectividad },
         { provide: SesionRepository, useValue: new SesionFalsa() },
+        { provide: SegundoPlano, useValue: segundoPlano },
       ],
     });
     facade = TestBed.inject(EncuestaFacade);
   });
 
+  it('logs an outbox that cannot be read when the connection returns, without an unhandled rejection', async () => {
+    const error = vi.spyOn(console, 'error').mockImplementation(() => {});
+    conectividad.enLinea.set(false);
+    TestBed.tick();
+    vi.spyOn(outbox, 'todos').mockRejectedValue(new ReferenceError('indexedDB is not defined'));
+    conectividad.enLinea.set(true);
+    TestBed.tick();
+    await vi.waitFor(() =>
+      expect(error).toHaveBeenCalledWith(
+        expect.stringContaining('No se pudo revisar el outbox'),
+        expect.any(ReferenceError),
+      ),
+    );
+  });
   it('sends the survey with the outbox id as Idempotency-Key and trims the comment', async () => {
     expect(await facade.enviar(datos)).toBe('ENVIADO');
     expect(enviadas).toHaveLength(1);
@@ -91,5 +114,52 @@ describe('EncuestaFacade', () => {
     responder = () => throwError(() => new HttpErrorResponse({ status: 400 }));
     expect(await facade.enviar(datos)).toBe('RECHAZADO');
     expect(facade.error()).toBeTruthy();
+  });
+
+  it('asks for Background Sync when the survey waits in the outbox', async () => {
+    conectividad.enLinea.set(false);
+    expect(await facade.enviar(datos)).toBe('EN_COLA');
+    expect(segundoPlano.programados).toBe(1);
+
+    conectividad.enLinea.set(true);
+    responder = () => throwError(() => new HttpErrorResponse({ status: 503 }));
+    expect(await facade.enviar(datos)).toBe('EN_COLA');
+    expect(segundoPlano.programados).toBe(2);
+  });
+
+  it('does not ask for Background Sync when the survey is sent or rejected', async () => {
+    expect(await facade.enviar(datos)).toBe('ENVIADO');
+    responder = () => throwError(() => new HttpErrorResponse({ status: 400 }));
+    expect(await facade.enviar(datos)).toBe('RECHAZADO');
+    expect(segundoPlano.programados).toBe(0);
+  });
+
+  it('does not send again a survey the service worker already sent', async () => {
+    conectividad.enLinea.set(false);
+    await facade.enviar(datos);
+    const [id] = [...outbox.filas.keys()];
+    // public/sw.js sent it in the background while the page was closed
+    await outbox.guardar({ ...outbox.filas.get(id)!, estado: 'ENVIADO', idServidor: '77' });
+    conectividad.enLinea.set(true);
+    await facade.sincronizar();
+    expect(enviadas).toHaveLength(0);
+    expect(facade.pendientes()).toBe(0);
+  });
+
+  it('counts a survey left ENVIANDO as pending and sends it again', async () => {
+    await outbox.guardar({
+      id: 'abandonada',
+      tipo: 'encuesta',
+      contenido: { percepcionRiesgo: 4, cambioOpinion: 3, claridadMensaje: 5 },
+      creadoEn: '2026-11-19T10:00:00.000Z',
+      intentos: 1,
+      estado: 'ENVIANDO',
+    });
+    await facade.refrescar();
+    expect(facade.pendientes()).toBe(1);
+
+    await facade.sincronizar();
+    expect(enviadas.map((e) => e.clave)).toEqual(['abandonada']);
+    expect(facade.pendientes()).toBe(0);
   });
 });

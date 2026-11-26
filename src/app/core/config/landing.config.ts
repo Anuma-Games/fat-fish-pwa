@@ -4,9 +4,10 @@
  * Everything is static: the landing page never calls the API or reads stored data.
  */
 
-/** Destinations of the call-to-action buttons. They stay in '#' until the pages exist. */
+/** Destinations of the call-to-action buttons. */
 export const CTA = {
-  demo: '#',
+  /** Link to the demo. Empty until the demo is published: every "Jugar la demo" stays hidden. */
+  demo: '',
   /** Internal routes of the PWA, used as plain links. */
   expediente: '/perfil',
   opinion: '/opinion/retroalimentacion',
@@ -19,7 +20,7 @@ export interface EnlaceMenu {
 
 /**
  * Menu shared by the whole site: the side panel of the landing page and the side menu of
- * Expediente and Opinión show the same two groups, so both feel like one site.
+ * Expediente and Opinión show the same groups, so both feel like one site.
  */
 export const MENU = {
   /** Sections of the landing page (anchors of `/`). */
@@ -39,7 +40,15 @@ export const MENU = {
     titulo: 'Tu expediente y tu opinión',
     enlaces: [
       { ruta: '/perfil', texto: 'Expediente', icono: 'expediente' },
+      { ruta: '/ranking', texto: 'Ranking', icono: 'trofeo' },
       { ruta: '/opinion/retroalimentacion', texto: 'Opinión', icono: 'opinion' },
+    ] as (EnlaceMenu & { ruta: string })[],
+  },
+  /** Legal pages, always at the end of the menu (README 8.5). */
+  legal: {
+    titulo: 'Legal',
+    enlaces: [
+      { ruta: '/privacidad', texto: 'Aviso de privacidad', icono: 'expediente' },
     ] as (EnlaceMenu & { ruta: string })[],
   },
 };
@@ -113,31 +122,37 @@ export const PILARES = [
   },
 ];
 
-/** The four wildcards of the MVP (fat-fish-diseno, section 6). */
+/**
+ * A sample of the game's wildcards, one per category (Ruleta, Mesa, Fichas, Economía in
+ * fat-fish-game, Assets/Modifiers). Only some of them and without figures, so the page does not go
+ * out of date when the shop changes; the full catalog lives in the game.
+ * `icono` is a pixel-art SVG in public/img/landing/comodines (README 8.3).
+ */
 export const COMODINES = [
   {
-    categoria: 'Puntuación',
-    titulo: 'Multiplicador de puntos',
-    texto: 'Aporta al multiplicador de comodines y crece con las copias.',
-    glifo: '×',
-  },
-  {
     categoria: 'Ruleta',
-    titulo: 'Bola adicional',
-    texto: 'Una bola más en el giro: más aciertos, menos puntos.',
-    glifo: '+1',
-  },
-  {
-    categoria: 'Economía',
-    titulo: 'Bonificación económica',
-    texto: 'Dinero adicional, con un límite por ronda.',
-    glifo: '$',
+    titulo: 'Tridente',
+    texto: 'Lanza más bolas y cuenta la que más te paga. La casa cobra por cada bola extra.',
+    icono: 'tridente',
   },
   {
     categoria: 'Mesa',
-    titulo: 'Cambio de color',
-    texto: 'Cambia qué casillas cubren las jugadas por color.',
-    glifo: 'R/N',
+    titulo: 'Reloj de arena',
+    texto: 'Más giros en cada ronda. El tiempo que le robas a tu familia.',
+    icono: 'reloj-de-arena',
+  },
+  {
+    categoria: 'Fichas',
+    titulo: 'Ficha cargada',
+    texto: 'Tus plenos hacen crecer el bono de la casa.',
+    icono: 'ficha-cargada',
+  },
+  {
+    categoria: 'Economía',
+    titulo: 'Seguro de la casa',
+    texto:
+      'Te regresa parte de lo que pierdes en cada giro. La casa siempre gana, pero te consuela.',
+    icono: 'seguro-de-la-casa',
   },
 ];
 
@@ -154,8 +169,8 @@ export const EXPEDIENTE = {
   titulo: 'Lo que el casino sabe de ti',
   texto:
     'El expediente no es un logro: es el perfil que el casino construyó de ti. Registra cuántas ' +
-    'veces volviste, cuánto dinero del juego perdiste, cada vez que arriesgaste todo, tu momento ' +
-    'de mayor desesperación y qué empeñaste o pediste prestado para seguir jugando.',
+    'veces volviste, cuánto dinero del juego perdiste, cada vez que arriesgaste todo y qué ' +
+    'empeñaste o pediste prestado para seguir jugando.',
   cta: 'Ver un expediente',
   alias: 'pezgordo',
   id: '1042',
@@ -165,7 +180,6 @@ export const EXPEDIENTE = {
     { etiqueta: 'Todo o nada', valor: '1 vez' },
     { etiqueta: 'Empeños', valor: 'Automóvil' },
     { etiqueta: 'Préstamos', valor: 500, prefijo: '$' },
-    { etiqueta: 'Mayor desesperación', valor: 'Ronda 3, giro 4' },
   ] as DatoExpediente[],
 };
 
@@ -254,6 +268,22 @@ export const CRUPIER = {
 };
 
 /** The wheel of the hero can be spun by the visitor; this is the hint before the first spin. */
+/**
+ * Trailer of the game (YouTube, channel of the team). A CRT monitor in the hero plays a silent
+ * montage of it, and the monitor or "Ver tráiler" open the full video, loading YouTube only then.
+ */
+export const TRAILER = {
+  youtube: '6DxVmyy-x_8',
+  titulo: 'Tráiler de Fat Fish',
+  /**
+   * Silent montage for the monitor (public/img/landing/hero, README 8.3): the Crupier, a payout,
+   * the shop, the bosses and the pawnshop, never the wheel, which is already the hero. `poster` is
+   * its still frame, also shown with reduced motion.
+   */
+  clip: 'img/landing/hero/trailer-monitor.mp4',
+  poster: 'img/landing/hero/trailer-monitor.jpg',
+};
+
 export const RULETA = {
   pista: 'Toca o arrastra la ruleta para girarla.',
   colores: { rojo: 'rojo', negro: 'negro', cero: 'verde' },

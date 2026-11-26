@@ -1,0 +1,183 @@
+:host {
+  display: block;
+  max-width: 760px;
+  /* Centered in the content area, like the column of the landing page */
+  margin-inline: auto;
+}
+.regla {
+  max-width: 52ch;
+  margin: var(--ff-space-1) 0 0;
+}
+.warn {
+  color: var(--ff-gold-400);
+}
+.ranking {
+  list-style: none;
+  margin: var(--ff-space-6) 0 0;
+  padding: 0;
+  display: grid;
+  gap: var(--ff-space-2);
+  perspective: 900px;
+}
+/* Each place is a card dealt on the table, like the players of the search */
+.fila {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--ff-space-3);
+  min-height: 56px;
+  padding: var(--ff-space-2) var(--ff-space-4);
+  overflow: hidden;
+  background: linear-gradient(160deg, var(--ff-bg-700), var(--ff-bg-800) 70%);
+  border: 1px solid var(--ff-line);
+  border-left: 4px solid var(--ff-line);
+  border-radius: var(--ff-radius-card);
+  box-shadow: 0 12px 20px -14px rgb(0 0 0 / 80%);
+  transition:
+    translate 0.2s ease,
+    border-color 0.2s ease;
+}
+.ranking .fila {
+  animation: ff-repartir 0.5s cubic-bezier(0.2, 0.8, 0.3, 1.25) calc(var(--i, 0) * 60ms) both;
+}
+/* Glint of the lamp across the card when the pointer passes over it */
+.fila::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(115deg, transparent 38%, rgb(255 236 200 / 14%) 50%, transparent 62%);
+  background-size: 300% 100%;
+  background-position: 100% 0;
+  transition: background-position 0.6s ease;
+}
+.ranking .fila:hover {
+  translate: 4px 0;
+  border-color: var(--ff-gold-600);
+}
+.ranking .fila:hover::after {
+  background-position: 0 0;
+}
+.posicion {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  min-width: 40px;
+  text-align: center;
+  font-family: var(--ff-font-display);
+  font-size: 26px;
+  line-height: 1;
+  color: var(--ff-fog-400);
+}
+/* Podium: the number on the cream center of a chip of the game */
+.posicion.ficha {
+  width: 40px;
+  height: 40px;
+  font-size: 20px;
+  color: #140e0a;
+  background: var(--ficha) center / contain no-repeat;
+  filter: drop-shadow(2px 2px 0 #000);
+  image-rendering: pixelated;
+}
+.podio {
+  border-left-color: var(--ff-gold-600);
+}
+.podio .puntaje {
+  color: var(--ff-gold-400);
+}
+.jugador {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+}
+.alias {
+  font-family: var(--ff-font-display);
+  font-size: 24px;
+  line-height: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.id {
+  font-family: var(--ff-font-label);
+  font-size: 7px;
+  color: var(--ff-fog-400);
+  margin-top: 4px;
+}
+.puntaje {
+  font-family: var(--ff-font-display);
+  font-size: 28px;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+.fila.mia {
+  background:
+    repeating-linear-gradient(45deg, rgb(232 184 80 / 7%) 0 2px, transparent 2px 14px),
+    linear-gradient(160deg, var(--ff-felt-700), var(--ff-felt-800) 70%);
+  border: 2px solid var(--ff-gold-400);
+  border-left-width: 4px;
+}
+.fila.mia .posicion:not(.ficha) {
+  color: var(--ff-cream-100);
+}
+
+/* Pager: ‹ 1 2 3 4 5 › */
+.paginador {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ff-space-2);
+  margin-top: var(--ff-space-4);
+}
+.numeros {
+  display: flex;
+  gap: var(--ff-space-2);
+}
+.numero {
+  min-width: 44px;
+  min-height: 44px;
+  font-family: var(--ff-font-label);
+  font-size: 10px;
+  color: var(--ff-fog-400);
+  background: var(--ff-bg-800);
+  border: 2px solid var(--ff-line);
+  border-radius: var(--ff-radius-field);
+  cursor: pointer;
+}
+.numero.actual {
+  color: var(--ff-cream-100);
+  background: var(--ff-felt-700);
+  border-color: var(--ff-gold-400);
+}
+.numero:disabled {
+  cursor: default;
+}
+.anterior {
+  transform: rotate(90deg);
+}
+.siguiente {
+  transform: rotate(-90deg);
+}
+
+/* Own position, fixed at the bottom of the screen while the list scrolls */
+.fila.fija {
+  position: sticky;
+  bottom: var(--ff-space-3);
+  margin-top: var(--ff-space-4);
+  box-shadow: var(--ff-shadow-hard);
+  z-index: 1;
+}
+.pista {
+  margin-top: var(--ff-space-4);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ranking .fila {
+    animation: none;
+  }
+  .fila,
+  .fila::after {
+    transition: none;
+  }
+}

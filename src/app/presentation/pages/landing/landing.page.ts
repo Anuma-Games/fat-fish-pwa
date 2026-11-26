@@ -1,6 +1,7 @@
 import { Component, DestroyRef, ElementRef, afterNextRender, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { CTA, EQUIPO, PREGUNTAS } from '../../../core/config/landing.config';
+import { BarraNav } from '../../components/barra-nav/barra-nav';
 import { Crupier } from './crupier';
 import { seguirAvance } from './motion';
 import { Reveal } from './reveal.directive';
@@ -11,7 +12,6 @@ import { ComodinesSection } from './sections/comodines/comodines.section';
 import { ExpedienteSection } from './sections/expediente/expediente.section';
 import { HeroSection } from './sections/hero/hero.section';
 import { MensajeSection } from './sections/mensaje/mensaje.section';
-import { MenuLateral } from './sections/menu-lateral/menu-lateral';
 import { VisitHud } from './sections/visit-hud/visit-hud';
 import { SonidoMesa } from './sonido-mesa';
 import { VisitDossier } from './visit-dossier';
@@ -36,7 +36,7 @@ import { VisitDossier } from './visit-dossier';
     CierreSection,
     VisitHud,
     CrupierVoz,
-    MenuLateral,
+    BarraNav,
   ],
   providers: [VisitDossier, Crupier, SonidoMesa],
   templateUrl: './landing.page.html',

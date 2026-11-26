@@ -1,14 +1,36 @@
-2026-10-16T18:28:23.456-06:00 DEBUG 7239 --- [fat-fish-api] [http-nio-8080-exec-5] org.hibernate.SQL                        : select p1_0.id,p1_0.alias,p1_0.creado_en,p1_0.ultima_actividad,p1_0.contrasena_hash,p1_0.token_hash from jugador p1_0 where p1_0.id=?
-2026-10-16T18:28:23.456-06:00 DEBUG 7239 --- [fat-fish-api] [http-nio-8080-exec-4] org.hibernate.SQL                        : select p1_0.id,p1_0.alias,p1_0.creado_en,p1_0.ultima_actividad,p1_0.contrasena_hash,p1_0.token_hash from jugador p1_0 where p1_0.id=?
-2026-10-16T18:28:23.457-06:00 TRACE 7239 --- [fat-fish-api] [http-nio-8080-exec-5] org.hibernate.orm.jdbc.bind              : binding parameter (1:BIGINT) <- [1]
-2026-10-16T18:28:23.457-06:00 TRACE 7239 --- [fat-fish-api] [http-nio-8080-exec-4] org.hibernate.orm.jdbc.bind              : binding parameter (1:BIGINT) <- [1]
-2026-10-16T18:28:23.468-06:00 DEBUG 7239 --- [fat-fish-api] [http-nio-8080-exec-4] org.hibernate.SQL                        : select ps1_0.jugador_id,ps1_0.puntaje_maximo,ps1_0.puntaje_maximo_en,ps1_0.racha_derrotas_max,ps1_0.partidas_ganadas,ps1_0.dinero_invertido,ps1_0.dinero_perdido,ps1_0.dinero_ganado,ps1_0.tiempo_jugado_seg,ps1_0.partidas_totales from estadistica_jugador ps1_0 where ps1_0.jugador_id=?
-2026-10-16T18:28:23.468-06:00 TRACE 7239 --- [fat-fish-api] [http-nio-8080-exec-4] org.hibernate.orm.jdbc.bind              : binding parameter (1:BIGINT) <- [1]
-2026-10-16T18:28:23.471-06:00 DEBUG 7239 --- [fat-fish-api] [http-nio-8080-exec-4] org.hibernate.session.metrics            : HHH000401: Logging session metrics:
-	223959 ns acquiring 1 JDBC connections
+2026-11-09T22:23:04.473-06:00  WARN 4246 --- [fat-fish-api] [main] o.s.core.events.SpringDocAppInitializer  : SpringDoc /v3/api-docs endpoint is enabled by default. To disable it in production, set the property 'springdoc.api-docs.enabled=false'
+2026-11-09T22:23:04.473-06:00  WARN 4246 --- [fat-fish-api] [main] o.s.core.events.SpringDocAppInitializer  : SpringDoc /swagger-ui.html endpoint is enabled by default. To disable it in production, set the property 'springdoc.swagger-ui.enabled=false'
+2026-11-09T22:23:06.054-06:00  INFO 4246 --- [fat-fish-api] [http-nio-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-11-09T22:23:06.054-06:00  INFO 4246 --- [fat-fish-api] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2026-11-09T22:23:06.055-06:00  INFO 4246 --- [fat-fish-api] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 1 ms
+2026-11-09T22:23:21.782-06:00 DEBUG 4246 --- [fat-fish-api] [http-nio-8080-exec-4] org.hibernate.SQL                        : select ps1_0.jugador_id,p1_0.alias,ps1_0.puntaje_maximo,ps1_0.puntaje_maximo_en from estadistica_jugador ps1_0 join jugador p1_0 on p1_0.id=ps1_0.jugador_id where ps1_0.puntaje_maximo_en is not null order by ps1_0.puntaje_maximo desc,ps1_0.puntaje_maximo_en,ps1_0.jugador_id fetch first ? rows only
+2026-11-09T22:23:21.783-06:00 TRACE 4246 --- [fat-fish-api] [http-nio-8080-exec-4] org.hibernate.orm.jdbc.bind              : binding parameter (1:INTEGER) <- [10]
+2026-11-09T22:23:21.792-06:00 DEBUG 4246 --- [fat-fish-api] [http-nio-8080-exec-4] org.hibernate.SQL                        : select count(ps1_0.jugador_id) from estadistica_jugador ps1_0 where ps1_0.puntaje_maximo_en is not null
+2026-11-09T22:23:21.797-06:00 DEBUG 4246 --- [fat-fish-api] [http-nio-8080-exec-4] org.hibernate.session.metrics            : HHH000401: Logging session metrics:
+	390458 ns acquiring 1 JDBC connections
 	0 ns releasing 0 JDBC connections
-	279584 ns preparing 2 JDBC statements
-	1433874 ns executing 2 JDBC statements
+	116584 ns preparing 2 JDBC statements
+	2120834 ns executing 2 JDBC statements
+	0 ns executing 0 JDBC batches
+	0 ns performing 0 second-level cache puts
+	0 ns performing 0 second-level cache hits
+	0 ns performing 0 second-level cache misses
+	0 ns executing 0 flushes (flushing a total of 0 entities and 0 collections)
+	52917 ns executing 2 pre-partial-flushes
+	48666 ns executing 2 partial-flushes (flushing a total of 0 entities and 0 collections)
+
+2026-11-09T22:23:21.815-06:00  INFO 4246 --- [fat-fish-api] [http-nio-8080-exec-4] fatfish.lab.http                         : GET /api/pwa/ranking -> 200 | 63.4 ms | petición 0 B, respuesta 1190 B | heap 74 MB de 150 MB (máx. 4096 MB)
+2026-11-09T22:27:03.539-06:00 DEBUG 4246 --- [fat-fish-api] [http-nio-8080-exec-7] org.hibernate.SQL                        : select p1_0.id,p1_0.alias,p1_0.creado_en,p1_0.ultima_actividad,p1_0.contrasena_hash,p1_0.token_hash from jugador p1_0 where p1_0.id=?
+2026-11-09T22:27:03.539-06:00 DEBUG 4246 --- [fat-fish-api] [http-nio-8080-exec-6] org.hibernate.SQL                        : select p1_0.id,p1_0.alias,p1_0.creado_en,p1_0.ultima_actividad,p1_0.contrasena_hash,p1_0.token_hash from jugador p1_0 where p1_0.id=?
+2026-11-09T22:27:03.540-06:00 TRACE 4246 --- [fat-fish-api] [http-nio-8080-exec-7] org.hibernate.orm.jdbc.bind              : binding parameter (1:BIGINT) <- [1]
+2026-11-09T22:27:03.540-06:00 TRACE 4246 --- [fat-fish-api] [http-nio-8080-exec-6] org.hibernate.orm.jdbc.bind              : binding parameter (1:BIGINT) <- [1]
+2026-11-09T22:27:03.547-06:00 DEBUG 4246 --- [fat-fish-api] [http-nio-8080-exec-6] org.hibernate.SQL                        : select ps1_0.jugador_id,ps1_0.puntaje_maximo,ps1_0.puntaje_maximo_en,ps1_0.racha_derrotas_max,ps1_0.partidas_ganadas,ps1_0.dinero_invertido,ps1_0.dinero_perdido,ps1_0.dinero_ganado,ps1_0.tiempo_jugado_seg,ps1_0.partidas_totales from estadistica_jugador ps1_0 where ps1_0.jugador_id=?
+2026-11-09T22:27:03.547-06:00 TRACE 4246 --- [fat-fish-api] [http-nio-8080-exec-6] org.hibernate.orm.jdbc.bind              : binding parameter (1:BIGINT) <- [1]
+2026-11-09T22:27:03.549-06:00 DEBUG 4246 --- [fat-fish-api] [http-nio-8080-exec-6] org.hibernate.session.metrics            : HHH000401: Logging session metrics:
+	257375 ns acquiring 1 JDBC connections
+	0 ns releasing 0 JDBC connections
+	148375 ns preparing 2 JDBC statements
+	767250 ns executing 2 JDBC statements
 	0 ns executing 0 JDBC batches
 	0 ns performing 0 second-level cache puts
 	0 ns performing 0 second-level cache hits
@@ -17,40 +39,56 @@
 	0 ns executing 0 pre-partial-flushes
 	0 ns executing 0 partial-flushes (flushing a total of 0 entities and 0 collections)
 
-2026-10-16T18:28:23.488-06:00  INFO 7239 --- [fat-fish-api] [http-nio-8080-exec-4] fatfish.lab.http                         : GET /api/pwa/perfil?id=1 -> 200 | 67.6 ms | petición 0 B, respuesta 298 B | heap 88 MB de 270 MB (máx. 4096 MB)
-2026-10-16T18:28:23.596-06:00 DEBUG 7239 --- [fat-fish-api] [http-nio-8080-exec-5] org.hibernate.SQL                        : select m1_0.id,m1_0.veces_todo_o_nada,m1_0.creada_en,m1_0.duracion_seg,m1_0.prestamos,m1_0.numero_local,m1_0.dinero_invertido,m1_0.dinero_perdido,m1_0.dinero_ganado,m1_0.empenos,m1_0.jugador_id,m1_0.resultado,m1_0.ronda_alcanzada,m1_0.puntaje from partida m1_0 where m1_0.jugador_id=? order by m1_0.creada_en desc,m1_0.id desc fetch first ? rows only
-2026-10-16T18:28:23.597-06:00 TRACE 7239 --- [fat-fish-api] [http-nio-8080-exec-5] org.hibernate.orm.jdbc.bind              : binding parameter (1:BIGINT) <- [1]
-2026-10-16T18:28:23.597-06:00 TRACE 7239 --- [fat-fish-api] [http-nio-8080-exec-5] org.hibernate.orm.jdbc.bind              : binding parameter (2:INTEGER) <- [10]
-2026-10-16T18:28:23.605-06:00 DEBUG 7239 --- [fat-fish-api] [http-nio-8080-exec-5] org.hibernate.SQL                        : select count(*) from partida m1_0 where m1_0.jugador_id=?
-2026-10-16T18:28:23.605-06:00 TRACE 7239 --- [fat-fish-api] [http-nio-8080-exec-5] org.hibernate.orm.jdbc.bind              : binding parameter (1:BIGINT) <- [1]
-2026-10-16T18:28:23.607-06:00 DEBUG 7239 --- [fat-fish-api] [http-nio-8080-exec-5] org.hibernate.session.metrics            : HHH000401: Logging session metrics:
-	272709 ns acquiring 1 JDBC connections
+2026-11-09T22:27:03.552-06:00  INFO 4246 --- [fat-fish-api] [http-nio-8080-exec-6] fatfish.lab.http                         : GET /api/pwa/perfil?id=1 -> 200 | 26.7 ms | petición 0 B, respuesta 305 B | heap 79 MB de 150 MB (máx. 4096 MB)
+2026-11-09T22:27:03.563-06:00 DEBUG 4246 --- [fat-fish-api] [http-nio-8080-exec-7] org.hibernate.SQL                        : select m1_0.id,m1_0.veces_todo_o_nada,m1_0.creada_en,m1_0.duracion_seg,m1_0.terminada_en,m1_0.clave_idempotencia,m1_0.prestamos,m1_0.dinero_invertido,m1_0.dinero_perdido,m1_0.dinero_ganado,m1_0.empenos,m1_0.jugador_id,m1_0.resultado,m1_0.ronda_alcanzada,m1_0.puntaje from partida m1_0 where m1_0.jugador_id=? order by m1_0.terminada_en desc,m1_0.id desc fetch first ? rows only
+2026-11-09T22:27:03.563-06:00 TRACE 4246 --- [fat-fish-api] [http-nio-8080-exec-7] org.hibernate.orm.jdbc.bind              : binding parameter (1:BIGINT) <- [1]
+2026-11-09T22:27:03.563-06:00 TRACE 4246 --- [fat-fish-api] [http-nio-8080-exec-7] org.hibernate.orm.jdbc.bind              : binding parameter (2:INTEGER) <- [10]
+2026-11-09T22:27:03.571-06:00 DEBUG 4246 --- [fat-fish-api] [http-nio-8080-exec-7] org.hibernate.SQL                        : select count(*) from partida m1_0 where m1_0.jugador_id=?
+2026-11-09T22:27:03.571-06:00 TRACE 4246 --- [fat-fish-api] [http-nio-8080-exec-7] org.hibernate.orm.jdbc.bind              : binding parameter (1:BIGINT) <- [1]
+2026-11-09T22:27:03.573-06:00 DEBUG 4246 --- [fat-fish-api] [http-nio-8080-exec-7] org.hibernate.session.metrics            : HHH000401: Logging session metrics:
+	219541 ns acquiring 1 JDBC connections
 	0 ns releasing 0 JDBC connections
-	327333 ns preparing 3 JDBC statements
-	2440917 ns executing 3 JDBC statements
+	236250 ns preparing 3 JDBC statements
+	2628750 ns executing 3 JDBC statements
 	0 ns executing 0 JDBC batches
 	0 ns performing 0 second-level cache puts
 	0 ns performing 0 second-level cache hits
 	0 ns performing 0 second-level cache misses
 	0 ns executing 0 flushes (flushing a total of 0 entities and 0 collections)
-	59333 ns executing 2 pre-partial-flushes
-	50126 ns executing 2 partial-flushes (flushing a total of 0 entities and 0 collections)
+	4542 ns executing 2 pre-partial-flushes
+	4250 ns executing 2 partial-flushes (flushing a total of 0 entities and 0 collections)
 
-2026-10-16T18:28:23.611-06:00  INFO 7239 --- [fat-fish-api] [http-nio-8080-exec-5] fatfish.lab.http                         : GET /api/pwa/partidas?id=1&pagina=0&tamano=10 -> 200 | 190.6 ms | petición 0 B, respuesta 1957 B | heap 124 MB de 270 MB (máx. 4096 MB)
-2026-10-16T18:28:29.424-06:00 DEBUG 7239 --- [fat-fish-api] [http-nio-8080-exec-9] org.hibernate.SQL                        : select p1_0.id,p1_0.alias,p1_0.creado_en,p1_0.ultima_actividad,p1_0.contrasena_hash,p1_0.token_hash from jugador p1_0 where p1_0.id=?
-2026-10-16T18:28:29.424-06:00 DEBUG 7239 --- [fat-fish-api] [http-nio-8080-exec-8] org.hibernate.SQL                        : select p1_0.id,p1_0.alias,p1_0.creado_en,p1_0.ultima_actividad,p1_0.contrasena_hash,p1_0.token_hash from jugador p1_0 where p1_0.id=?
-2026-10-16T18:28:29.424-06:00 TRACE 7239 --- [fat-fish-api] [http-nio-8080-exec-9] org.hibernate.orm.jdbc.bind              : binding parameter (1:BIGINT) <- [1]
-2026-10-16T18:28:29.424-06:00 TRACE 7239 --- [fat-fish-api] [http-nio-8080-exec-8] org.hibernate.orm.jdbc.bind              : binding parameter (1:BIGINT) <- [1]
-2026-10-16T18:28:29.425-06:00 DEBUG 7239 --- [fat-fish-api] [http-nio-8080-exec-8] org.hibernate.SQL                        : select ps1_0.jugador_id,ps1_0.puntaje_maximo,ps1_0.puntaje_maximo_en,ps1_0.racha_derrotas_max,ps1_0.partidas_ganadas,ps1_0.dinero_invertido,ps1_0.dinero_perdido,ps1_0.dinero_ganado,ps1_0.tiempo_jugado_seg,ps1_0.partidas_totales from estadistica_jugador ps1_0 where ps1_0.jugador_id=?
-2026-10-16T18:28:29.426-06:00 TRACE 7239 --- [fat-fish-api] [http-nio-8080-exec-8] org.hibernate.orm.jdbc.bind              : binding parameter (1:BIGINT) <- [1]
-2026-10-16T18:28:29.426-06:00 DEBUG 7239 --- [fat-fish-api] [http-nio-8080-exec-9] org.hibernate.SQL                        : select m1_0.id,m1_0.veces_todo_o_nada,m1_0.creada_en,m1_0.duracion_seg,m1_0.prestamos,m1_0.numero_local,m1_0.dinero_invertido,m1_0.dinero_perdido,m1_0.dinero_ganado,m1_0.empenos,m1_0.jugador_id,m1_0.resultado,m1_0.ronda_alcanzada,m1_0.puntaje from partida m1_0 where m1_0.jugador_id=? order by m1_0.creada_en desc,m1_0.id desc fetch first ? rows only
-2026-10-16T18:28:29.426-06:00 TRACE 7239 --- [fat-fish-api] [http-nio-8080-exec-9] org.hibernate.orm.jdbc.bind              : binding parameter (1:BIGINT) <- [1]
-2026-10-16T18:28:29.426-06:00 TRACE 7239 --- [fat-fish-api] [http-nio-8080-exec-9] org.hibernate.orm.jdbc.bind              : binding parameter (2:INTEGER) <- [10]
-2026-10-16T18:28:29.427-06:00 DEBUG 7239 --- [fat-fish-api] [http-nio-8080-exec-8] org.hibernate.session.metrics            : HHH000401: Logging session metrics:
-	250292 ns acquiring 1 JDBC connections
+2026-11-09T22:27:03.576-06:00  INFO 4246 --- [fat-fish-api] [http-nio-8080-exec-7] fatfish.lab.http                         : GET /api/pwa/partidas?id=1&pagina=0&tamano=10 -> 200 | 51.2 ms | petición 0 B, respuesta 1969 B | heap 81 MB de 150 MB (máx. 4096 MB)
+2026-11-09T22:27:32.194-06:00 DEBUG 4246 --- [fat-fish-api] [http-nio-8080-exec-10] org.hibernate.SQL                        : select p1_0.id,p1_0.alias,p1_0.creado_en,p1_0.ultima_actividad,p1_0.contrasena_hash,p1_0.token_hash from jugador p1_0 where p1_0.id=?
+2026-11-09T22:27:32.195-06:00 TRACE 4246 --- [fat-fish-api] [http-nio-8080-exec-10] org.hibernate.orm.jdbc.bind              : binding parameter (1:BIGINT) <- [1]
+2026-11-09T22:27:32.202-06:00 DEBUG 4246 --- [fat-fish-api] [http-nio-8080-exec-10] org.hibernate.SQL                        : select p1_0.id,p1_0.alias,p1_0.creado_en,p1_0.ultima_actividad,p1_0.contrasena_hash,p1_0.token_hash from jugador p1_0 where position(lower(?) in lower(p1_0.alias))>0 order by p1_0.ultima_actividad desc nulls last,p1_0.id fetch first ? rows only
+2026-11-09T22:27:32.202-06:00 TRACE 4246 --- [fat-fish-api] [http-nio-8080-exec-10] org.hibernate.orm.jdbc.bind              : binding parameter (1:VARCHAR) <- [1]
+2026-11-09T22:27:32.203-06:00 TRACE 4246 --- [fat-fish-api] [http-nio-8080-exec-10] org.hibernate.orm.jdbc.bind              : binding parameter (2:INTEGER) <- [20]
+2026-11-09T22:27:32.204-06:00 DEBUG 4246 --- [fat-fish-api] [http-nio-8080-exec-10] org.hibernate.session.metrics            : HHH000401: Logging session metrics:
+	530125 ns acquiring 1 JDBC connections
 	0 ns releasing 0 JDBC connections
-	84583 ns preparing 2 JDBC statements
-	1098624 ns executing 2 JDBC statements
+	105958 ns preparing 2 JDBC statements
+	1268583 ns executing 2 JDBC statements
+	0 ns executing 0 JDBC batches
+	0 ns performing 0 second-level cache puts
+	0 ns performing 0 second-level cache hits
+	0 ns performing 0 second-level cache misses
+	0 ns executing 0 flushes (flushing a total of 0 entities and 0 collections)
+	3458 ns executing 1 pre-partial-flushes
+	1542 ns executing 1 partial-flushes (flushing a total of 0 entities and 0 collections)
+
+2026-11-09T22:27:32.208-06:00  INFO 4246 --- [fat-fish-api] [http-nio-8080-exec-10] fatfish.lab.http                         : GET /api/pwa/jugadores?busqueda=1 -> 200 | 23.3 ms | petición 0 B, respuesta 83 B | heap 82 MB de 150 MB (máx. 4096 MB)
+2026-11-09T22:27:32.640-06:00 DEBUG 4246 --- [fat-fish-api] [http-nio-8080-exec-1] org.hibernate.SQL                        : select p1_0.id,p1_0.alias,p1_0.creado_en,p1_0.ultima_actividad,p1_0.contrasena_hash,p1_0.token_hash from jugador p1_0 where p1_0.id=?
+2026-11-09T22:27:32.641-06:00 TRACE 4246 --- [fat-fish-api] [http-nio-8080-exec-1] org.hibernate.orm.jdbc.bind              : binding parameter (1:BIGINT) <- [1]
+2026-11-09T22:27:32.642-06:00 DEBUG 4246 --- [fat-fish-api] [http-nio-8080-exec-2] org.hibernate.SQL                        : select p1_0.id,p1_0.alias,p1_0.creado_en,p1_0.ultima_actividad,p1_0.contrasena_hash,p1_0.token_hash from jugador p1_0 where p1_0.id=?
+2026-11-09T22:27:32.642-06:00 DEBUG 4246 --- [fat-fish-api] [http-nio-8080-exec-1] org.hibernate.SQL                        : select ps1_0.jugador_id,ps1_0.puntaje_maximo,ps1_0.puntaje_maximo_en,ps1_0.racha_derrotas_max,ps1_0.partidas_ganadas,ps1_0.dinero_invertido,ps1_0.dinero_perdido,ps1_0.dinero_ganado,ps1_0.tiempo_jugado_seg,ps1_0.partidas_totales from estadistica_jugador ps1_0 where ps1_0.jugador_id=?
+2026-11-09T22:27:32.642-06:00 TRACE 4246 --- [fat-fish-api] [http-nio-8080-exec-2] org.hibernate.orm.jdbc.bind              : binding parameter (1:BIGINT) <- [1]
+2026-11-09T22:27:32.642-06:00 TRACE 4246 --- [fat-fish-api] [http-nio-8080-exec-1] org.hibernate.orm.jdbc.bind              : binding parameter (1:BIGINT) <- [1]
+2026-11-09T22:27:32.644-06:00 DEBUG 4246 --- [fat-fish-api] [http-nio-8080-exec-1] org.hibernate.session.metrics            : HHH000401: Logging session metrics:
+	30375 ns acquiring 1 JDBC connections
+	0 ns releasing 0 JDBC connections
+	57209 ns preparing 2 JDBC statements
+	843291 ns executing 2 JDBC statements
 	0 ns executing 0 JDBC batches
 	0 ns performing 0 second-level cache puts
 	0 ns performing 0 second-level cache hits
@@ -59,79 +97,79 @@
 	0 ns executing 0 pre-partial-flushes
 	0 ns executing 0 partial-flushes (flushing a total of 0 entities and 0 collections)
 
-2026-10-16T18:28:29.428-06:00  INFO 7239 --- [fat-fish-api] [http-nio-8080-exec-8] fatfish.lab.http                         : GET /api/pwa/perfil?id=1 -> 200 | 5.3 ms | petición 0 B, respuesta 298 B | heap 126 MB de 270 MB (máx. 4096 MB)
-2026-10-16T18:28:29.429-06:00 DEBUG 7239 --- [fat-fish-api] [http-nio-8080-exec-9] org.hibernate.SQL                        : select count(*) from partida m1_0 where m1_0.jugador_id=?
-2026-10-16T18:28:29.429-06:00 TRACE 7239 --- [fat-fish-api] [http-nio-8080-exec-9] org.hibernate.orm.jdbc.bind              : binding parameter (1:BIGINT) <- [1]
-2026-10-16T18:28:29.430-06:00 DEBUG 7239 --- [fat-fish-api] [http-nio-8080-exec-9] org.hibernate.session.metrics            : HHH000401: Logging session metrics:
-	247583 ns acquiring 1 JDBC connections
+2026-11-09T22:27:32.644-06:00 DEBUG 4246 --- [fat-fish-api] [http-nio-8080-exec-2] org.hibernate.SQL                        : select m1_0.id,m1_0.veces_todo_o_nada,m1_0.creada_en,m1_0.duracion_seg,m1_0.terminada_en,m1_0.clave_idempotencia,m1_0.prestamos,m1_0.dinero_invertido,m1_0.dinero_perdido,m1_0.dinero_ganado,m1_0.empenos,m1_0.jugador_id,m1_0.resultado,m1_0.ronda_alcanzada,m1_0.puntaje from partida m1_0 where m1_0.jugador_id=? order by m1_0.terminada_en desc,m1_0.id desc fetch first ? rows only
+2026-11-09T22:27:32.644-06:00 TRACE 4246 --- [fat-fish-api] [http-nio-8080-exec-2] org.hibernate.orm.jdbc.bind              : binding parameter (1:BIGINT) <- [1]
+2026-11-09T22:27:32.645-06:00 TRACE 4246 --- [fat-fish-api] [http-nio-8080-exec-2] org.hibernate.orm.jdbc.bind              : binding parameter (2:INTEGER) <- [10]
+2026-11-09T22:27:32.645-06:00  INFO 4246 --- [fat-fish-api] [http-nio-8080-exec-1] fatfish.lab.http                         : GET /api/pwa/perfil?id=1 -> 200 | 5.8 ms | petición 0 B, respuesta 305 B | heap 83 MB de 150 MB (máx. 4096 MB)
+2026-11-09T22:27:32.648-06:00 DEBUG 4246 --- [fat-fish-api] [http-nio-8080-exec-2] org.hibernate.SQL                        : select count(*) from partida m1_0 where m1_0.jugador_id=?
+2026-11-09T22:27:32.648-06:00 TRACE 4246 --- [fat-fish-api] [http-nio-8080-exec-2] org.hibernate.orm.jdbc.bind              : binding parameter (1:BIGINT) <- [1]
+2026-11-09T22:27:32.649-06:00 DEBUG 4246 --- [fat-fish-api] [http-nio-8080-exec-2] org.hibernate.session.metrics            : HHH000401: Logging session metrics:
+	332417 ns acquiring 1 JDBC connections
 	0 ns releasing 0 JDBC connections
-	109958 ns preparing 3 JDBC statements
-	1744876 ns executing 3 JDBC statements
+	81333 ns preparing 3 JDBC statements
+	1539834 ns executing 3 JDBC statements
 	0 ns executing 0 JDBC batches
 	0 ns performing 0 second-level cache puts
 	0 ns performing 0 second-level cache hits
 	0 ns performing 0 second-level cache misses
 	0 ns executing 0 flushes (flushing a total of 0 entities and 0 collections)
-	7792 ns executing 2 pre-partial-flushes
-	3792 ns executing 2 partial-flushes (flushing a total of 0 entities and 0 collections)
+	6958 ns executing 2 pre-partial-flushes
+	5125 ns executing 2 partial-flushes (flushing a total of 0 entities and 0 collections)
 
-2026-10-16T18:28:29.432-06:00  INFO 7239 --- [fat-fish-api] [http-nio-8080-exec-9] fatfish.lab.http                         : GET /api/pwa/partidas?id=1&pagina=0&tamano=10 -> 200 | 8.9 ms | petición 0 B, respuesta 1957 B | heap 126 MB de 270 MB (máx. 4096 MB)
-2026-10-16T18:28:32.466-06:00 DEBUG 7239 --- [fat-fish-api] [http-nio-8080-exec-10] org.hibernate.SQL                        : select p1_0.id,p1_0.alias,p1_0.creado_en,p1_0.ultima_actividad,p1_0.contrasena_hash,p1_0.token_hash from jugador p1_0 where p1_0.id=?
-2026-10-16T18:28:32.466-06:00 TRACE 7239 --- [fat-fish-api] [http-nio-8080-exec-10] org.hibernate.orm.jdbc.bind              : binding parameter (1:BIGINT) <- [1]
-2026-10-16T18:28:32.467-06:00 DEBUG 7239 --- [fat-fish-api] [http-nio-8080-exec-10] org.hibernate.SQL                        : select m1_0.id,m1_0.veces_todo_o_nada,m1_0.creada_en,m1_0.duracion_seg,m1_0.prestamos,m1_0.numero_local,m1_0.dinero_invertido,m1_0.dinero_perdido,m1_0.dinero_ganado,m1_0.empenos,m1_0.jugador_id,m1_0.resultado,m1_0.ronda_alcanzada,m1_0.puntaje from partida m1_0 where m1_0.jugador_id=? order by m1_0.creada_en desc,m1_0.id desc offset ? rows fetch first ? rows only
-2026-10-16T18:28:32.468-06:00 TRACE 7239 --- [fat-fish-api] [http-nio-8080-exec-10] org.hibernate.orm.jdbc.bind              : binding parameter (1:BIGINT) <- [1]
-2026-10-16T18:28:32.468-06:00 TRACE 7239 --- [fat-fish-api] [http-nio-8080-exec-10] org.hibernate.orm.jdbc.bind              : binding parameter (2:INTEGER) <- [10]
-2026-10-16T18:28:32.468-06:00 TRACE 7239 --- [fat-fish-api] [http-nio-8080-exec-10] org.hibernate.orm.jdbc.bind              : binding parameter (3:INTEGER) <- [10]
-2026-10-16T18:28:32.469-06:00 DEBUG 7239 --- [fat-fish-api] [http-nio-8080-exec-10] org.hibernate.session.metrics            : HHH000401: Logging session metrics:
-	232250 ns acquiring 1 JDBC connections
+2026-11-09T22:27:32.651-06:00  INFO 4246 --- [fat-fish-api] [http-nio-8080-exec-2] fatfish.lab.http                         : GET /api/pwa/partidas?id=1&pagina=0&tamano=10 -> 200 | 10.1 ms | petición 0 B, respuesta 1969 B | heap 83 MB de 150 MB (máx. 4096 MB)
+2026-11-09T22:27:52.117-06:00 DEBUG 4246 --- [fat-fish-api] [http-nio-8080-exec-5] org.hibernate.SQL                        : select p1_0.id,p1_0.alias,p1_0.creado_en,p1_0.ultima_actividad,p1_0.contrasena_hash,p1_0.token_hash from jugador p1_0 where p1_0.id=?
+2026-11-09T22:27:52.118-06:00 TRACE 4246 --- [fat-fish-api] [http-nio-8080-exec-5] org.hibernate.orm.jdbc.bind              : binding parameter (1:BIGINT) <- [1]
+2026-11-09T22:27:52.123-06:00 DEBUG 4246 --- [fat-fish-api] [http-nio-8080-exec-5] org.hibernate.SQL                        : select m1_0.id,m1_0.veces_todo_o_nada,m1_0.creada_en,m1_0.duracion_seg,m1_0.terminada_en,m1_0.clave_idempotencia,m1_0.prestamos,m1_0.dinero_invertido,m1_0.dinero_perdido,m1_0.dinero_ganado,m1_0.empenos,m1_0.jugador_id,m1_0.resultado,m1_0.ronda_alcanzada,m1_0.puntaje from partida m1_0 where m1_0.jugador_id=? order by m1_0.terminada_en desc,m1_0.id desc offset ? rows fetch first ? rows only
+2026-11-09T22:27:52.123-06:00 TRACE 4246 --- [fat-fish-api] [http-nio-8080-exec-5] org.hibernate.orm.jdbc.bind              : binding parameter (1:BIGINT) <- [1]
+2026-11-09T22:27:52.123-06:00 TRACE 4246 --- [fat-fish-api] [http-nio-8080-exec-5] org.hibernate.orm.jdbc.bind              : binding parameter (2:INTEGER) <- [10]
+2026-11-09T22:27:52.123-06:00 TRACE 4246 --- [fat-fish-api] [http-nio-8080-exec-5] org.hibernate.orm.jdbc.bind              : binding parameter (3:INTEGER) <- [10]
+2026-11-09T22:27:52.129-06:00 DEBUG 4246 --- [fat-fish-api] [http-nio-8080-exec-5] org.hibernate.session.metrics            : HHH000401: Logging session metrics:
+	463666 ns acquiring 1 JDBC connections
 	0 ns releasing 0 JDBC connections
-	64500 ns preparing 2 JDBC statements
-	670208 ns executing 2 JDBC statements
+	244292 ns preparing 2 JDBC statements
+	3069834 ns executing 2 JDBC statements
 	0 ns executing 0 JDBC batches
 	0 ns performing 0 second-level cache puts
 	0 ns performing 0 second-level cache hits
 	0 ns performing 0 second-level cache misses
 	0 ns executing 0 flushes (flushing a total of 0 entities and 0 collections)
-	1291 ns executing 1 pre-partial-flushes
-	1042 ns executing 1 partial-flushes (flushing a total of 0 entities and 0 collections)
-
-2026-10-16T18:28:32.470-06:00  INFO 7239 --- [fat-fish-api] [http-nio-8080-exec-10] fatfish.lab.http                         : GET /api/pwa/partidas?id=1&pagina=1&tamano=10 -> 200 | 4.9 ms | petición 0 B, respuesta 491 B | heap 127 MB de 270 MB (máx. 4096 MB)
-2026-10-16T18:28:37.271-06:00 DEBUG 7239 --- [fat-fish-api] [http-nio-8080-exec-2] org.hibernate.SQL                        : select f1_0.id,f1_0.categoria,f1_0.componente,f1_0.creada_en,f1_0.clave_idempotencia,f1_0.mensaje from retroalimentacion f1_0 where f1_0.clave_idempotencia=?
-2026-10-16T18:28:37.272-06:00 TRACE 7239 --- [fat-fish-api] [http-nio-8080-exec-2] org.hibernate.orm.jdbc.bind              : binding parameter (1:UUID) <- [b3b5c4e7-e4e8-43d3-8631-9236fb94f01a]
-2026-10-16T18:28:37.281-06:00 DEBUG 7239 --- [fat-fish-api] [http-nio-8080-exec-2] org.hibernate.SQL                        : insert into retroalimentacion (categoria,componente,creada_en,clave_idempotencia,mensaje) values (?,?,?,?,?)
-2026-10-16T18:28:37.282-06:00 TRACE 7239 --- [fat-fish-api] [http-nio-8080-exec-2] org.hibernate.orm.jdbc.bind              : binding parameter (1:VARCHAR) <- [SUGERENCIA]
-2026-10-16T18:28:37.282-06:00 TRACE 7239 --- [fat-fish-api] [http-nio-8080-exec-2] org.hibernate.orm.jdbc.bind              : binding parameter (2:VARCHAR) <- [PWA]
-2026-10-16T18:28:37.282-06:00 TRACE 7239 --- [fat-fish-api] [http-nio-8080-exec-2] org.hibernate.orm.jdbc.bind              : binding parameter (3:TIMESTAMP_UTC) <- [2026-10-17T00:28:37.273826Z]
-2026-10-16T18:28:37.282-06:00 TRACE 7239 --- [fat-fish-api] [http-nio-8080-exec-2] org.hibernate.orm.jdbc.bind              : binding parameter (4:UUID) <- [b3b5c4e7-e4e8-43d3-8631-9236fb94f01a]
-2026-10-16T18:28:37.282-06:00 TRACE 7239 --- [fat-fish-api] [http-nio-8080-exec-2] org.hibernate.orm.jdbc.bind              : binding parameter (5:VARCHAR) <- [Sugerencia enviada en línea desde el laboratorio]
-2026-10-16T18:28:37.287-06:00 DEBUG 7239 --- [fat-fish-api] [http-nio-8080-exec-2] org.hibernate.session.metrics            : HHH000401: Logging session metrics:
-	235041 ns acquiring 1 JDBC connections
-	0 ns releasing 0 JDBC connections
-	150375 ns preparing 2 JDBC statements
-	1913876 ns executing 2 JDBC statements
-	0 ns executing 0 JDBC batches
-	0 ns performing 0 second-level cache puts
-	0 ns performing 0 second-level cache hits
-	0 ns performing 0 second-level cache misses
-	1391625 ns executing 1 flushes (flushing a total of 1 entities and 0 collections)
-	11291 ns executing 1 pre-partial-flushes
+	5417 ns executing 1 pre-partial-flushes
 	6375 ns executing 1 partial-flushes (flushing a total of 0 entities and 0 collections)
 
-2026-10-16T18:28:37.290-06:00  INFO 7239 --- [fat-fish-api] [http-nio-8080-exec-2] fatfish.lab.http                         : POST /api/pwa/retroalimentacion -> 201 | 47.7 ms | petición 107 B, respuesta 51 B | heap 135 MB de 270 MB (máx. 4096 MB)
-2026-10-16T18:28:42.088-06:00 DEBUG 7239 --- [fat-fish-api] [http-nio-8080-exec-3] org.hibernate.SQL                        : select p1_0.id,p1_0.alias,p1_0.creado_en,p1_0.ultima_actividad,p1_0.contrasena_hash,p1_0.token_hash from jugador p1_0 where p1_0.id=?
-2026-10-16T18:28:42.089-06:00 DEBUG 7239 --- [fat-fish-api] [http-nio-8080-exec-4] org.hibernate.SQL                        : select p1_0.id,p1_0.alias,p1_0.creado_en,p1_0.ultima_actividad,p1_0.contrasena_hash,p1_0.token_hash from jugador p1_0 where p1_0.id=?
-2026-10-16T18:28:42.089-06:00 TRACE 7239 --- [fat-fish-api] [http-nio-8080-exec-4] org.hibernate.orm.jdbc.bind              : binding parameter (1:BIGINT) <- [1]
-2026-10-16T18:28:42.089-06:00 TRACE 7239 --- [fat-fish-api] [http-nio-8080-exec-3] org.hibernate.orm.jdbc.bind              : binding parameter (1:BIGINT) <- [1]
-2026-10-16T18:28:42.090-06:00 DEBUG 7239 --- [fat-fish-api] [http-nio-8080-exec-3] org.hibernate.SQL                        : select ps1_0.jugador_id,ps1_0.puntaje_maximo,ps1_0.puntaje_maximo_en,ps1_0.racha_derrotas_max,ps1_0.partidas_ganadas,ps1_0.dinero_invertido,ps1_0.dinero_perdido,ps1_0.dinero_ganado,ps1_0.tiempo_jugado_seg,ps1_0.partidas_totales from estadistica_jugador ps1_0 where ps1_0.jugador_id=?
-2026-10-16T18:28:42.090-06:00 TRACE 7239 --- [fat-fish-api] [http-nio-8080-exec-3] org.hibernate.orm.jdbc.bind              : binding parameter (1:BIGINT) <- [1]
-2026-10-16T18:28:42.091-06:00 DEBUG 7239 --- [fat-fish-api] [http-nio-8080-exec-4] org.hibernate.SQL                        : select m1_0.id,m1_0.veces_todo_o_nada,m1_0.creada_en,m1_0.duracion_seg,m1_0.prestamos,m1_0.numero_local,m1_0.dinero_invertido,m1_0.dinero_perdido,m1_0.dinero_ganado,m1_0.empenos,m1_0.jugador_id,m1_0.resultado,m1_0.ronda_alcanzada,m1_0.puntaje from partida m1_0 where m1_0.jugador_id=? order by m1_0.creada_en desc,m1_0.id desc fetch first ? rows only
-2026-10-16T18:28:42.091-06:00 TRACE 7239 --- [fat-fish-api] [http-nio-8080-exec-4] org.hibernate.orm.jdbc.bind              : binding parameter (1:BIGINT) <- [1]
-2026-10-16T18:28:42.091-06:00 TRACE 7239 --- [fat-fish-api] [http-nio-8080-exec-4] org.hibernate.orm.jdbc.bind              : binding parameter (2:INTEGER) <- [10]
-2026-10-16T18:28:42.091-06:00 DEBUG 7239 --- [fat-fish-api] [http-nio-8080-exec-3] org.hibernate.session.metrics            : HHH000401: Logging session metrics:
-	253083 ns acquiring 1 JDBC connections
+2026-11-09T22:27:52.131-06:00  INFO 4246 --- [fat-fish-api] [http-nio-8080-exec-5] fatfish.lab.http                         : GET /api/pwa/partidas?id=1&pagina=1&tamano=10 -> 200 | 15.9 ms | petición 0 B, respuesta 861 B | heap 83 MB de 150 MB (máx. 4096 MB)
+2026-11-09T22:28:18.674-06:00 DEBUG 4246 --- [fat-fish-api] [http-nio-8080-exec-8] org.hibernate.SQL                        : select p1_0.id,p1_0.alias,p1_0.creado_en,p1_0.ultima_actividad,p1_0.contrasena_hash,p1_0.token_hash from jugador p1_0 where p1_0.id=?
+2026-11-09T22:28:18.675-06:00 TRACE 4246 --- [fat-fish-api] [http-nio-8080-exec-8] org.hibernate.orm.jdbc.bind              : binding parameter (1:BIGINT) <- [5]
+2026-11-09T22:28:18.679-06:00 DEBUG 4246 --- [fat-fish-api] [http-nio-8080-exec-8] org.hibernate.SQL                        : select p1_0.id,p1_0.alias,p1_0.creado_en,p1_0.ultima_actividad,p1_0.contrasena_hash,p1_0.token_hash from jugador p1_0 where position(lower(?) in lower(p1_0.alias))>0 order by p1_0.ultima_actividad desc nulls last,p1_0.id fetch first ? rows only
+2026-11-09T22:28:18.679-06:00 TRACE 4246 --- [fat-fish-api] [http-nio-8080-exec-8] org.hibernate.orm.jdbc.bind              : binding parameter (1:VARCHAR) <- [5]
+2026-11-09T22:28:18.679-06:00 TRACE 4246 --- [fat-fish-api] [http-nio-8080-exec-8] org.hibernate.orm.jdbc.bind              : binding parameter (2:INTEGER) <- [20]
+2026-11-09T22:28:18.681-06:00 DEBUG 4246 --- [fat-fish-api] [http-nio-8080-exec-8] org.hibernate.session.metrics            : HHH000401: Logging session metrics:
+	663458 ns acquiring 1 JDBC connections
 	0 ns releasing 0 JDBC connections
-	42875 ns preparing 2 JDBC statements
-	657333 ns executing 2 JDBC statements
+	112500 ns preparing 2 JDBC statements
+	1535042 ns executing 2 JDBC statements
+	0 ns executing 0 JDBC batches
+	0 ns performing 0 second-level cache puts
+	0 ns performing 0 second-level cache hits
+	0 ns performing 0 second-level cache misses
+	0 ns executing 0 flushes (flushing a total of 0 entities and 0 collections)
+	7125 ns executing 1 pre-partial-flushes
+	5542 ns executing 1 partial-flushes (flushing a total of 0 entities and 0 collections)
+
+2026-11-09T22:28:18.683-06:00  INFO 4246 --- [fat-fish-api] [http-nio-8080-exec-8] fatfish.lab.http                         : GET /api/pwa/jugadores?busqueda=5 -> 200 | 11.7 ms | petición 0 B, respuesta 67 B | heap 83 MB de 150 MB (máx. 4096 MB)
+2026-11-09T22:28:19.129-06:00 DEBUG 4246 --- [fat-fish-api] [http-nio-8080-exec-10] org.hibernate.SQL                        : select p1_0.id,p1_0.alias,p1_0.creado_en,p1_0.ultima_actividad,p1_0.contrasena_hash,p1_0.token_hash from jugador p1_0 where p1_0.id=?
+2026-11-09T22:28:19.129-06:00 DEBUG 4246 --- [fat-fish-api] [http-nio-8080-exec-9] org.hibernate.SQL                        : select p1_0.id,p1_0.alias,p1_0.creado_en,p1_0.ultima_actividad,p1_0.contrasena_hash,p1_0.token_hash from jugador p1_0 where p1_0.id=?
+2026-11-09T22:28:19.129-06:00 TRACE 4246 --- [fat-fish-api] [http-nio-8080-exec-10] org.hibernate.orm.jdbc.bind              : binding parameter (1:BIGINT) <- [5]
+2026-11-09T22:28:19.129-06:00 TRACE 4246 --- [fat-fish-api] [http-nio-8080-exec-9] org.hibernate.orm.jdbc.bind              : binding parameter (1:BIGINT) <- [5]
+2026-11-09T22:28:19.130-06:00 DEBUG 4246 --- [fat-fish-api] [http-nio-8080-exec-9] org.hibernate.SQL                        : select ps1_0.jugador_id,ps1_0.puntaje_maximo,ps1_0.puntaje_maximo_en,ps1_0.racha_derrotas_max,ps1_0.partidas_ganadas,ps1_0.dinero_invertido,ps1_0.dinero_perdido,ps1_0.dinero_ganado,ps1_0.tiempo_jugado_seg,ps1_0.partidas_totales from estadistica_jugador ps1_0 where ps1_0.jugador_id=?
+2026-11-09T22:28:19.131-06:00 TRACE 4246 --- [fat-fish-api] [http-nio-8080-exec-9] org.hibernate.orm.jdbc.bind              : binding parameter (1:BIGINT) <- [5]
+2026-11-09T22:28:19.131-06:00 DEBUG 4246 --- [fat-fish-api] [http-nio-8080-exec-10] org.hibernate.SQL                        : select m1_0.id,m1_0.veces_todo_o_nada,m1_0.creada_en,m1_0.duracion_seg,m1_0.terminada_en,m1_0.clave_idempotencia,m1_0.prestamos,m1_0.dinero_invertido,m1_0.dinero_perdido,m1_0.dinero_ganado,m1_0.empenos,m1_0.jugador_id,m1_0.resultado,m1_0.ronda_alcanzada,m1_0.puntaje from partida m1_0 where m1_0.jugador_id=? order by m1_0.terminada_en desc,m1_0.id desc fetch first ? rows only
+2026-11-09T22:28:19.132-06:00 TRACE 4246 --- [fat-fish-api] [http-nio-8080-exec-10] org.hibernate.orm.jdbc.bind              : binding parameter (1:BIGINT) <- [5]
+2026-11-09T22:28:19.132-06:00 TRACE 4246 --- [fat-fish-api] [http-nio-8080-exec-10] org.hibernate.orm.jdbc.bind              : binding parameter (2:INTEGER) <- [10]
+2026-11-09T22:28:19.132-06:00 DEBUG 4246 --- [fat-fish-api] [http-nio-8080-exec-9] org.hibernate.session.metrics            : HHH000401: Logging session metrics:
+	325375 ns acquiring 1 JDBC connections
+	0 ns releasing 0 JDBC connections
+	110833 ns preparing 2 JDBC statements
+	1291043 ns executing 2 JDBC statements
 	0 ns executing 0 JDBC batches
 	0 ns performing 0 second-level cache puts
 	0 ns performing 0 second-level cache hits
@@ -140,42 +178,327 @@
 	0 ns executing 0 pre-partial-flushes
 	0 ns executing 0 partial-flushes (flushing a total of 0 entities and 0 collections)
 
-2026-10-16T18:28:42.092-06:00  INFO 7239 --- [fat-fish-api] [http-nio-8080-exec-3] fatfish.lab.http                         : GET /api/pwa/perfil?id=1 -> 200 | 5.0 ms | petición 0 B, respuesta 298 B | heap 135 MB de 270 MB (máx. 4096 MB)
-2026-10-16T18:28:42.094-06:00 DEBUG 7239 --- [fat-fish-api] [http-nio-8080-exec-4] org.hibernate.SQL                        : select count(*) from partida m1_0 where m1_0.jugador_id=?
-2026-10-16T18:28:42.094-06:00 TRACE 7239 --- [fat-fish-api] [http-nio-8080-exec-4] org.hibernate.orm.jdbc.bind              : binding parameter (1:BIGINT) <- [1]
-2026-10-16T18:28:42.095-06:00 DEBUG 7239 --- [fat-fish-api] [http-nio-8080-exec-4] org.hibernate.session.metrics            : HHH000401: Logging session metrics:
-	143000 ns acquiring 1 JDBC connections
+2026-11-09T22:28:19.133-06:00 DEBUG 4246 --- [fat-fish-api] [http-nio-8080-exec-10] org.hibernate.session.metrics            : HHH000401: Logging session metrics:
+	40333 ns acquiring 1 JDBC connections
 	0 ns releasing 0 JDBC connections
-	44125 ns preparing 3 JDBC statements
-	1023250 ns executing 3 JDBC statements
+	114625 ns preparing 2 JDBC statements
+	706209 ns executing 2 JDBC statements
 	0 ns executing 0 JDBC batches
 	0 ns performing 0 second-level cache puts
 	0 ns performing 0 second-level cache hits
 	0 ns performing 0 second-level cache misses
 	0 ns executing 0 flushes (flushing a total of 0 entities and 0 collections)
-	6250 ns executing 2 pre-partial-flushes
-	4083 ns executing 2 partial-flushes (flushing a total of 0 entities and 0 collections)
+	4333 ns executing 1 pre-partial-flushes
+	3125 ns executing 1 partial-flushes (flushing a total of 0 entities and 0 collections)
 
-2026-10-16T18:28:42.096-06:00  INFO 7239 --- [fat-fish-api] [http-nio-8080-exec-4] fatfish.lab.http                         : GET /api/pwa/partidas?id=1&pagina=0&tamano=10 -> 200 | 8.1 ms | petición 0 B, respuesta 1957 B | heap 135 MB de 270 MB (máx. 4096 MB)
-2026-10-16T18:28:47.678-06:00 DEBUG 7239 --- [fat-fish-api] [http-nio-8080-exec-7] org.hibernate.SQL                        : select f1_0.id,f1_0.categoria,f1_0.componente,f1_0.creada_en,f1_0.clave_idempotencia,f1_0.mensaje from retroalimentacion f1_0 where f1_0.clave_idempotencia=?
-2026-10-16T18:28:47.679-06:00 TRACE 7239 --- [fat-fish-api] [http-nio-8080-exec-7] org.hibernate.orm.jdbc.bind              : binding parameter (1:UUID) <- [73a32db0-9a25-4018-bd3a-814ac7c5cc95]
-2026-10-16T18:28:47.681-06:00 DEBUG 7239 --- [fat-fish-api] [http-nio-8080-exec-7] org.hibernate.SQL                        : insert into retroalimentacion (categoria,componente,creada_en,clave_idempotencia,mensaje) values (?,?,?,?,?)
-2026-10-16T18:28:47.681-06:00 TRACE 7239 --- [fat-fish-api] [http-nio-8080-exec-7] org.hibernate.orm.jdbc.bind              : binding parameter (1:VARCHAR) <- [ERROR]
-2026-10-16T18:28:47.681-06:00 TRACE 7239 --- [fat-fish-api] [http-nio-8080-exec-7] org.hibernate.orm.jdbc.bind              : binding parameter (2:VARCHAR) <- [PWA]
-2026-10-16T18:28:47.681-06:00 TRACE 7239 --- [fat-fish-api] [http-nio-8080-exec-7] org.hibernate.orm.jdbc.bind              : binding parameter (3:TIMESTAMP_UTC) <- [2026-10-17T00:28:47.680831Z]
-2026-10-16T18:28:47.682-06:00 TRACE 7239 --- [fat-fish-api] [http-nio-8080-exec-7] org.hibernate.orm.jdbc.bind              : binding parameter (4:UUID) <- [73a32db0-9a25-4018-bd3a-814ac7c5cc95]
-2026-10-16T18:28:47.682-06:00 TRACE 7239 --- [fat-fish-api] [http-nio-8080-exec-7] org.hibernate.orm.jdbc.bind              : binding parameter (5:VARCHAR) <- [Error reportado sin conexión: queda en IndexedDB]
-2026-10-16T18:28:47.684-06:00 DEBUG 7239 --- [fat-fish-api] [http-nio-8080-exec-7] org.hibernate.session.metrics            : HHH000401: Logging session metrics:
-	724958 ns acquiring 1 JDBC connections
+2026-11-09T22:28:19.133-06:00  INFO 4246 --- [fat-fish-api] [http-nio-8080-exec-9] fatfish.lab.http                         : GET /api/pwa/perfil?id=5 -> 200 | 5.3 ms | petición 0 B, respuesta 276 B | heap 83 MB de 150 MB (máx. 4096 MB)
+2026-11-09T22:28:19.133-06:00  INFO 4246 --- [fat-fish-api] [http-nio-8080-exec-10] fatfish.lab.http                         : GET /api/pwa/partidas?id=5&pagina=0&tamano=10 -> 200 | 5.4 ms | petición 0 B, respuesta 132 B | heap 83 MB de 150 MB (máx. 4096 MB)
+2026-11-09T22:28:33.122-06:00 DEBUG 4246 --- [fat-fish-api] [http-nio-8080-exec-3] org.hibernate.SQL                        : select p1_0.id,p1_0.alias,p1_0.creado_en,p1_0.ultima_actividad,p1_0.contrasena_hash,p1_0.token_hash from jugador p1_0 where p1_0.id=?
+2026-11-09T22:28:33.123-06:00 TRACE 4246 --- [fat-fish-api] [http-nio-8080-exec-3] org.hibernate.orm.jdbc.bind              : binding parameter (1:BIGINT) <- [999]
+2026-11-09T22:28:33.127-06:00 DEBUG 4246 --- [fat-fish-api] [http-nio-8080-exec-3] org.hibernate.SQL                        : select p1_0.id,p1_0.alias,p1_0.creado_en,p1_0.ultima_actividad,p1_0.contrasena_hash,p1_0.token_hash from jugador p1_0 where position(lower(?) in lower(p1_0.alias))>0 order by p1_0.ultima_actividad desc nulls last,p1_0.id fetch first ? rows only
+2026-11-09T22:28:33.127-06:00 TRACE 4246 --- [fat-fish-api] [http-nio-8080-exec-3] org.hibernate.orm.jdbc.bind              : binding parameter (1:VARCHAR) <- [999]
+2026-11-09T22:28:33.127-06:00 TRACE 4246 --- [fat-fish-api] [http-nio-8080-exec-3] org.hibernate.orm.jdbc.bind              : binding parameter (2:INTEGER) <- [20]
+2026-11-09T22:28:33.130-06:00 DEBUG 4246 --- [fat-fish-api] [http-nio-8080-exec-3] org.hibernate.session.metrics            : HHH000401: Logging session metrics:
+	481417 ns acquiring 1 JDBC connections
 	0 ns releasing 0 JDBC connections
-	103166 ns preparing 2 JDBC statements
-	1585250 ns executing 2 JDBC statements
+	630917 ns preparing 2 JDBC statements
+	1392333 ns executing 2 JDBC statements
 	0 ns executing 0 JDBC batches
 	0 ns performing 0 second-level cache puts
 	0 ns performing 0 second-level cache hits
 	0 ns performing 0 second-level cache misses
-	139875 ns executing 1 flushes (flushing a total of 1 entities and 0 collections)
-	8709 ns executing 1 pre-partial-flushes
-	4584 ns executing 1 partial-flushes (flushing a total of 0 entities and 0 collections)
+	0 ns executing 0 flushes (flushing a total of 0 entities and 0 collections)
+	6708 ns executing 1 pre-partial-flushes
+	6583 ns executing 1 partial-flushes (flushing a total of 0 entities and 0 collections)
 
-2026-10-16T18:28:47.685-06:00  INFO 7239 --- [fat-fish-api] [http-nio-8080-exec-7] fatfish.lab.http                         : POST /api/pwa/retroalimentacion -> 201 | 11.6 ms | petición 102 B, respuesta 51 B | heap 136 MB de 270 MB (máx. 4096 MB)
+2026-11-09T22:28:33.132-06:00  INFO 4246 --- [fat-fish-api] [http-nio-8080-exec-3] fatfish.lab.http                         : GET /api/pwa/jugadores?busqueda=999 -> 200 | 12.0 ms | petición 0 B, respuesta 2 B | heap 83 MB de 150 MB (máx. 4096 MB)
+2026-11-09T22:28:43.936-06:00 DEBUG 4246 --- [fat-fish-api] [http-nio-8080-exec-5] org.hibernate.SQL                        : select p1_0.id,p1_0.alias,p1_0.creado_en,p1_0.ultima_actividad,p1_0.contrasena_hash,p1_0.token_hash from jugador p1_0 where p1_0.id=?
+2026-11-09T22:28:43.937-06:00 TRACE 4246 --- [fat-fish-api] [http-nio-8080-exec-5] org.hibernate.orm.jdbc.bind              : binding parameter (1:BIGINT) <- [1]
+2026-11-09T22:28:43.941-06:00 DEBUG 4246 --- [fat-fish-api] [http-nio-8080-exec-5] org.hibernate.SQL                        : select p1_0.id,p1_0.alias,p1_0.creado_en,p1_0.ultima_actividad,p1_0.contrasena_hash,p1_0.token_hash from jugador p1_0 where position(lower(?) in lower(p1_0.alias))>0 order by p1_0.ultima_actividad desc nulls last,p1_0.id fetch first ? rows only
+2026-11-09T22:28:43.941-06:00 TRACE 4246 --- [fat-fish-api] [http-nio-8080-exec-5] org.hibernate.orm.jdbc.bind              : binding parameter (1:VARCHAR) <- [1]
+2026-11-09T22:28:43.942-06:00 TRACE 4246 --- [fat-fish-api] [http-nio-8080-exec-5] org.hibernate.orm.jdbc.bind              : binding parameter (2:INTEGER) <- [20]
+2026-11-09T22:28:43.944-06:00 DEBUG 4246 --- [fat-fish-api] [http-nio-8080-exec-5] org.hibernate.session.metrics            : HHH000401: Logging session metrics:
+	462625 ns acquiring 1 JDBC connections
+	0 ns releasing 0 JDBC connections
+	112500 ns preparing 2 JDBC statements
+	1471083 ns executing 2 JDBC statements
+	0 ns executing 0 JDBC batches
+	0 ns performing 0 second-level cache puts
+	0 ns performing 0 second-level cache hits
+	0 ns performing 0 second-level cache misses
+	0 ns executing 0 flushes (flushing a total of 0 entities and 0 collections)
+	6708 ns executing 1 pre-partial-flushes
+	6458 ns executing 1 partial-flushes (flushing a total of 0 entities and 0 collections)
+
+2026-11-09T22:28:43.946-06:00  INFO 4246 --- [fat-fish-api] [http-nio-8080-exec-5] fatfish.lab.http                         : GET /api/pwa/jugadores?busqueda=1 -> 200 | 12.3 ms | petición 0 B, respuesta 83 B | heap 83 MB de 150 MB (máx. 4096 MB)
+2026-11-09T22:28:44.389-06:00 DEBUG 4246 --- [fat-fish-api] [http-nio-8080-exec-6] org.hibernate.SQL                        : select p1_0.id,p1_0.alias,p1_0.creado_en,p1_0.ultima_actividad,p1_0.contrasena_hash,p1_0.token_hash from jugador p1_0 where p1_0.id=?
+2026-11-09T22:28:44.390-06:00 TRACE 4246 --- [fat-fish-api] [http-nio-8080-exec-6] org.hibernate.orm.jdbc.bind              : binding parameter (1:BIGINT) <- [1]
+2026-11-09T22:28:44.396-06:00 DEBUG 4246 --- [fat-fish-api] [http-nio-8080-exec-7] org.hibernate.SQL                        : select p1_0.id,p1_0.alias,p1_0.creado_en,p1_0.ultima_actividad,p1_0.contrasena_hash,p1_0.token_hash from jugador p1_0 where p1_0.id=?
+2026-11-09T22:28:44.396-06:00 TRACE 4246 --- [fat-fish-api] [http-nio-8080-exec-7] org.hibernate.orm.jdbc.bind              : binding parameter (1:BIGINT) <- [1]
+2026-11-09T22:28:44.397-06:00 DEBUG 4246 --- [fat-fish-api] [http-nio-8080-exec-6] org.hibernate.SQL                        : select ps1_0.jugador_id,ps1_0.puntaje_maximo,ps1_0.puntaje_maximo_en,ps1_0.racha_derrotas_max,ps1_0.partidas_ganadas,ps1_0.dinero_invertido,ps1_0.dinero_perdido,ps1_0.dinero_ganado,ps1_0.tiempo_jugado_seg,ps1_0.partidas_totales from estadistica_jugador ps1_0 where ps1_0.jugador_id=?
+2026-11-09T22:28:44.397-06:00 TRACE 4246 --- [fat-fish-api] [http-nio-8080-exec-6] org.hibernate.orm.jdbc.bind              : binding parameter (1:BIGINT) <- [1]
+2026-11-09T22:28:44.399-06:00 DEBUG 4246 --- [fat-fish-api] [http-nio-8080-exec-6] org.hibernate.session.metrics            : HHH000401: Logging session metrics:
+	247584 ns acquiring 1 JDBC connections
+	0 ns releasing 0 JDBC connections
+	95333 ns preparing 2 JDBC statements
+	1054375 ns executing 2 JDBC statements
+	0 ns executing 0 JDBC batches
+	0 ns performing 0 second-level cache puts
+	0 ns performing 0 second-level cache hits
+	0 ns performing 0 second-level cache misses
+	0 ns executing 0 flushes (flushing a total of 0 entities and 0 collections)
+	0 ns executing 0 pre-partial-flushes
+	0 ns executing 0 partial-flushes (flushing a total of 0 entities and 0 collections)
+
+2026-11-09T22:28:44.399-06:00 DEBUG 4246 --- [fat-fish-api] [http-nio-8080-exec-7] org.hibernate.SQL                        : select m1_0.id,m1_0.veces_todo_o_nada,m1_0.creada_en,m1_0.duracion_seg,m1_0.terminada_en,m1_0.clave_idempotencia,m1_0.prestamos,m1_0.dinero_invertido,m1_0.dinero_perdido,m1_0.dinero_ganado,m1_0.empenos,m1_0.jugador_id,m1_0.resultado,m1_0.ronda_alcanzada,m1_0.puntaje from partida m1_0 where m1_0.jugador_id=? order by m1_0.terminada_en desc,m1_0.id desc fetch first ? rows only
+2026-11-09T22:28:44.399-06:00 TRACE 4246 --- [fat-fish-api] [http-nio-8080-exec-7] org.hibernate.orm.jdbc.bind              : binding parameter (1:BIGINT) <- [1]
+2026-11-09T22:28:44.400-06:00 TRACE 4246 --- [fat-fish-api] [http-nio-8080-exec-7] org.hibernate.orm.jdbc.bind              : binding parameter (2:INTEGER) <- [10]
+2026-11-09T22:28:44.401-06:00  INFO 4246 --- [fat-fish-api] [http-nio-8080-exec-6] fatfish.lab.http                         : GET /api/pwa/perfil?id=1 -> 200 | 17.2 ms | petición 0 B, respuesta 305 B | heap 84 MB de 150 MB (máx. 4096 MB)
+2026-11-09T22:28:44.405-06:00 DEBUG 4246 --- [fat-fish-api] [http-nio-8080-exec-7] org.hibernate.SQL                        : select count(*) from partida m1_0 where m1_0.jugador_id=?
+2026-11-09T22:28:44.406-06:00 TRACE 4246 --- [fat-fish-api] [http-nio-8080-exec-7] org.hibernate.orm.jdbc.bind              : binding parameter (1:BIGINT) <- [1]
+2026-11-09T22:28:44.408-06:00 DEBUG 4246 --- [fat-fish-api] [http-nio-8080-exec-7] org.hibernate.session.metrics            : HHH000401: Logging session metrics:
+	517584 ns acquiring 1 JDBC connections
+	0 ns releasing 0 JDBC connections
+	155708 ns preparing 3 JDBC statements
+	2437916 ns executing 3 JDBC statements
+	0 ns executing 0 JDBC batches
+	0 ns performing 0 second-level cache puts
+	0 ns performing 0 second-level cache hits
+	0 ns performing 0 second-level cache misses
+	0 ns executing 0 flushes (flushing a total of 0 entities and 0 collections)
+	16333 ns executing 2 pre-partial-flushes
+	12417 ns executing 2 partial-flushes (flushing a total of 0 entities and 0 collections)
+
+2026-11-09T22:28:44.409-06:00  INFO 4246 --- [fat-fish-api] [http-nio-8080-exec-7] fatfish.lab.http                         : GET /api/pwa/partidas?id=1&pagina=0&tamano=10 -> 200 | 20.2 ms | petición 0 B, respuesta 1969 B | heap 84 MB de 150 MB (máx. 4096 MB)
+2026-11-09T22:28:56.940-06:00 DEBUG 4246 --- [fat-fish-api] [http-nio-8080-exec-9] org.hibernate.SQL                        : select f1_0.id,f1_0.categoria,f1_0.componente,f1_0.creada_en,f1_0.clave_idempotencia,f1_0.mensaje from retroalimentacion f1_0 where f1_0.clave_idempotencia=?
+2026-11-09T22:28:56.941-06:00 TRACE 4246 --- [fat-fish-api] [http-nio-8080-exec-9] org.hibernate.orm.jdbc.bind              : binding parameter (1:UUID) <- [ea1397a6-cddd-40f2-8e65-d013bc55b7ce]
+2026-11-09T22:28:56.942-06:00 DEBUG 4246 --- [fat-fish-api] [http-nio-8080-exec-9] org.hibernate.session.metrics            : HHH000401: Logging session metrics:
+	250334 ns acquiring 1 JDBC connections
+	0 ns releasing 0 JDBC connections
+	36791 ns preparing 1 JDBC statements
+	1591375 ns executing 1 JDBC statements
+	0 ns executing 0 JDBC batches
+	0 ns performing 0 second-level cache puts
+	0 ns performing 0 second-level cache hits
+	0 ns performing 0 second-level cache misses
+	0 ns executing 0 flushes (flushing a total of 0 entities and 0 collections)
+	0 ns executing 0 pre-partial-flushes
+	0 ns executing 0 partial-flushes (flushing a total of 0 entities and 0 collections)
+
+2026-11-09T22:28:56.950-06:00 DEBUG 4246 --- [fat-fish-api] [http-nio-8080-exec-9] org.hibernate.SQL                        : insert into retroalimentacion (categoria,componente,creada_en,clave_idempotencia,mensaje) values (?,?,?,?,?)
+2026-11-09T22:28:56.951-06:00 TRACE 4246 --- [fat-fish-api] [http-nio-8080-exec-9] org.hibernate.orm.jdbc.bind              : binding parameter (1:VARCHAR) <- [SUGERENCIA]
+2026-11-09T22:28:56.951-06:00 TRACE 4246 --- [fat-fish-api] [http-nio-8080-exec-9] org.hibernate.orm.jdbc.bind              : binding parameter (2:VARCHAR) <- [PWA]
+2026-11-09T22:28:56.951-06:00 TRACE 4246 --- [fat-fish-api] [http-nio-8080-exec-9] org.hibernate.orm.jdbc.bind              : binding parameter (3:TIMESTAMP_UTC) <- [2026-11-10T04:28:56.943162Z]
+2026-11-09T22:28:56.951-06:00 TRACE 4246 --- [fat-fish-api] [http-nio-8080-exec-9] org.hibernate.orm.jdbc.bind              : binding parameter (4:UUID) <- [ea1397a6-cddd-40f2-8e65-d013bc55b7ce]
+2026-11-09T22:28:56.951-06:00 TRACE 4246 --- [fat-fish-api] [http-nio-8080-exec-9] org.hibernate.orm.jdbc.bind              : binding parameter (5:VARCHAR) <- [Me gustaría ver en el expediente cuántas veces usé cada comodín]
+2026-11-09T22:28:56.957-06:00 DEBUG 4246 --- [fat-fish-api] [http-nio-8080-exec-9] org.hibernate.session.metrics            : HHH000401: Logging session metrics:
+	8292 ns acquiring 1 JDBC connections
+	0 ns releasing 0 JDBC connections
+	97916 ns preparing 1 JDBC statements
+	483333 ns executing 1 JDBC statements
+	0 ns executing 0 JDBC batches
+	0 ns performing 0 second-level cache puts
+	0 ns performing 0 second-level cache hits
+	0 ns performing 0 second-level cache misses
+	1479833 ns executing 1 flushes (flushing a total of 1 entities and 0 collections)
+	0 ns executing 0 pre-partial-flushes
+	0 ns executing 0 partial-flushes (flushing a total of 0 entities and 0 collections)
+
+2026-11-09T22:28:56.960-06:00  INFO 4246 --- [fat-fish-api] [http-nio-8080-exec-9] fatfish.lab.http                         : POST /api/pwa/retroalimentacion -> 201 | 75.4 ms | petición 125 B, respuesta 51 B | heap 92 MB de 150 MB (máx. 4096 MB)
+2026-11-09T22:29:12.497-06:00  INFO 4246 --- [fat-fish-api] [http-nio-8080-exec-2] fatfish.lab.http                         : POST /api/pwa/retroalimentacion -> 400 | 7.3 ms | petición 61 B, respuesta 193 B | heap 92 MB de 150 MB (máx. 4096 MB)
+2026-11-09T22:53:30.139-06:00 DEBUG 4246 --- [fat-fish-api] [http-nio-8080-exec-3] org.hibernate.SQL                        : select p1_0.id,p1_0.alias,p1_0.creado_en,p1_0.ultima_actividad,p1_0.contrasena_hash,p1_0.token_hash from jugador p1_0 where p1_0.id=?
+2026-11-09T22:53:30.140-06:00 TRACE 4246 --- [fat-fish-api] [http-nio-8080-exec-3] org.hibernate.orm.jdbc.bind              : binding parameter (1:BIGINT) <- [1]
+2026-11-09T22:53:30.139-06:00 DEBUG 4246 --- [fat-fish-api] [http-nio-8080-exec-4] org.hibernate.SQL                        : select p1_0.id,p1_0.alias,p1_0.creado_en,p1_0.ultima_actividad,p1_0.contrasena_hash,p1_0.token_hash from jugador p1_0 where p1_0.id=?
+2026-11-09T22:53:30.145-06:00 TRACE 4246 --- [fat-fish-api] [http-nio-8080-exec-4] org.hibernate.orm.jdbc.bind              : binding parameter (1:BIGINT) <- [1]
+2026-11-09T22:53:30.150-06:00 DEBUG 4246 --- [fat-fish-api] [http-nio-8080-exec-3] org.hibernate.SQL                        : select ps1_0.jugador_id,ps1_0.puntaje_maximo,ps1_0.puntaje_maximo_en,ps1_0.racha_derrotas_max,ps1_0.partidas_ganadas,ps1_0.dinero_invertido,ps1_0.dinero_perdido,ps1_0.dinero_ganado,ps1_0.tiempo_jugado_seg,ps1_0.partidas_totales from estadistica_jugador ps1_0 where ps1_0.jugador_id=?
+2026-11-09T22:53:30.150-06:00 TRACE 4246 --- [fat-fish-api] [http-nio-8080-exec-3] org.hibernate.orm.jdbc.bind              : binding parameter (1:BIGINT) <- [1]
+2026-11-09T22:53:30.151-06:00 DEBUG 4246 --- [fat-fish-api] [http-nio-8080-exec-4] org.hibernate.SQL                        : select m1_0.id,m1_0.veces_todo_o_nada,m1_0.creada_en,m1_0.duracion_seg,m1_0.terminada_en,m1_0.clave_idempotencia,m1_0.prestamos,m1_0.dinero_invertido,m1_0.dinero_perdido,m1_0.dinero_ganado,m1_0.empenos,m1_0.jugador_id,m1_0.resultado,m1_0.ronda_alcanzada,m1_0.puntaje from partida m1_0 where m1_0.jugador_id=? order by m1_0.terminada_en desc,m1_0.id desc fetch first ? rows only
+2026-11-09T22:53:30.152-06:00 TRACE 4246 --- [fat-fish-api] [http-nio-8080-exec-4] org.hibernate.orm.jdbc.bind              : binding parameter (1:BIGINT) <- [1]
+2026-11-09T22:53:30.152-06:00 TRACE 4246 --- [fat-fish-api] [http-nio-8080-exec-4] org.hibernate.orm.jdbc.bind              : binding parameter (2:INTEGER) <- [10]
+2026-11-09T22:53:30.152-06:00 DEBUG 4246 --- [fat-fish-api] [http-nio-8080-exec-3] org.hibernate.session.metrics            : HHH000401: Logging session metrics:
+	530333 ns acquiring 1 JDBC connections
+	0 ns releasing 0 JDBC connections
+	143417 ns preparing 2 JDBC statements
+	5249374 ns executing 2 JDBC statements
+	0 ns executing 0 JDBC batches
+	0 ns performing 0 second-level cache puts
+	0 ns performing 0 second-level cache hits
+	0 ns performing 0 second-level cache misses
+	0 ns executing 0 flushes (flushing a total of 0 entities and 0 collections)
+	0 ns executing 0 pre-partial-flushes
+	0 ns executing 0 partial-flushes (flushing a total of 0 entities and 0 collections)
+
+2026-11-09T22:53:30.156-06:00  INFO 4246 --- [fat-fish-api] [http-nio-8080-exec-3] fatfish.lab.http                         : GET /api/pwa/perfil?id=1 -> 200 | 27.0 ms | petición 0 B, respuesta 305 B | heap 95 MB de 150 MB (máx. 4096 MB)
+2026-11-09T22:53:30.159-06:00 DEBUG 4246 --- [fat-fish-api] [http-nio-8080-exec-4] org.hibernate.SQL                        : select count(*) from partida m1_0 where m1_0.jugador_id=?
+2026-11-09T22:53:30.160-06:00 TRACE 4246 --- [fat-fish-api] [http-nio-8080-exec-4] org.hibernate.orm.jdbc.bind              : binding parameter (1:BIGINT) <- [1]
+2026-11-09T22:53:30.161-06:00 DEBUG 4246 --- [fat-fish-api] [http-nio-8080-exec-4] org.hibernate.session.metrics            : HHH000401: Logging session metrics:
+	351000 ns acquiring 1 JDBC connections
+	0 ns releasing 0 JDBC connections
+	144126 ns preparing 3 JDBC statements
+	6241792 ns executing 3 JDBC statements
+	0 ns executing 0 JDBC batches
+	0 ns performing 0 second-level cache puts
+	0 ns performing 0 second-level cache hits
+	0 ns performing 0 second-level cache misses
+	0 ns executing 0 flushes (flushing a total of 0 entities and 0 collections)
+	9042 ns executing 2 pre-partial-flushes
+	6459 ns executing 2 partial-flushes (flushing a total of 0 entities and 0 collections)
+
+2026-11-09T22:53:30.162-06:00  INFO 4246 --- [fat-fish-api] [http-nio-8080-exec-4] fatfish.lab.http                         : GET /api/pwa/partidas?id=1&pagina=0&tamano=10 -> 200 | 33.0 ms | petición 0 B, respuesta 1969 B | heap 96 MB de 150 MB (máx. 4096 MB)
+2026-11-09T22:58:58.244-06:00  WARN 4246 --- [fat-fish-api] [HikariPool-1:housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=54s864ms).
+2026-11-09T23:00:44.225-06:00  WARN 4246 --- [fat-fish-api] [HikariPool-1:housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=1m15s981ms).
+2026-11-09T23:08:22.822-06:00  WARN 4246 --- [fat-fish-api] [HikariPool-1:housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=7m38s597ms).
+2026-11-09T23:09:43.798-06:00  WARN 4246 --- [fat-fish-api] [HikariPool-1:housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=50s969ms).
+2026-11-09T23:10:29.743-06:00  WARN 4246 --- [fat-fish-api] [HikariPool-1:housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=45s945ms).
+2026-11-09T23:12:56.435-06:00 DEBUG 4246 --- [fat-fish-api] [http-nio-8080-exec-8] org.hibernate.SQL                        : select p1_0.id,p1_0.alias,p1_0.creado_en,p1_0.ultima_actividad,p1_0.contrasena_hash,p1_0.token_hash from jugador p1_0 where p1_0.id=?
+2026-11-09T23:12:56.435-06:00 DEBUG 4246 --- [fat-fish-api] [http-nio-8080-exec-7] org.hibernate.SQL                        : select p1_0.id,p1_0.alias,p1_0.creado_en,p1_0.ultima_actividad,p1_0.contrasena_hash,p1_0.token_hash from jugador p1_0 where p1_0.id=?
+2026-11-09T23:12:56.436-06:00 TRACE 4246 --- [fat-fish-api] [http-nio-8080-exec-8] org.hibernate.orm.jdbc.bind              : binding parameter (1:BIGINT) <- [1]
+2026-11-09T23:12:56.436-06:00 DEBUG 4246 --- [fat-fish-api] [http-nio-8080-exec-10] org.hibernate.SQL                        : select f1_0.id,f1_0.categoria,f1_0.componente,f1_0.creada_en,f1_0.clave_idempotencia,f1_0.mensaje from retroalimentacion f1_0 where f1_0.clave_idempotencia=?
+2026-11-09T23:12:56.437-06:00 TRACE 4246 --- [fat-fish-api] [http-nio-8080-exec-10] org.hibernate.orm.jdbc.bind              : binding parameter (1:UUID) <- [bf7ab21a-b8da-4b70-8650-f2e84d59adaf]
+2026-11-09T23:12:56.438-06:00 TRACE 4246 --- [fat-fish-api] [http-nio-8080-exec-7] org.hibernate.orm.jdbc.bind              : binding parameter (1:BIGINT) <- [1]
+2026-11-09T23:12:56.438-06:00 DEBUG 4246 --- [fat-fish-api] [http-nio-8080-exec-8] org.hibernate.SQL                        : select ps1_0.jugador_id,ps1_0.puntaje_maximo,ps1_0.puntaje_maximo_en,ps1_0.racha_derrotas_max,ps1_0.partidas_ganadas,ps1_0.dinero_invertido,ps1_0.dinero_perdido,ps1_0.dinero_ganado,ps1_0.tiempo_jugado_seg,ps1_0.partidas_totales from estadistica_jugador ps1_0 where ps1_0.jugador_id=?
+2026-11-09T23:12:56.439-06:00 TRACE 4246 --- [fat-fish-api] [http-nio-8080-exec-8] org.hibernate.orm.jdbc.bind              : binding parameter (1:BIGINT) <- [1]
+2026-11-09T23:12:56.439-06:00 DEBUG 4246 --- [fat-fish-api] [http-nio-8080-exec-7] org.hibernate.SQL                        : select m1_0.id,m1_0.veces_todo_o_nada,m1_0.creada_en,m1_0.duracion_seg,m1_0.terminada_en,m1_0.clave_idempotencia,m1_0.prestamos,m1_0.dinero_invertido,m1_0.dinero_perdido,m1_0.dinero_ganado,m1_0.empenos,m1_0.jugador_id,m1_0.resultado,m1_0.ronda_alcanzada,m1_0.puntaje from partida m1_0 where m1_0.jugador_id=? order by m1_0.terminada_en desc,m1_0.id desc fetch first ? rows only
+2026-11-09T23:12:56.439-06:00 DEBUG 4246 --- [fat-fish-api] [http-nio-8080-exec-10] org.hibernate.session.metrics            : HHH000401: Logging session metrics:
+	133542 ns acquiring 1 JDBC connections
+	0 ns releasing 0 JDBC connections
+	80166 ns preparing 1 JDBC statements
+	1990500 ns executing 1 JDBC statements
+	0 ns executing 0 JDBC batches
+	0 ns performing 0 second-level cache puts
+	0 ns performing 0 second-level cache hits
+	0 ns performing 0 second-level cache misses
+	0 ns executing 0 flushes (flushing a total of 0 entities and 0 collections)
+	0 ns executing 0 pre-partial-flushes
+	0 ns executing 0 partial-flushes (flushing a total of 0 entities and 0 collections)
+
+2026-11-09T23:12:56.439-06:00 TRACE 4246 --- [fat-fish-api] [http-nio-8080-exec-7] org.hibernate.orm.jdbc.bind              : binding parameter (1:BIGINT) <- [1]
+2026-11-09T23:12:56.439-06:00 TRACE 4246 --- [fat-fish-api] [http-nio-8080-exec-7] org.hibernate.orm.jdbc.bind              : binding parameter (2:INTEGER) <- [10]
+2026-11-09T23:12:56.440-06:00 DEBUG 4246 --- [fat-fish-api] [http-nio-8080-exec-8] org.hibernate.session.metrics            : HHH000401: Logging session metrics:
+	356125 ns acquiring 1 JDBC connections
+	0 ns releasing 0 JDBC connections
+	441874 ns preparing 2 JDBC statements
+	1641083 ns executing 2 JDBC statements
+	0 ns executing 0 JDBC batches
+	0 ns performing 0 second-level cache puts
+	0 ns performing 0 second-level cache hits
+	0 ns performing 0 second-level cache misses
+	0 ns executing 0 flushes (flushing a total of 0 entities and 0 collections)
+	0 ns executing 0 pre-partial-flushes
+	0 ns executing 0 partial-flushes (flushing a total of 0 entities and 0 collections)
+
+2026-11-09T23:12:56.441-06:00 DEBUG 4246 --- [fat-fish-api] [http-nio-8080-exec-10] org.hibernate.SQL                        : insert into retroalimentacion (categoria,componente,creada_en,clave_idempotencia,mensaje) values (?,?,?,?,?)
+2026-11-09T23:12:56.441-06:00 TRACE 4246 --- [fat-fish-api] [http-nio-8080-exec-10] org.hibernate.orm.jdbc.bind              : binding parameter (1:VARCHAR) <- [ERROR]
+2026-11-09T23:12:56.441-06:00 TRACE 4246 --- [fat-fish-api] [http-nio-8080-exec-10] org.hibernate.orm.jdbc.bind              : binding parameter (2:VARCHAR) <- [PWA]
+2026-11-09T23:12:56.441-06:00 TRACE 4246 --- [fat-fish-api] [http-nio-8080-exec-10] org.hibernate.orm.jdbc.bind              : binding parameter (3:TIMESTAMP_UTC) <- [2026-11-10T05:12:56.440008Z]
+2026-11-09T23:12:56.442-06:00 TRACE 4246 --- [fat-fish-api] [http-nio-8080-exec-10] org.hibernate.orm.jdbc.bind              : binding parameter (4:UUID) <- [bf7ab21a-b8da-4b70-8650-f2e84d59adaf]
+2026-11-09T23:12:56.442-06:00 TRACE 4246 --- [fat-fish-api] [http-nio-8080-exec-10] org.hibernate.orm.jdbc.bind              : binding parameter (5:VARCHAR) <- [Sin señal en el camión, el ranking no cargó pero el expediente sí]
+2026-11-09T23:12:56.443-06:00  INFO 4246 --- [fat-fish-api] [http-nio-8080-exec-8] fatfish.lab.http                         : GET /api/pwa/perfil?id=1 -> 200 | 15.4 ms | petición 0 B, respuesta 305 B | heap 96 MB de 150 MB (máx. 4096 MB)
+2026-11-09T23:12:56.446-06:00 DEBUG 4246 --- [fat-fish-api] [http-nio-8080-exec-7] org.hibernate.SQL                        : select count(*) from partida m1_0 where m1_0.jugador_id=?
+2026-11-09T23:12:56.446-06:00 TRACE 4246 --- [fat-fish-api] [http-nio-8080-exec-7] org.hibernate.orm.jdbc.bind              : binding parameter (1:BIGINT) <- [1]
+2026-11-09T23:12:56.447-06:00 DEBUG 4246 --- [fat-fish-api] [http-nio-8080-exec-10] org.hibernate.session.metrics            : HHH000401: Logging session metrics:
+	11208 ns acquiring 1 JDBC connections
+	0 ns releasing 0 JDBC connections
+	70334 ns preparing 1 JDBC statements
+	3143250 ns executing 1 JDBC statements
+	0 ns executing 0 JDBC batches
+	0 ns performing 0 second-level cache puts
+	0 ns performing 0 second-level cache hits
+	0 ns performing 0 second-level cache misses
+	241792 ns executing 1 flushes (flushing a total of 1 entities and 0 collections)
+	0 ns executing 0 pre-partial-flushes
+	0 ns executing 0 partial-flushes (flushing a total of 0 entities and 0 collections)
+
+2026-11-09T23:12:56.448-06:00 DEBUG 4246 --- [fat-fish-api] [http-nio-8080-exec-7] org.hibernate.session.metrics            : HHH000401: Logging session metrics:
+	643500 ns acquiring 1 JDBC connections
+	0 ns releasing 0 JDBC connections
+	182626 ns preparing 3 JDBC statements
+	2792666 ns executing 3 JDBC statements
+	0 ns executing 0 JDBC batches
+	0 ns performing 0 second-level cache puts
+	0 ns performing 0 second-level cache hits
+	0 ns performing 0 second-level cache misses
+	0 ns executing 0 flushes (flushing a total of 0 entities and 0 collections)
+	6917 ns executing 2 pre-partial-flushes
+	2417 ns executing 2 partial-flushes (flushing a total of 0 entities and 0 collections)
+
+2026-11-09T23:12:56.448-06:00  INFO 4246 --- [fat-fish-api] [http-nio-8080-exec-10] fatfish.lab.http                         : POST /api/pwa/retroalimentacion -> 201 | 17.9 ms | petición 122 B, respuesta 51 B | heap 97 MB de 150 MB (máx. 4096 MB)
+2026-11-09T23:12:56.448-06:00  INFO 4246 --- [fat-fish-api] [http-nio-8080-exec-7] fatfish.lab.http                         : GET /api/pwa/partidas?id=1&pagina=0&tamano=10 -> 200 | 21.4 ms | petición 0 B, respuesta 1969 B | heap 97 MB de 150 MB (máx. 4096 MB)
+2026-11-09T23:14:07.506-06:00 DEBUG 4246 --- [fat-fish-api] [http-nio-8080-exec-4] org.hibernate.SQL                        : select p1_0.id,p1_0.alias,p1_0.creado_en,p1_0.ultima_actividad,p1_0.contrasena_hash,p1_0.token_hash from jugador p1_0 where p1_0.id=?
+2026-11-09T23:14:07.506-06:00 DEBUG 4246 --- [fat-fish-api] [http-nio-8080-exec-3] org.hibernate.SQL                        : select p1_0.id,p1_0.alias,p1_0.creado_en,p1_0.ultima_actividad,p1_0.contrasena_hash,p1_0.token_hash from jugador p1_0 where p1_0.id=?
+2026-11-09T23:14:07.507-06:00 TRACE 4246 --- [fat-fish-api] [http-nio-8080-exec-4] org.hibernate.orm.jdbc.bind              : binding parameter (1:BIGINT) <- [1]
+2026-11-09T23:14:07.507-06:00 TRACE 4246 --- [fat-fish-api] [http-nio-8080-exec-3] org.hibernate.orm.jdbc.bind              : binding parameter (1:BIGINT) <- [1]
+2026-11-09T23:14:07.508-06:00 DEBUG 4246 --- [fat-fish-api] [http-nio-8080-exec-3] org.hibernate.SQL                        : select ps1_0.jugador_id,ps1_0.puntaje_maximo,ps1_0.puntaje_maximo_en,ps1_0.racha_derrotas_max,ps1_0.partidas_ganadas,ps1_0.dinero_invertido,ps1_0.dinero_perdido,ps1_0.dinero_ganado,ps1_0.tiempo_jugado_seg,ps1_0.partidas_totales from estadistica_jugador ps1_0 where ps1_0.jugador_id=?
+2026-11-09T23:14:07.508-06:00 TRACE 4246 --- [fat-fish-api] [http-nio-8080-exec-3] org.hibernate.orm.jdbc.bind              : binding parameter (1:BIGINT) <- [1]
+2026-11-09T23:14:07.508-06:00 DEBUG 4246 --- [fat-fish-api] [http-nio-8080-exec-4] org.hibernate.SQL                        : select m1_0.id,m1_0.veces_todo_o_nada,m1_0.creada_en,m1_0.duracion_seg,m1_0.terminada_en,m1_0.clave_idempotencia,m1_0.prestamos,m1_0.dinero_invertido,m1_0.dinero_perdido,m1_0.dinero_ganado,m1_0.empenos,m1_0.jugador_id,m1_0.resultado,m1_0.ronda_alcanzada,m1_0.puntaje from partida m1_0 where m1_0.jugador_id=? order by m1_0.terminada_en desc,m1_0.id desc fetch first ? rows only
+2026-11-09T23:14:07.509-06:00 TRACE 4246 --- [fat-fish-api] [http-nio-8080-exec-4] org.hibernate.orm.jdbc.bind              : binding parameter (1:BIGINT) <- [1]
+2026-11-09T23:14:07.509-06:00 TRACE 4246 --- [fat-fish-api] [http-nio-8080-exec-4] org.hibernate.orm.jdbc.bind              : binding parameter (2:INTEGER) <- [10]
+2026-11-09T23:14:07.509-06:00 DEBUG 4246 --- [fat-fish-api] [http-nio-8080-exec-3] org.hibernate.session.metrics            : HHH000401: Logging session metrics:
+	224750 ns acquiring 1 JDBC connections
+	0 ns releasing 0 JDBC connections
+	58625 ns preparing 2 JDBC statements
+	587625 ns executing 2 JDBC statements
+	0 ns executing 0 JDBC batches
+	0 ns performing 0 second-level cache puts
+	0 ns performing 0 second-level cache hits
+	0 ns performing 0 second-level cache misses
+	0 ns executing 0 flushes (flushing a total of 0 entities and 0 collections)
+	0 ns executing 0 pre-partial-flushes
+	0 ns executing 0 partial-flushes (flushing a total of 0 entities and 0 collections)
+
+2026-11-09T23:14:07.511-06:00  INFO 4246 --- [fat-fish-api] [http-nio-8080-exec-3] fatfish.lab.http                         : GET /api/pwa/perfil?id=1 -> 200 | 9.6 ms | petición 0 B, respuesta 305 B | heap 97 MB de 150 MB (máx. 4096 MB)
+2026-11-09T23:14:07.512-06:00 DEBUG 4246 --- [fat-fish-api] [http-nio-8080-exec-4] org.hibernate.SQL                        : select count(*) from partida m1_0 where m1_0.jugador_id=?
+2026-11-09T23:14:07.513-06:00 TRACE 4246 --- [fat-fish-api] [http-nio-8080-exec-4] org.hibernate.orm.jdbc.bind              : binding parameter (1:BIGINT) <- [1]
+2026-11-09T23:14:07.516-06:00 DEBUG 4246 --- [fat-fish-api] [http-nio-8080-exec-4] org.hibernate.session.metrics            : HHH000401: Logging session metrics:
+	224750 ns acquiring 1 JDBC connections
+	0 ns releasing 0 JDBC connections
+	505959 ns preparing 3 JDBC statements
+	1496125 ns executing 3 JDBC statements
+	0 ns executing 0 JDBC batches
+	0 ns performing 0 second-level cache puts
+	0 ns performing 0 second-level cache hits
+	0 ns performing 0 second-level cache misses
+	0 ns executing 0 flushes (flushing a total of 0 entities and 0 collections)
+	6501 ns executing 2 pre-partial-flushes
+	157874 ns executing 2 partial-flushes (flushing a total of 0 entities and 0 collections)
+
+2026-11-09T23:14:07.518-06:00  INFO 4246 --- [fat-fish-api] [http-nio-8080-exec-4] fatfish.lab.http                         : GET /api/pwa/partidas?id=1&pagina=0&tamano=10 -> 200 | 16.6 ms | petición 0 B, respuesta 1969 B | heap 97 MB de 150 MB (máx. 4096 MB)
+2026-11-09T23:14:17.680-06:00 DEBUG 4246 --- [fat-fish-api] [http-nio-8080-exec-8] org.hibernate.SQL                        : select p1_0.id,p1_0.alias,p1_0.creado_en,p1_0.ultima_actividad,p1_0.contrasena_hash,p1_0.token_hash from jugador p1_0 where p1_0.id=?
+2026-11-09T23:14:17.680-06:00 TRACE 4246 --- [fat-fish-api] [http-nio-8080-exec-8] org.hibernate.orm.jdbc.bind              : binding parameter (1:BIGINT) <- [1]
+2026-11-09T23:14:17.681-06:00 DEBUG 4246 --- [fat-fish-api] [http-nio-8080-exec-10] org.hibernate.SQL                        : select p1_0.id,p1_0.alias,p1_0.creado_en,p1_0.ultima_actividad,p1_0.contrasena_hash,p1_0.token_hash from jugador p1_0 where p1_0.id=?
+2026-11-09T23:14:17.682-06:00 TRACE 4246 --- [fat-fish-api] [http-nio-8080-exec-10] org.hibernate.orm.jdbc.bind              : binding parameter (1:BIGINT) <- [1]
+2026-11-09T23:14:17.682-06:00 DEBUG 4246 --- [fat-fish-api] [http-nio-8080-exec-8] org.hibernate.SQL                        : select ps1_0.jugador_id,ps1_0.puntaje_maximo,ps1_0.puntaje_maximo_en,ps1_0.racha_derrotas_max,ps1_0.partidas_ganadas,ps1_0.dinero_invertido,ps1_0.dinero_perdido,ps1_0.dinero_ganado,ps1_0.tiempo_jugado_seg,ps1_0.partidas_totales from estadistica_jugador ps1_0 where ps1_0.jugador_id=?
+2026-11-09T23:14:17.682-06:00 TRACE 4246 --- [fat-fish-api] [http-nio-8080-exec-8] org.hibernate.orm.jdbc.bind              : binding parameter (1:BIGINT) <- [1]
+2026-11-09T23:14:17.683-06:00 DEBUG 4246 --- [fat-fish-api] [http-nio-8080-exec-8] org.hibernate.session.metrics            : HHH000401: Logging session metrics:
+	165708 ns acquiring 1 JDBC connections
+	0 ns releasing 0 JDBC connections
+	77876 ns preparing 2 JDBC statements
+	755250 ns executing 2 JDBC statements
+	0 ns executing 0 JDBC batches
+	0 ns performing 0 second-level cache puts
+	0 ns performing 0 second-level cache hits
+	0 ns performing 0 second-level cache misses
+	0 ns executing 0 flushes (flushing a total of 0 entities and 0 collections)
+	0 ns executing 0 pre-partial-flushes
+	0 ns executing 0 partial-flushes (flushing a total of 0 entities and 0 collections)
+
+2026-11-09T23:14:17.683-06:00 DEBUG 4246 --- [fat-fish-api] [http-nio-8080-exec-10] org.hibernate.SQL                        : select m1_0.id,m1_0.veces_todo_o_nada,m1_0.creada_en,m1_0.duracion_seg,m1_0.terminada_en,m1_0.clave_idempotencia,m1_0.prestamos,m1_0.dinero_invertido,m1_0.dinero_perdido,m1_0.dinero_ganado,m1_0.empenos,m1_0.jugador_id,m1_0.resultado,m1_0.ronda_alcanzada,m1_0.puntaje from partida m1_0 where m1_0.jugador_id=? order by m1_0.terminada_en desc,m1_0.id desc fetch first ? rows only
+2026-11-09T23:14:17.684-06:00 TRACE 4246 --- [fat-fish-api] [http-nio-8080-exec-10] org.hibernate.orm.jdbc.bind              : binding parameter (1:BIGINT) <- [1]
+2026-11-09T23:14:17.684-06:00 TRACE 4246 --- [fat-fish-api] [http-nio-8080-exec-10] org.hibernate.orm.jdbc.bind              : binding parameter (2:INTEGER) <- [10]
+2026-11-09T23:14:17.685-06:00  INFO 4246 --- [fat-fish-api] [http-nio-8080-exec-8] fatfish.lab.http                         : GET /api/pwa/perfil?id=1 -> 200 | 7.5 ms | petición 0 B, respuesta 305 B | heap 97 MB de 150 MB (máx. 4096 MB)
+2026-11-09T23:14:17.688-06:00 DEBUG 4246 --- [fat-fish-api] [http-nio-8080-exec-10] org.hibernate.SQL                        : select count(*) from partida m1_0 where m1_0.jugador_id=?
+2026-11-09T23:14:17.688-06:00 TRACE 4246 --- [fat-fish-api] [http-nio-8080-exec-10] org.hibernate.orm.jdbc.bind              : binding parameter (1:BIGINT) <- [1]
+2026-11-09T23:14:17.689-06:00 DEBUG 4246 --- [fat-fish-api] [http-nio-8080-exec-10] org.hibernate.session.metrics            : HHH000401: Logging session metrics:
+	372250 ns acquiring 1 JDBC connections
+	0 ns releasing 0 JDBC connections
+	186291 ns preparing 3 JDBC statements
+	3271000 ns executing 3 JDBC statements
+	0 ns executing 0 JDBC batches
+	0 ns performing 0 second-level cache puts
+	0 ns performing 0 second-level cache hits
+	0 ns performing 0 second-level cache misses
+	0 ns executing 0 flushes (flushing a total of 0 entities and 0 collections)
+	5833 ns executing 2 pre-partial-flushes
+	5125 ns executing 2 partial-flushes (flushing a total of 0 entities and 0 collections)
+
+2026-11-09T23:14:17.690-06:00  INFO 4246 --- [fat-fish-api] [http-nio-8080-exec-10] fatfish.lab.http                         : GET /api/pwa/partidas?id=1&pagina=0&tamano=10 -> 200 | 10.5 ms | petición 0 B, respuesta 1969 B | heap 97 MB de 150 MB (máx. 4096 MB)

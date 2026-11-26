@@ -1,0 +1,111 @@
+/* Top bar of the whole site: felt with a gold edge, stuck to the top of the window */
+:host {
+  /* Without a box of its own, the bar sticks to the top of the page and not of this element */
+  display: contents;
+}
+.barra {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  background: color-mix(in srgb, var(--ff-felt-800) 97%, transparent);
+  border-bottom: 2px solid var(--ff-gold-600);
+}
+.fila {
+  display: flex;
+  align-items: center;
+  gap: var(--ff-space-4);
+  max-width: var(--ff-content-max);
+  margin-inline: auto;
+  padding: var(--ff-space-2) var(--ff-space-4);
+}
+.marca {
+  display: flex;
+  align-items: center;
+  gap: var(--ff-space-2);
+  font-family: var(--ff-font-display);
+  font-size: 24px;
+  color: var(--ff-cream-100);
+  text-decoration: none;
+  text-transform: uppercase;
+}
+.marca span {
+  white-space: nowrap;
+}
+.marca img {
+  border-radius: 50%;
+}
+.enlaces {
+  display: none;
+  gap: var(--ff-space-4);
+  margin-left: auto;
+  font-family: var(--ff-font-label);
+  font-size: 9px;
+  text-transform: uppercase;
+}
+.enlaces a {
+  position: relative;
+  color: var(--ff-fog-400);
+  text-decoration: none;
+  white-space: nowrap;
+}
+.enlaces a:hover,
+.enlaces a:focus-visible {
+  color: var(--ff-gold-400);
+}
+/* Current page: cream text with a gold underline that reaches the edge of the bar */
+.enlaces a.activo {
+  color: var(--ff-cream-100);
+}
+.enlaces a.activo::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -20px;
+  height: 3px;
+  background: var(--ff-gold-400);
+}
+/* Between the sections of the landing page and the pages of the app */
+.separador {
+  align-self: center;
+  width: 1px;
+  height: 14px;
+  background: var(--ff-line);
+}
+.sin-red {
+  margin-left: auto;
+  white-space: nowrap;
+}
+.cta {
+  margin-left: auto;
+  min-height: 40px;
+  font-size: 18px;
+  padding-inline: var(--ff-space-3);
+}
+.sin-red + .cta {
+  margin-left: 0;
+}
+
+/* Very narrow phones: the bar keeps the brand on one line */
+@media (max-width: 380px) {
+  .fila {
+    gap: var(--ff-space-2);
+  }
+  .marca {
+    font-size: 20px;
+  }
+  .cta {
+    font-size: 16px;
+    padding-inline: var(--ff-space-2);
+  }
+}
+/* Desktop: links in the bar too */
+@media (min-width: 1024px) {
+  .enlaces {
+    display: flex;
+  }
+  .sin-red,
+  .cta {
+    margin-left: 0;
+  }
+}

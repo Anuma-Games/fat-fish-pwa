@@ -31,8 +31,9 @@ Este documento reúne la **propuesta de diseño** de la PWA y el **estado actual
 | Diseño preproyecto       | Estructura modular (JS/CSS) y diseño adaptativo            | [4.2](#42-capas-del-código) y [8](#8-experiencia-de-usuario-uiux)                                                         |
 | Diseño preproyecto       | Diagramas de la aplicación                                 | [4](#4-arquitectura), [5](#5-modelo-de-datos) y [9](#9-diagramas-de-la-aplicación)                                        |
 | Laboratorio de pruebas 1 | Scripts de carga y limpieza                                | [`sql/`](docs/laboratorio-pruebas/sql)                                                                                    |
-| Laboratorio de pruebas 1 | Consultas antes y después, logs del backend                | [Evidencias](docs/laboratorio-pruebas/README.md#evidencias)                                                               |
-| Laboratorio de pruebas 1 | Interfaz y DevTools (Network, Application, Console)        | [Casos de prueba](docs/laboratorio-pruebas/README.md#casos-de-prueba) y [evidencias](docs/laboratorio-pruebas/evidencias) |
+| Laboratorio de pruebas 1 | Consultas antes y después, logs del backend                | [Evidencias](docs/laboratorio-pruebas/README.md#7-evidencias)                                                             |
+| Laboratorio de pruebas 1 | Interfaz y DevTools (Network, Application, Console)        | [Casos de prueba](docs/laboratorio-pruebas/README.md#6-casos-de-prueba) y [evidencias](docs/laboratorio-pruebas/evidencias) |
+| Laboratorio de pruebas 1 | Requisitos de Integradora: importación de BD, creación y consulta | [Requisitos de Integradora](docs/laboratorio-pruebas/README.md#requisitos-de-integradora) |
 
 ---
 
@@ -50,7 +51,7 @@ La PWA cierra el ciclo **jugar → registrar → reflexionar → opinar**:
 | Investigación           | Encuesta anónima sobre la percepción del juego y la ludopatía                                                                                                          |
 | Referencia *(deseable)* | Wiki del juego disponible sin conexión                                                                                                                                 |
 
-La PWA solo lee datos del juego y solo inserta opiniones. No registra jugadores ni partidas, no maneja contraseñas y no permite jugar. El jugador se identifica con su **ID público**, sin iniciar sesión.
+La PWA solo lee datos del juego y solo inserta opiniones. No registra jugadores ni partidas, no maneja contraseñas y no permite jugar. El jugador se identifica con su **ID público**, sin iniciar sesión. Los datos de la cuenta que guarda la API se explican en el [aviso de privacidad](#85-aviso-de-privacidad).
 
 ---
 
@@ -58,7 +59,7 @@ La PWA solo lee datos del juego y solo inserta opiniones. No registra jugadores 
 
 | Función                                                                       | Estado                       |
 |-------------------------------------------------------------------------------|------------------------------|
-| Expediente por ID: estadísticas e historial paginado ("Ver más partidas")     | ✅ Construido                |
+| Expediente: estadísticas e historial paginado ("Ver más partidas")            | ✅ Construido                |
 | Retroalimentación con envío sin conexión (outbox en IndexedDB)                | ✅ Construido                |
 | Service Worker: precaché de la app y caché del expediente, ranking y búsqueda | ✅ Construido                |
 | Manifiesto e instalación                                                      | ✅ Construido                |
@@ -68,12 +69,16 @@ La PWA solo lee datos del juego y solo inserta opiniones. No registra jugadores 
 | Ranking mundial: capa de datos (repositorio, fachada y caché sin conexión)    | ✅ Construido                |
 | Encuesta anónima: capa de datos (repositorio, fachada y outbox sin conexión)  | ✅ Construido                |
 | Conexión con la API en Google Cloud Run (proxy que agrega la llave)           | ✅ Construido                |
-| Pantallas de búsqueda, ranking y encuesta                                     | ⏳ Pendiente (tickets de UI) |
-| Aviso de versión nueva y Background Sync                                      | ⏳ Pendiente para el MVP     |
+| Pantalla de la encuesta anónima (`/opinion/encuesta`)                         | ✅ Construido                |
+| Pantalla del ranking mundial (`/ranking`)                                     | ✅ Construido                |
+| Pantalla de búsqueda por alias o ID (`/acceso`)                               | ✅ Construido                |
+| Aviso de versión nueva (diálogo "¿Cargar la versión nueva?")                  | ✅ Construido                |
+| Background Sync: el outbox se envía con la pestaña cerrada (Chrome y Android) | ✅ Construido                |
 | Wiki                                                                          | ⏳ Deseable                  |
 | Publicación de la PWA en Firebase Hosting (despliegue automático desde `main`) | ✅ Construido                |
+| Aviso de privacidad (`/privacidad`), enlazado desde el pie de la landing y el menú lateral | ✅ Construido |
 
-Las fachadas de búsqueda, ranking y encuesta ya están listas para la UI ([4.3](#43-fachadas-contrato-con-la-ui)); las pantallas se construyen en los tickets de interfaz.
+Las fachadas de búsqueda, ranking y encuesta ya tienen su pantalla ([4.3](#43-fachadas-contrato-con-la-ui)).
 
 ---
 
@@ -95,6 +100,7 @@ La PWA queda en <http://localhost:8080> y la documentación de la API en <http:/
 | `npm start`   | Servidor de desarrollo con proxy a `/api` (el Service Worker no se activa) |
 | `npm run lab` | Build de producción con Service Worker, como en el laboratorio de pruebas  |
 | `npm test`    | Pruebas                                                                    |
+| `npm run test:sw` | Pruebas del Service Worker propio (`public/sw.js`), con `node --test`  |
 
 **Con la API en Google Cloud Run.** La dirección y la llave de la API se pasan en dos variables, `API_URL` y `API_KEY`. Para el servidor de desarrollo crea en la raíz un archivo `.env` (está en `.gitignore`, no se sube al repositorio):
 
@@ -146,7 +152,8 @@ docker run --rm -p 8080:8080 --env-file .env fat-fish-pwa
 
 ![Vista general de la arquitectura](docs/diagramas/arquitectura.png)
 
-- **Un solo origen.** La PWA consume la API con rutas relativas (`/api/pwa/...`), por lo que no requiere CORS. En la propuesta, el mismo contenedor sirve la PWA y la API; en el laboratorio, Nginx cumple ese papel con un proxy hacia la API. En producción, la PWA se aloja en Firebase Hosting y este reenvía `/api/**` a la API en Cloud Run, de modo que el navegador sigue viendo un solo origen ([10.1](#101-despliegue-en-firebase-hosting)).
+- **Renderizado en el cliente (CSR).** La interfaz se genera en el navegador con Angular; la API solo entrega JSON y no sirve archivos de la PWA ([4.4](#44-estrategia-de-renderizado)).
+- **Un solo origen.** La PWA consume la API con rutas relativas (`/api/pwa/...`), por lo que no requiere CORS. Quien entrega la PWA también reenvía `/api` a la API: Firebase Hosting en producción (hacia Cloud Run, [10.1](#101-despliegue-en-firebase-hosting)), Nginx en la imagen de Docker, `scripts/lab-server.mjs` en `npm run lab` y el proxy de `ng serve` en desarrollo ([3](#3-cómo-ejecutarla)). En todos los casos el navegador ve un solo origen.
 - **El Service Worker atiende todas las peticiones** y decide qué responder desde la caché y qué pedir a la red ([7](#7-estrategia-pwa)).
 - **Angular moderno:** componentes *standalone* y *signals* para el estado.
 
@@ -156,7 +163,7 @@ El código se organiza en capas; cada una tiene una sola responsabilidad y solo 
 
 ```
 src/app/
-├── presentation/      # páginas (Expediente y Opinión) y componentes reutilizables
+├── presentation/      # páginas (landing, búsqueda, expediente, ranking, opinión y aviso de privacidad) y componentes reutilizables
 ├── application/       # fachadas (casos de uso y estado con signals) y lógica compartida del outbox
 ├── domain/            # modelos y puertos (interfaces de los repositorios)
 ├── infrastructure/    # implementación de los puertos: API (repositorios y DTOs), IndexedDB, localStorage, conectividad
@@ -203,17 +210,21 @@ Las pantallas solo usan las fachadas de `src/app/application/facades/`. Todo su 
 | `resultados`                              | Lista de `{ jugadorId, alias }`; el alias puede repetirse, por eso el jugador se elige por su ID            |
 | `estado`, `error`, `cargando`, `consulta` | Estado de la pantalla, mensaje, bandera de carga y texto normalizado de la última búsqueda                  |
 
-Al elegir un jugador, la pantalla llama a `HistorialFacade.buscar(jugadorId)` y navega a `/perfil`.
+Al elegir un jugador, la pantalla llama a `HistorialFacade.buscar(jugadorId)` y navega a `/perfil`. `/acceso` es el único buscador: `/perfil` no tiene buscador propio, abre el último jugador consultado (`HistorialFacade.jugadorGuardado()`) y, si todavía no se ha consultado ninguno, su guarda (`expediente.guard.ts`) manda a `/acceso`. Si el servidor ya no conoce al jugador guardado (`404`), la fachada lo olvida (`SesionRepository.olvidarJugadorId()`) y marca `jugadorNoEncontrado()`; la página regresa a `/acceso` sin mostrar un error.
 
 **`RankingFacade`**: ranking mundial.
 
 | Miembro                                   | Uso                                                                                                                    |
 |-------------------------------------------|------------------------------------------------------------------------------------------------------------------------|
-| `cargar()`                                | Primera página; también es el botón "Reintentar". Si vuelve la conexión después de `SIN_RED`, se recarga sola          |
+| `cargar()`                                | Primera página; también es el botón "Reintentar". Al volver la conexión se recarga sola: tras `SIN_RED` desde la primera página y tras `DESDE_CACHE` la página que se muestra |
+| `irAPagina(n)`                            | Muestra solo la página `n` (de 0 a 4) en lugar de la actual; es el paginador numerado de la pantalla. Si falla, conserva la página que se muestra |
 | `verMas()`                                | Agrega las siguientes 10 posiciones; si falla, conserva las que ya se muestran                                         |
 | `entradas`                                | Lista de `{ posicion, jugadorId, alias, puntaje, logradoEn }`                                                          |
 | `miPosicion`                              | La fila del visitante, solo si ya consultó un perfil (el ID sale de la sesión guardada); puede quedar fuera del top 50 |
+| `consultoExpediente`                      | `true` si ya consultó un perfil y ese jugador todavía existe; con `miPosicion` en `null` significa que no tiene victorias. Si la API dice que el jugador guardado ya no existe (404/400), olvida el ID y pasa a `false` |
+| `confirmandoJugador`                      | `true` mientras el perfil confirma si el jugador guardado existe; la página no muestra ninguna pista para que no parpadee |
 | `hayMas`, `cargandoMas`, `totalElementos` | Paginación                                                                                                             |
+| `paginaActual`, `totalPaginas`            | Página que se muestra (desde 0) y cuántas hay (máximo 5)                                                               |
 | `generadoEn`                              | Cuándo generó la API los datos; con `DESDE_CACHE` indica la antigüedad de la copia                                     |
 | `estado`, `error`, `enLinea`              | Estado de la pantalla, mensaje y conexión                                                                              |
 
@@ -224,7 +235,37 @@ Al elegir un jugador, la pantalla llama a `HistorialFacade.buscar(jugadorId)` y 
 | `enviar(datos)`                | `datos`: `percepcionRiesgo`, `cambioOpinion` y `claridadMensaje` (de 1 a 5) y `comentario` opcional (máximo 500 caracteres). Devuelve `ENVIADO`, `EN_COLA` (guardada en el dispositivo, se envía al volver la red) o `RECHAZADO` (mensaje en `error()`) |
 | `enviando`                     | Deshabilita el botón mientras se envía                                                                                                                                                                                                                  |
 | `pendientes`, `envios`         | Cuántas respuestas esperan conexión y su detalle                                                                                                                                                                                                        |
-| `sincronizar()`, `refrescar()` | Se ejecutan solos al volver la conexión; `refrescar()` actualiza la lista al abrir la pantalla                                                                                                                                                          |
+| `sincronizar()`, `refrescar()` | Se ejecutan solos al abrir la app y al volver la conexión; `refrescar()` actualiza la lista al abrir la pantalla                                                                                                                                        |
+
+### 4.4 Estrategia de renderizado
+
+La PWA se renderiza en el cliente (**CSR**, *client-side rendering*): el navegador recibe un `index.html` casi vacío y Angular genera toda la interfaz con JavaScript. No usa SSR (renderizado en servidor) ni prerenderizado, y la API no genera HTML: solo responde JSON.
+
+| Qué se revisó                             | Qué se encontró                                                                                                                                               |
+|-------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `angular.json`                            | Constructor `@angular/build:application` solo con la entrada `browser` (`src/main.ts`). No hay opciones `server`, `ssr` ni `prerender`                        |
+| `package.json`                            | Sin `@angular/ssr` ni `@angular/platform-server`                                                                                                              |
+| `src/main.ts` y `src/app/app.config.ts`   | `bootstrapApplication` en el navegador; sin hidratación (`provideClientHydration`) ni rutas de servidor                                                       |
+| `src/app/app.routes.ts`                   | El enrutador de Angular resuelve las rutas en el navegador. La landing va en el bundle inicial y las demás páginas se cargan bajo demanda con `loadComponent` |
+| Resultado de `npx ng build`               | Solo crea `dist/Pwa_FatFish/browser` (sin carpeta `server`). El `<body>` de `index.html` trae únicamente `<app-root></app-root>` y el `<script>` del bundle   |
+| `firebase.json`, Nginx y `lab-server.mjs` | Sirven archivos estáticos y mandan cualquier ruta a `index.html` (Firebase: rewrite `**`; Nginx: `try_files`)                                                 |
+
+**Dónde se genera la interfaz.** Todo ocurre en el navegador:
+
+1. Firebase Hosting (producción), Nginx (Docker) o `lab-server.mjs` (laboratorio) entregan `index.html` y los archivos `.js` y `.css`. Desde la primera visita, el Service Worker los guarda en la precaché ([7.2](#72-service-worker-y-caché)).
+2. Angular arranca con `bootstrapApplication`, el enrutador resuelve la URL y carga la página que corresponde.
+3. La página pide los datos a su fachada. El repositorio HTTP hace un `GET` o un `POST` a `/api/pwa/...` con `HttpClient` y recibe JSON. El Service Worker responde con la red o, sin conexión, con la última copia guardada ([7.3](#73-sin-conexión)).
+4. El repositorio convierte el DTO en un modelo del dominio, la fachada lo guarda en *signals* y la plantilla de la página pinta la pantalla ([6.2](#62-de-la-respuesta-a-la-lista-en-pantalla)).
+
+La API solo participa en el paso 3: devuelve JSON y no tiene plantillas HTML ni archivos estáticos. Su contrato está en el [README de la API](https://github.com/Anuma-Games/fat-fish-api#endpoints) y el recorrido por capas, en [4.2](#42-capas-del-código).
+
+Detalles de esta configuración:
+
+- El build de producción incrusta el CSS crítico en `index.html` (Beasties). Eso no es prerenderizado: el contenido de las pantallas sigue sin estar en el HTML.
+- Sin JavaScript solo se ve el aviso de `<noscript>`.
+- El título de cada ruta (`title` en `app.routes.ts`) lo pone el enrutador en el navegador. La descripción y las etiquetas Open Graph de `index.html` son las de la landing para cualquier ruta, porque quien lee solo el HTML no ejecuta Angular.
+
+Explicación breve de cómo trabajan la PWA y la API, por separado y juntas: [`docs/pwa-y-api.md`](docs/pwa-y-api.md).
 
 ---
 
@@ -256,9 +297,9 @@ El `id` del jugador lo genera la API y es único; el alias se puede repetir. Tod
 | `GET /api/pwa/perfil?id=`                   | Datos del jugador y sus estadísticas                                                     | ✅ En uso       |
 | `GET /api/pwa/partidas?id=&pagina=&tamano=` | Historial paginado, de la partida más reciente a la más antigua                          | ✅ En uso       |
 | `POST /api/pwa/retroalimentacion`           | Envía categoría, componente y mensaje (mínimo 10 caracteres)                             | ✅ En uso       |
-| `GET /api/pwa/jugadores?busqueda=`          | Busca por alias o ID (hasta 24 caracteres); devuelve una lista porque el alias se repite | ✅ Sin pantalla |
-| `GET /api/pwa/ranking?pagina=&jugadorId=`   | Top 50 en páginas de 10 y la posición propia (`jugadorId` es opcional)                   | ✅ Sin pantalla |
-| `POST /api/pwa/encuesta`                    | Encuesta anónima con tres escalas del 1 al 5 y un comentario opcional                    | ✅ Sin pantalla |
+| `GET /api/pwa/jugadores?busqueda=`          | Busca por alias o ID (hasta 24 caracteres); devuelve una lista porque el alias se repite | ✅ En uso       |
+| `GET /api/pwa/ranking?pagina=&jugadorId=`   | Top 50 en páginas de 10 y la posición propia (`jugadorId` es opcional)                   | ✅ En uso       |
+| `POST /api/pwa/encuesta`                    | Encuesta anónima con tres escalas del 1 al 5 y un comentario opcional                    | ✅ En uso       |
 
 Reglas comunes:
 
@@ -267,7 +308,6 @@ Reglas comunes:
 - Los `POST` llevan la cabecera `Idempotency-Key` con un UUID generado en el dispositivo; si el envío se repite, la API devuelve el registro existente en lugar de duplicarlo.
 - Las listas paginadas indican si hay más páginas (`ultima`) y cuándo se generaron (`generadoEn`), para mostrar la antigüedad de los datos sin conexión.
 - La API exige la cabecera `X-Api-Key` en todo `/api/**`. La llave es pública: identifica al cliente, no protege datos. En Firebase Hosting la agrega el interceptor de Angular (`api-key.interceptor.ts`), porque el rewrite hacia Cloud Run no puede agregar cabeceras; en local y en Docker también la agrega el proxy. Las escrituras de un jugador (partidas, contraseña) se protegen con su token, y los envíos sin token se protegen con límites de peticiones en la API ([10.1](#101-despliegue-en-firebase-hosting)).
-- "✅ Sin pantalla" significa que el repositorio y la fachada ya consumen el endpoint, pero la interfaz todavía no existe.
 
 ### 6.2 De la respuesta a la lista en pantalla
 
@@ -332,7 +372,7 @@ Así viajan por la red; los repositorios las convierten en modelos del dominio (
 
 ### 7.2 Service Worker y caché
 
-Se usa el Service Worker de Angular, configurado en [`ngsw-config.json`](ngsw-config.json). Solo se activa en el build de producción y requiere HTTPS o `localhost`.
+Se usa el Service Worker de Angular, configurado en [`ngsw-config.json`](ngsw-config.json). La app registra [`public/sw.js`](public/sw.js), que importa el de Angular (`ngsw-worker.js`) y le agrega Background Sync ([7.4](#74-segundo-plano-y-actualizaciones)). Solo se activa en el build de producción y requiere HTTPS o `localhost`.
 
 | Recurso                          | Estrategia                                                                    | Vigencia                    |
 |----------------------------------|-------------------------------------------------------------------------------|-----------------------------|
@@ -351,17 +391,39 @@ El Service Worker solo guarda lo que ya se pidió, así que al cargar la primera
 |-------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Abrir la app      | Abre desde la precaché                                                                                                                                         |
 | Expediente        | Muestra los últimos datos consultados con el aviso "Sin conexión" y su fecha; si nunca se consultaron, avisa que se necesita red                               |
-| Ranking           | Muestra la última copia guardada con el aviso "Sin conexión" y su fecha; si nunca se abrió con red, avisa que se necesita conexión y se recarga solo al volver |
+| Ranking           | Muestra la última copia guardada con el aviso "Sin conexión" y su fecha; si nunca se abrió con red, avisa que se necesita conexión. Al volver la red se recarga solo |
 | Búsqueda          | Solo repite búsquedas hechas en el último día; si no hay copia, avisa que no hay conexión                                                                      |
 | Retroalimentación | Guarda el envío en el **outbox** (IndexedDB) y lo envía solo al volver la conexión                                                                             |
 | Encuesta          | Igual que la retroalimentación: la respuesta queda en el outbox y se envía sola al volver la conexión                                                          |
 | Menú              | Indica si hay conexión y la fecha de la última sincronización                                                                                                  |
 
-El outbox guarda cada envío con su UUID, su tipo (`retroalimentacion` o `encuesta`), el contenido, el número de intentos y su estado (`PENDIENTE`, `ENVIANDO`, `ENVIADO` o `FALLIDO`). Es el mismo almacén para los dos tipos y cada fachada solo procesa los suyos. Se vacía al recuperar la conexión y al abrir la sección de Opinión, con hasta 5 intentos: se reintentan los fallos temporales (sin red, `408`, `429` y errores `5xx`) y un rechazo del servidor, como un `400`, marca el envío como `FALLIDO` sin reintentar. Como el UUID viaja en `Idempotency-Key`, un reintento nunca crea un duplicado.
+El outbox guarda cada envío con su UUID, su tipo (`retroalimentacion` o `encuesta`), el contenido, el número de intentos y su estado (`PENDIENTE`, `ENVIANDO`, `ENVIADO` o `FALLIDO`). Es el mismo almacén para los dos tipos y cada fachada solo procesa los suyos. Se vacía al abrir la app, en cualquier página, y al recuperar la conexión, con hasta 5 intentos: se reintentan los fallos temporales (sin red, `408`, `429` y errores `5xx`) y un rechazo del servidor, como un `400`, marca el envío como `FALLIDO` sin reintentar. Como el UUID viaja en `Idempotency-Key`, un reintento nunca crea un duplicado. Un envío que se quedó en `ENVIANDO` porque la pestaña se cerró (o el Service Worker se detuvo) a mitad de la petición también se vuelve a enviar: `ENVIANDO` solo se marca dentro del candado compartido ([7.4](#74-segundo-plano-y-actualizaciones)), así que si se ve dentro del candado es que nadie lo está enviando. El reintento cuenta como un intento más y, si ya había llegado, la API no lo guarda dos veces; si se quedó así en su quinto intento, ya no se reenvía y queda `FALLIDO` ("Se agotaron los intentos"). En Chrome y Android también se vacía en segundo plano con la pestaña cerrada ([7.4](#74-segundo-plano-y-actualizaciones)).
 
 ### 7.4 Segundo plano y actualizaciones
 
-El Service Worker funciona aparte de la página: descarga la app por adelantado y responde las consultas aunque no haya red. La propuesta agrega **Background Sync** para vaciar el outbox aun con la pestaña cerrada (solo existe en navegadores Chromium) y un aviso cuando hay una versión nueva; ambos están pendientes. Las notificaciones push quedan fuera de alcance.
+El Service Worker funciona aparte de la página: descarga la app por adelantado y responde las consultas aunque no haya red. Las notificaciones push quedan fuera de alcance.
+
+**Aviso de versión nueva.** Al abrir la app, el Service Worker revisa si hay una versión publicada más reciente y la descarga en segundo plano, pero la página sigue con la que abrió. Cuando la versión nueva está lista (`VERSION_READY` de `SwUpdate.versionUpdates`), el componente `aviso-version` pregunta "¿Cargar la versión nueva?":
+
+| Opción       | Qué pasa                                                                                       |
+|--------------|------------------------------------------------------------------------------------------------|
+| "Actualizar" | Activa la versión nueva (`activateUpdate()`) y recarga la página                               |
+| "Ahora no"   | Cierra el diálogo (también con Escape o tocando fuera); la versión nueva se usa la próxima vez que se abra la app |
+
+Con el Service Worker desactivado (`ng serve`) no se muestra nada. Para probarlo: abre la app con `npm run lab`, cambia algo, vuelve a compilar con `npm run build` sin detener el servidor y recarga la página una vez; el diálogo aparece cuando termina la descarga.
+
+Cada POST del outbox tiene un límite de 15 segundos, incluida la lectura de la respuesta. Al agotarse, se aborta la petición y se trata como un fallo temporal: queda `PENDIENTE` (o `FALLIDO` al quinto intento) y se libera el candado para continuar con los demás envíos. El reintento conserva el mismo `Idempotency-Key`.
+
+**Background Sync.** Cuando una respuesta queda en el outbox (sin conexión o por un fallo temporal), la página registra la sincronización `fatfish-outbox` (`registration.sync.register`). Al volver la red, el navegador despierta al Service Worker aunque la pestaña ya esté cerrada, y `public/sw.js` vacía el outbox con las mismas reglas de la página: hasta 5 intentos, `Idempotency-Key` con el UUID, reintento solo en fallos temporales y `FALLIDO` ante un rechazo como un `400`. Si algo sigue pendiente, el navegador vuelve a intentarlo más tarde.
+
+| Navegador                   | Comportamiento                                                                          |
+|-----------------------------|-----------------------------------------------------------------------------------------|
+| Chrome, Edge y Android      | Se envía solo al volver la red, aunque la PWA esté cerrada                              |
+| Safari y Firefox            | No tienen Background Sync: el outbox se vacía al abrir la app o al recuperar la conexión |
+
+Para que nada se envíe dos veces, la página y el Service Worker toman el mismo candado (Web Locks, `fatfish-outbox`) antes de enviar y vuelven a leer el envío dentro de él: si el otro ya lo mandó, lo saltan. Aunque coincidieran, la API guarda cada `Idempotency-Key` una sola vez.
+
+`public/sw.js` es JavaScript plano porque Angular no compila un Service Worker propio. Usa la misma base de IndexedDB que `outbox-db.ts`, la misma llave pública que `api.config.ts` y los mismos nombres de etiqueta y candado; `npm run test:sw` comprueba que coincidan y prueba las reglas del envío. Para probarlo a mano en Chrome: `npm run lab`, en DevTools → Network marca *Offline*, envía una opinión, cierra la pestaña, quita *Offline* (o vuelve a conectar la red) y revisa en la base de datos que llegó; en DevTools → Application → Background services → Background sync se ve el evento.
 
 ---
 
@@ -371,9 +433,10 @@ La PWA se ve como el casino clandestino del juego: fondo oscuro con un patrón d
 
 ### 8.1 Vistas
 
-- **Consulta:** búsqueda por alias o ID (`/acceso`) y expediente (estadísticas e historial). La propuesta suma el ranking.
+- **Consulta:** búsqueda por alias o ID (`/acceso`), que es el único buscador, y expediente (`/perfil`: estadísticas e historial, con el botón **Buscar otro jugador**). Cada página tiene su título: *Busca tu expediente* en `/acceso` y *Lo que el casino sabe de ti* en `/perfil`. **Expediente** abre el último jugador consultado o, si no hay ninguno (o ya no existe), el buscador. El ranking mundial (`/ranking`) muestra 10 jugadores por página, hasta 5 páginas, con la posición propia fija abajo si ya consultaste un expediente.
   - La búsqueda lista a cada jugador con su alias y su ID, porque el alias puede repetirse. Si nadie coincide, muestra **Sin resultados** y el Crupier responde con el texto buscado, por ejemplo: *No tengo a nadie llamado «pezgordo». Revisa el alias o dime tu ID.*
-- **Captura:** retroalimentación. La propuesta suma la encuesta anónima.
+- **Captura:** retroalimentación y encuesta anónima, en dos pestañas de la sección Opinión (`/opinion/retroalimentacion` y `/opinion/encuesta`).
+- **Legal:** aviso de privacidad (`/privacidad`), enlazado desde el pie de la landing y desde el grupo *Legal* del menú lateral ([8.5](#85-aviso-de-privacidad)).
 
 ![Vistas en teléfono](docs/img/pantallas-telefono.jpg)
 
@@ -388,15 +451,33 @@ La PWA se ve como el casino clandestino del juego: fondo oscuro con un patrón d
 | Dorado (lo importante, foco del teclado) | `#E8B850`                                                                                   |
 | Victoria / derrota                       | `#6FD39A` / `#882020`                                                                       |
 | Texto                                    | `#F2E8CC` y `#9AA8A2`                                                                       |
-| Fuentes                                  | **Jersey 10** (títulos y cifras), **Press Start 2P** (etiquetas cortas) y **Geist** (texto) |
+| Fuentes                                  | Las del juego: **Jersey 10** (títulos, botones y cifras), **Jersey 15** (lectura), **Fat Fish Pixel** (etiquetas y sellos) y **Courier Prime** (el expediente) |
 
-Los textos tienen buen contraste y el resultado de una partida siempre se escribe (VICTORIA, DERROTA, ABANDONO), no se indica solo con color. Las fuentes están en `public/fonts/` para funcionar sin conexión.
+Los textos tienen buen contraste y el resultado de una partida siempre se escribe (VICTORIA, DERROTA, ABANDONO), no se indica solo con color. Las fuentes están en `public/fonts/` para funcionar sin conexión, con sus licencias en [`public/fonts/LICENSE.md`](public/fonts/LICENSE.md).
 
 ![Colores y tipografía](docs/img/guia-colores-tipografia.jpg)
 
 ### 8.3 Componentes
 
 La guía define botones, campos, fichas de estado, tarjetas de estadística, historial, menú lateral y avisos de conexión. Los íconos son pixel art de 12 × 12 hecho para la PWA (componente `pixel-icon`) y los controles miden al menos 44 px para tocarse con el dedo.
+
+Las páginas de la app comparten las piezas del landing, para que todo el sitio se sienta como la misma mesa:
+
+| Componente o clase              | Qué es                                                                                                   |
+|---------------------------------|----------------------------------------------------------------------------------------------------------|
+| `barra-nav`                     | Barra superior de todo el sitio: ☰, logo, enlaces a las secciones del landing y a la app (en escritorio) y "Jugar la demo" cuando la demo tiene enlace |
+| `menu-lateral`                  | Panel que abre ☰ en cualquier ancho. En la app resalta la sección actual y muestra la última sincronización |
+| `cabecera-pagina`               | Lámpara que se enciende, título con líneas de monitor viejo, frase dorada y una línea del Crupier         |
+| `aviso-version`                 | Diálogo sobre un tapete que pregunta si se carga la versión nueva de la app ([7.4](#74-segundo-plano-y-actualizaciones)) |
+| `.tapete` (`styles/paginas.css`) | Paño verde con el enrejado del casino y borde dorado: buscador, formularios de Opinión e historial        |
+
+El expediente (`/perfil`) es una hoja de papel como la del landing, y en el ranking los tres primeros lugares llevan las fichas del juego.
+
+El hero del landing ya no tiene el remolino pintado de fondo (FF-166). En la sala hay una tele vieja con el tráiler del juego: un montaje corto y sin sonido (el Crupier, un cobro, la tienda, los jefes y la casa de empeño, nunca la ruleta, que ya es el centro del hero). La tele ilumina la sala: unas veces por segundo su imagen se copia a un canvas de 32 × 18 que se difumina sobre todo el hero (como el modo ambiente de YouTube), así que el fondo toma los colores del tráiler. Un clic en la tele (**Ver tráiler**) abre el video completo de YouTube en un diálogo; el reproductor solo se carga con ese clic, en el modo de privacidad mejorada (`youtube-nocookie.com`), y se quita al cerrarlo. En pantallas angostas la tele va debajo de los botones; desde 1280 px, a la derecha de la mesa, ocupando el espacio libre (hasta 420 px). Con movimiento reducido o ahorro de datos la tele y la luz de la sala usan solo la imagen fija. Todo se configura en `TRAILER` (`landing.config.ts`). El montaje (`img/landing/hero/trailer-monitor.mp4`, 10.9 s, 379 KB, 640 × 356) une los segundos 14.2–16.4, 21.2–22.0, 26.5–27.5, 29.0–30.4, 32.0–32.8, 38.0–38.8, 40.6–42.6 y 53.4–55.2 del tráiler, con un fundido en cada extremo; la imagen fija es el segundo 15.4. Se exportó con ffmpeg de una copia comprimida por WhatsApp: cuando haya el archivo original, se vuelve a exportar con los mismos tramos y se reemplazan los dos archivos.
+
+Las cartas de comodines del landing llevan íconos de pixel art de 16 × 16 (`public/img/landing/comodines/*.svg`, con contorno oscuro). El de **Tridente** sale de su modelo en el juego (`Assets/PreFab/Modifiers/Tridente.prefab`). **Reloj de arena**, **Ficha cargada** y **Seguro de la casa** todavía no tienen modelo: en la tienda del juego se ven como una ficha del color de su efecto (`ModifierFallbackVisual`), así que sus íconos usan ese color (ámbar, rojo y azul) con una figura propia. Cuando el juego les dé modelo, se redibujan a partir de él.
+
+Los botones "Jugar la demo" solo aparecen cuando `CTA.demo` (`landing.config.ts`) tiene el enlace de la demo; mientras esté vacío, no se muestran.
 
 ![Componentes base e íconos](docs/img/guia-componentes.jpg)
 
@@ -406,7 +487,9 @@ La guía define botones, campos, fichas de estado, tarjetas de estadística, his
 src/styles/
 ├── tokens.css    # colores, fuentes y espacios (variables --ff-*)
 ├── base.css      # estilos generales y fondo
-└── layout.css    # menú, márgenes y puntos de quiebre
+├── layout.css    # márgenes y puntos de quiebre de las páginas de la app
+├── landing.css   # clases y animaciones compartidas por las secciones del landing
+└── paginas.css   # tapete y animaciones de las páginas de la app
 ```
 
 Los valores de diseño solo se escriben en `tokens.css`; cada componente tiene sus propios estilos y usa esas variables. El diseño parte del teléfono y se amplía; las tarjetas de estadísticas ocupan tantas columnas como quepan en cada ancho:
@@ -415,11 +498,22 @@ Los valores de diseño solo se escriben en `tokens.css`; cada componente tiene s
 |------------------------|-----------------------------------------------------------------|
 | Teléfono (< 768 px)    | Menú con el botón ☰ e historial en tarjetas                    |
 | Tableta (≥ 768 px)     | Historial en tabla                                              |
-| Escritorio (≥ 1024 px) | Menú lateral siempre visible y contenido de 1040 px como máximo |
+| Escritorio (≥ 1024 px) | Enlaces también en la barra superior y contenido de 1040 px como máximo |
 
 ![Vistas en escritorio](docs/img/pantallas-escritorio.jpg)
 
 Los textos van en español y de **tú**. El expediente describe hechos sin felicitar, como parte del mensaje sobre la ludopatía.
+
+### 8.5 Aviso de privacidad
+
+La página `/privacidad` publica el aviso de privacidad que pide la Ley Federal de Protección de Datos Personales en Posesión de los Particulares (arts. 14 y 15), porque la cuenta del juego guarda datos del jugador en el servidor del equipo. Su dirección pública es <https://fat-fish-511723.web.app/privacidad> y es la que enlaza el juego.
+
+- **Contenido:** responsable y contacto, datos que se tratan, para qué se usan, qué pueden ver otras personas (ranking y búsqueda), anonimato de la retroalimentación y la encuesta, proveedor de alojamiento, derechos ARCO y cómo limitar el uso de los datos, edad mínima de 15 años y cómo se avisa de los cambios.
+- **Dónde está el código:** `src/app/presentation/pages/privacidad/`. El texto está en `privacidad.page.html`; el correo de contacto y la fecha de última actualización, en `privacidad.page.ts` (`correo` y `actualizacion`). El enlace del menú es el grupo `legal` de `MENU` (`core/config/landing.config.ts`).
+- **Enlaces:** el pie de la landing y el grupo *Legal* del menú lateral.
+- **Carga y sin conexión:** la ruta se carga bajo demanda (`loadComponent`) para no engordar el bundle inicial. Como el Service Worker precachea todos los `.js` ([7.2](#72-service-worker-y-caché)), la página también abre sin conexión.
+- **Cuándo actualizarlo:** cuando cambie lo que la PWA guarda en el dispositivo (`localStorage`, IndexedDB o caché), los datos que recibe o usa la API (por ejemplo, la IP para el límite de peticiones) o el proveedor de alojamiento. El texto y la fecha `actualizacion` se cambian en el mismo Pull Request.
+- El equipo lo redactó sin asesoría legal; es suficiente para el proyecto escolar y la demo gratuita.
 
 ---
 
@@ -430,7 +524,7 @@ Los diagramas corresponden a la propuesta completa; su código está en [`docs/d
 | Diagrama                                             | Qué muestra                                                                                 |
 |------------------------------------------------------|---------------------------------------------------------------------------------------------|
 | ![Contexto](docs/diagramas/contexto.png)             | **Contexto:** cómo llegan los datos del juego a la PWA                                      |
-| ![Navegación](docs/diagramas/navegacion.png)         | **Navegación:** rutas de la propuesta; hoy existen `/perfil` y `/opinion/retroalimentacion` |
+| ![Navegación](docs/diagramas/navegacion.png)         | **Navegación:** rutas de la propuesta; hoy existen `/` (landing), `/acceso`, `/perfil`, `/ranking`, `/opinion/retroalimentacion` y `/opinion/encuesta` |
 | ![Búsqueda](docs/diagramas/busqueda.png)             | **Búsqueda:** buscar por alias, elegir un jugador y ver su expediente                       |
 | ![Estados](docs/diagramas/estados.png)               | **Estados de una pantalla:** cargando, con datos, vacío, sin conexión o con error           |
 | ![Service Worker](docs/diagramas/service-worker.png) | **Service Worker:** instalación, atención sin red y actualización                           |
@@ -442,7 +536,7 @@ Los diagramas corresponden a la propuesta completa; su código está en [`docs/d
 
 GitHub Actions ([`ci.yml`](.github/workflows/ci.yml)) corre en cada Pull Request y en cada cambio a `develop` y `main`:
 
-1. **Analizar y probar:** formato del código y pruebas.
+1. **Analizar y probar:** formato del código, pruebas de Angular y pruebas del Service Worker (`npm run test:sw`).
 2. **Compilar:** build de producción.
 3. **Construir imagen Docker:** comprueba que el `Dockerfile` funciona.
 
@@ -481,3 +575,8 @@ La configuración del sitio está en [`firebase.json`](firebase.json): sirve `di
 - Jesús Antonio Jiménez Mendoza
 - Ángel Gael Jurado Rodríguez
 - Andrik Rivera Esquer
+## Descargas y almacenamiento de CI
+
+La última compilación comprobada de `main` se conserva en Releases sin caducidad.
+Consulta la [política de descargas y limpieza automática](.github/ARTIFACTS.md) para conocer
+los archivos disponibles, la retención temporal en Actions y cómo previsualizar la limpieza.

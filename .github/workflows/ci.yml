@@ -14,6 +14,23 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  artifact-policy:
+    name: Verificar conservación de builds
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+          sparse-checkout: .github/scripts
+
+      - name: Pruebas de limpieza y publicación
+        working-directory: .github/scripts
+        run: python3 -m unittest test_prune_artifacts test_publish_latest_build
+
   check:
     name: Analizar y probar
     runs-on: ubuntu-24.04
@@ -36,6 +53,9 @@ jobs:
 
       - name: Pruebas
         run: npx ng test --watch=false
+
+      - name: Pruebas del Service Worker
+        run: npm run test:sw
 
   build:
     name: Compilar
@@ -62,6 +82,7 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: fat-fish-pwa-dist
+          retention-days: 7
           path: dist/
           if-no-files-found: error
 
@@ -87,3 +108,31 @@ jobs:
             echo "|---|---|"
             docker image ls fat-fish-pwa:${{ github.sha }} --format '| `{{.Repository}}:{{.Tag}}` | {{.Size}} |'
           } >> "$GITHUB_STEP_SUMMARY"
+
+  release:
+    name: Actualizar última descarga
+    needs: [build, docker, artifact-policy]
+    if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      contents: write
+      actions: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+          sparse-checkout: .github/scripts
+
+      - name: Descargar el build comprobado de esta ejecución
+        uses: actions/download-artifact@v7
+        with:
+          name: fat-fish-pwa-dist
+          path: release-input
+
+      - name: Publicar y reemplazar la descarga anterior
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 .github/scripts/publish_latest_build.py --source release-input --name fat-fish-pwa.zip --zip

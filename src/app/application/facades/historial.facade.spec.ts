@@ -1,3 +1,4 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { TestBed } from '@angular/core/testing';
 import { Subject } from 'rxjs';
 import { Pagina, Partida } from '../../domain/models/partida';
@@ -53,6 +54,7 @@ describe('HistorialFacade', () => {
   let perfiles: Map<string, Subject<Perfil>>;
   let paginas: Map<string, Subject<Pagina<Partida>>>;
   let facade: HistorialFacade;
+  let sesion: SesionFalsa;
 
   const enCamino = <T>(mapa: Map<string, Subject<T>>, clave: string) => {
     const respuesta = new Subject<T>();
@@ -72,6 +74,7 @@ describe('HistorialFacade', () => {
   beforeEach(() => {
     perfiles = new Map();
     paginas = new Map();
+    sesion = new SesionFalsa();
     TestBed.configureTestingModule({
       providers: [
         {
@@ -85,7 +88,7 @@ describe('HistorialFacade', () => {
           },
         },
         { provide: Conectividad, useValue: new ConectividadFalsa() },
-        { provide: SesionRepository, useValue: new SesionFalsa() },
+        { provide: SesionRepository, useValue: sesion },
       ],
     });
     facade = TestBed.inject(HistorialFacade);
@@ -111,6 +114,26 @@ describe('HistorialFacade', () => {
     expect(facade.partidas().map((p) => p.id)).toEqual(['1042-0']);
     expect(facade.hayMas()).toBe(true);
     expect(facade.cargandoMas()).toBe(false);
+  });
+
+  it('forgets a saved player that no longer exists, without an error message', () => {
+    facade.buscar('77');
+    expect(sesion.id).toBe('77');
+    perfiles.get('77')!.error(new HttpErrorResponse({ status: 404 }));
+    expect(sesion.id).toBeNull();
+    expect(facade.jugadorGuardado()).toBeNull();
+    expect(facade.jugadorNoEncontrado()).toBe(true);
+    expect(facade.error()).toBeNull();
+    expect(facade.cargando()).toBe(false);
+  });
+
+  it('keeps the saved player and explains it when the server fails for another reason', () => {
+    facade.buscar('6');
+    perfiles.get('6')!.error(new HttpErrorResponse({ status: 0 }));
+    expect(sesion.id).toBe('6');
+    expect(facade.jugadorNoEncontrado()).toBe(false);
+    expect(facade.error()).toContain('No pudimos consultar tu expediente');
+    expect(facade.error()).not.toMatch(/laboratorio|02_carga/);
   });
 
   it('tells whose dossier is on its way', () => {
